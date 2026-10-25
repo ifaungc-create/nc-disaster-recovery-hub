@@ -12,3 +12,4 @@
 - [x] Live smoke 12/12 + branding 7/7 pass (tests updated for language dialog + static hotel list); live-34..39 site screenshots
 - [x] Final commit + report
 - [x] 2026-10-25: Play app signing SHA-256 added to assetlinks.json (both keys), Play app 4974956770726627957 internal release 1 (1.0.0)
+- [x] 2026-10-25: Fixed Translation page "Open in Google Translate" (was a blank "Loading…" page: Google's translate.goog proxy loads our /assets JS+CSS cross-origin and we sent no CORS header). Added `Access-Control-Allow-Origin: https://disaster--resources-app.translate.goog` on /assets/* and /data/* only (CSP/X-Frame-Options unchanged), link straight to the proxy URL, keep "#route" links inside the translation, no language dialog there, header wraps long words. Deploys 6add8dd64bd68d297c214b53 + 6add8f21dd667bc722bf3acd. Live check: `node tests/live-translate.mjs` (21 languages pass; screenshots/live-40-translate-fix.png)

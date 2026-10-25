@@ -21,6 +21,7 @@ import { adminScreens, responderNotice } from './screens/admin.js';
 const app = $('#app');
 import { ctx } from './ctx.js';
 import { routeFromPath } from './paths.js';
+import { onTranslateProxy } from './proxy.js';
 const PRIVATE = ['notes', 'share', 'submit', 'admin'];
 const go = (r) => { if (location.hash === '#' + r) render(); else location.hash = r; };
 ctx.go = go;
@@ -199,6 +200,13 @@ async function render() {
 ctx.render = render;
 
 window.addEventListener('hashchange', render);
+// In the Google Translate copy, keep in-app links inside the translation: Google's proxy sets
+// <base href="https://disaster-resources.app/...">, so a plain "#route" link would open the untranslated site.
+if (onTranslateProxy()) document.addEventListener('click', (e) => {
+  const a = e.target.closest?.('a[href]'); const h = a && a.getAttribute('href');
+  if (e.defaultPrevented || !h || h[0] !== '#' || h.length < 2 || a.target) return;
+  e.preventDefault(); location.hash = h.slice(1);
+});
 (async () => {
   applyLang();
   ctx.me = await auth.currentUser();

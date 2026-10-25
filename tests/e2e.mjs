@@ -391,7 +391,7 @@ try {
   const trText = await page.textContent('main'); assert.match(trText, /1-800-621-3362/); assert.match(trText, /211/); assert.match(trText, /English and Spanish/i);
   assert.equal(await page.locator('main a[href^="tel:"]').count() >= 2, true);
   const before = foreign.length; await page.selectOption('#gtlang', 'vi'); assert.equal(foreign.length, before, 'choosing a language does not contact Google');
-  assert.match(await page.getAttribute('#gtopen', 'href'), /^https:\/\/translate\.google\.com\/translate\?sl=auto&tl=vi&u=https%3A%2F%2Fdisaster-resources\.app/);
+  assert.equal(await page.getAttribute('#gtopen', 'href'), 'https://disaster--resources-app.translate.goog/translation?_x_tr_sl=auto&_x_tr_tl=vi&_x_tr_hl=vi&_x_tr_pto=wapp');
   assert.equal(await page.getAttribute('#gtopen', 'target'), '_blank'); assert.match(await page.textContent('#gtprivacy'), /Google/);
   await shot('live-30-translation-en'); step('translation tile: free apps with store links, phone how-tos, interpreter help (FEMA, NC 211), Google Translate only on tap');
   { const cES = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true }); await cES.addInitScript(() => localStorage.setItem('ncdrh.lang', 'es'));

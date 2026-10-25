@@ -91,7 +91,15 @@ export const GT_LANGS = [
 const RTL = ['ar'];
 export const langDir = (code) => (RTL.includes(code) ? 'rtl' : 'ltr');
 export const gtLangTag = (code) => code;
-export const gtUrl = (pageUrl, lang) => `https://translate.google.com/translate?sl=auto&tl=${encodeURIComponent(lang)}&u=${encodeURIComponent(pageUrl)}`;
+// Google Translate's website proxy. translate.google.com/translate?u=... only redirects here, so link it
+// directly: host dots become "-" and dashes become "--" (disaster-resources.app -> disaster--resources-app).
+export const gtUrl = (pageUrl, lang) => {
+  const u = new URL(pageUrl);
+  const host = u.hostname.replace(/-/g, '--').replace(/\./g, '-');
+  const q = new URLSearchParams(u.search);
+  q.set('_x_tr_sl', 'auto'); q.set('_x_tr_tl', lang); q.set('_x_tr_hl', lang); q.set('_x_tr_pto', 'wapp');
+  return `https://${host}.translate.goog${u.pathname}?${q}`;
+};
 
 // Free interpreters: only what the linked source says.
 export const RIGHTS = [

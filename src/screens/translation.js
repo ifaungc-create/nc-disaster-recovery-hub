@@ -40,13 +40,14 @@ function translation() {
 
     <section aria-labelledby="tr-gt-h" id="tr-gt"><h3 id="tr-gt-h" class="sech">${t('Read this app in another language')}</h3>
     <div class="card"><p>${t('You can open a page of this app in Google Translate. This is optional.')}</p>
-      <p class="small" id="gtprivacy"><b>${t('Privacy:')}</b> ${t('Nothing is sent to Google unless you tap the button. When you tap it, the address and text of the page are sent to Google, which has its own privacy policy. Private notes and sign-in do not work in the translated copy, so do not type personal information there.')}</p>
+      <p class="small" id="gtprivacy"><b>${t('Privacy:')}</b> ${t('Nothing is sent to Google unless you tap the button. When you tap it, the address and text of the page are sent to Google, which has its own privacy policy. Sign-in, private notes and the nearby hotel search do not work in the translated copy, so do not type personal information there.')}</p>
       <label for="gtlang">${t('Translate into')}</label>
       <select id="gtlang">${GT_LANGS.filter(([c]) => c !== (isEs() ? 'es' : 'en')).map(([c, n]) => `<option value="${esc(c)}" lang="${esc(c)}" dir="${langDir(c)}">${esc(n)}</option>`).join('')}</select>
       <label for="gtpage">${t('Page')}</label>
       <select id="gtpage">${pageChoices().map((p) => `<option value="${esc(p.path)}"${p.route === 'translation' ? ' selected' : ''}>${esc(p.title)}</option>`).join('')}</select>
       <a class="btn" id="gtopen" href="#" target="_blank" rel="noopener noreferrer" aria-describedby="gtprivacy">${t('Open in Google Translate')} <span aria-hidden="true">↗</span><span class="sr"> ${t('(opens a new tab)')}</span></a>
-      <p class="small">${t('Translations are made by a computer and may be wrong.')}</p></div>
+      <p class="small">${t('Translations are made by a computer and may be wrong.')}</p>
+      <p class="small">${t('If the page does not translate, use the Translate option in your web browser instead (see "Translate a web page" above).')}</p></div>
     </section>
     <p class="small">${t('Links and steps checked {date}.', { date: esc(fmtDate(CHECKED)) })}</p>`,
   bind(root) {

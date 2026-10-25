@@ -37,6 +37,20 @@
     Access-Control-Allow-Origin = "*"
     Cache-Control = "public, max-age=3600"
 
+# Google Translate's website proxy (Translation page, "Open in Google Translate") serves our HTML from
+# disaster--resources-app.translate.goog with <base href="https://disaster-resources.app/...">, so the app's
+# module script, stylesheet and public data files load cross-origin and need CORS. Only that one origin, only
+# public static files (no credentials, no API): normal visitors and our CSP are unchanged.
+[[headers]]
+  for = "/assets/*"
+  [headers.values]
+    Access-Control-Allow-Origin = "https://disaster--resources-app.translate.goog"
+
+[[headers]]
+  for = "/data/*"
+  [headers.values]
+    Access-Control-Allow-Origin = "https://disaster--resources-app.translate.goog"
+
 [[headers]]
   for = "/robots.txt"
   [headers.values]

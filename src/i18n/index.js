@@ -3,6 +3,7 @@
 // scripts/i18n-extract.mjs; tests/i18n.test.mjs fails if any key is missing from es.js.
 // Names, addresses and phone numbers are never translated. The choice is kept on this device only.
 import ES from './es.js';
+import { onTranslateProxy } from '../proxy.js';
 export const LANG_KEY = 'ncdrh.lang';
 let cur = null;
 export function getLang() {
@@ -10,7 +11,7 @@ export function getLang() {
   try { cur = localStorage.getItem(LANG_KEY) === 'es' ? 'es' : 'en'; } catch { cur = 'en'; }
   return cur;
 }
-export function langChosen() { try { return !!localStorage.getItem(LANG_KEY); } catch { return true; } }
+export function langChosen() { if (onTranslateProxy()) return true; try { return !!localStorage.getItem(LANG_KEY); } catch { return true; } }
 export function setLang(l) { cur = l === 'es' ? 'es' : 'en'; try { localStorage.setItem(LANG_KEY, cur); } catch {} applyLang(); }
 export function applyLang() { if (typeof document !== 'undefined') document.documentElement.lang = getLang(); }
 export const isEs = () => getLang() === 'es';

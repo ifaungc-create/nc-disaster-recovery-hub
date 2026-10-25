@@ -1,4 +1,6 @@
 {
+  "license": "MIT",
+  "author": "Donnell Nichols and C4I Veteran Services Corp.",
   "name": "nc-disaster-hub",
   "private": true,
   "version": "0.1.0",

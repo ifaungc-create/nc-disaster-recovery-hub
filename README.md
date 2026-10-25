@@ -1,5 +1,10 @@
 # NC Disaster Recovery Hub (prototype)
 
+**Created by Donnell Nichols. A project of C4I Veteran Services Corp.**
+
+Open source under the [MIT License](LICENSE). Please keep the credit to Donnell Nichols and C4I Veteran Services Corp. when you reuse this code; see [NOTICE.md](NOTICE.md) for credits and data licenses (hotel and store data © OpenStreetMap contributors, ODbL).
+
+
 A mobile-first PWA for people in North Carolina affected by fires, floods and hurricanes, and for the responders who help them.
 **Branding:** the name is "NC Disaster Recovery Hub" with the tagline "A project of C4I Veteran Services Corp.". Both live in `src/config.js` (`APP_NAME`, `APP_TAGLINE`, `APP_DESCRIPTION`) and appear in:
 - the header on every screen

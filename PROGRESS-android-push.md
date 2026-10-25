@@ -11,3 +11,4 @@
 - [x] Live: assetlinks application/json, /translation /alerts /accessibility /delete-account 200, pushKey OK, CSP+HSTS
 - [x] Live smoke 12/12 + branding 7/7 pass (tests updated for language dialog + static hotel list); live-34..39 site screenshots
 - [x] Final commit + report
+- [x] 2026-10-25: Play app signing SHA-256 added to assetlinks.json (both keys), Play app 4974956770726627957 internal release 1 (1.0.0)

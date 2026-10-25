@@ -55,6 +55,9 @@ Check a build: `jarsigner -verify release/app-release.aab` and
   upload fingerprint (keep both), then deploy the website. Until you do, the app installed from Play
   will show a browser address bar at the top (the site cannot be verified). Play Console also shows a
   ready-made Digital Asset Links JSON on that page.
+- **Status (2026-10-25): done.** Play app ID 4974956770726627957; internal release 1 (1.0.0) uploaded
+  Oct 25 2026. `assetlinks.json` now lists both the upload key (`94:38:DA:…:B4:31`) and the Play app
+  signing key (`89:47:EB:26:04:E2:0B:EE:CE:CD:6C:84:F1:CC:2E:93:7B:A8:AC:46:E8:6F:FD:10:F0:1D:84:E0:E3:AB:CE:EC`).
 
 ### Back up the upload key (do this now)
 The keystore and its password live only in `/home/box/secrets/nc-disaster-hub/android/` (folder mode 700).

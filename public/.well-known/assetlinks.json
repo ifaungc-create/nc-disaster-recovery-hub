@@ -1,11 +1,14 @@
 [
   {
-    "relation": ["delegate_permission/common.handle_all_urls"],
+    "relation": [
+      "delegate_permission/common.handle_all_urls"
+    ],
     "target": {
       "namespace": "android_app",
       "package_name": "app.disasterresources.nchub",
       "sha256_cert_fingerprints": [
-        "94:38:DA:C9:DB:50:A0:DC:4A:31:FA:AA:F1:81:9C:00:0B:E0:2C:A0:29:3E:5D:FC:AC:39:C6:43:FA:77:B4:31"
+        "94:38:DA:C9:DB:50:A0:DC:4A:31:FA:AA:F1:81:9C:00:0B:E0:2C:A0:29:3E:5D:FC:AC:39:C6:43:FA:77:B4:31",
+        "89:47:EB:26:04:E2:0B:EE:CE:CD:6C:84:F1:CC:2E:93:7B:A8:AC:46:E8:6F:FD:10:F0:1D:84:E0:E3:AB:CE:EC"
       ]
     }
   }

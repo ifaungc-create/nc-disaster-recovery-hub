@@ -20,8 +20,9 @@ Rules checked 2026-10-24 (Eastern time) against Play Console Help:
 
 ## 2. Create the app
 - [ ] Create app → name **NC Disaster Recovery Hub**, default language English (United States), App, Free.
-- [ ] Upload `android/release/app-release.aab` to **Internal testing** first. Accept **Play App Signing**.
-- [ ] Copy the **App signing key SHA-256** (App signing page) and add it to `public/.well-known/assetlinks.json`
+- [x] Upload `android/release/app-release.aab` to **Internal testing** first. Accept **Play App Signing**.
+      Done 2026-10-25: Play app ID 4974956770726627957, internal release 1 (1.0.0) uploaded.
+- [x] (2026-10-25: app signing SHA-256 89:47:EB:…:AB:CE:EC added next to upload key 94:38:DA:…:B4:31 and deployed) Copy the **App signing key SHA-256** (App signing page) and add it to `public/.well-known/assetlinks.json`
       (keep the upload one). Deploy the website. Install from the internal test link and confirm there is no address bar.
 
 ## 3. App content (Policy → App content)

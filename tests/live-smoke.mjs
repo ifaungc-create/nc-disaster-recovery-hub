@@ -10,6 +10,7 @@ const rnd = randomBytes(4).toString('hex');
 const PW = 'Smoke-' + randomBytes(9).toString('base64url');
 const browser = await chromium.launch({ executablePath: '/usr/bin/google-chrome', args: ['--no-sandbox'] });
 const context = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true, geolocation: { latitude: 35.5951, longitude: -82.5515 }, permissions: ['geolocation'], acceptDownloads: true });
+await context.addInitScript(() => { try { if (!localStorage.getItem('ncdrh.lang')) localStorage.setItem('ncdrh.lang', 'en'); } catch {} });
 const page = await context.newPage();
 const foreign = [], errors = [], results = {};
 page.on('request', (r) => { const u = new URL(r.url()); if (u.origin !== BASE && !/^(data|blob):/.test(u.protocol)) foreign.push(r.url()); });
@@ -57,15 +58,15 @@ try {
   await page.screenshot({ path: SHOTS + 'live-03-county-buncombe.png' }); step('Buncombe county page loads (EM, DSS)');
 
   await go('hotels');
-  const resp = page.waitForResponse((r) => r.url().includes('/.netlify/functions/overpass'), { timeout: 45000 });
-  await page.click('#hloc'); const r = await resp; results.hotelStatus = r.status();
+  // Hotels come from the bundled static list; the live Overpass check is optional and usually hidden.
+  await page.click('#hloc'); results.hotelStatus = 'static list';
   await page.waitForFunction(() => document.querySelector('li.hotel') || /could not|try again|error|no /i.test(document.querySelector('main').textContent) && document.querySelector('#hsum')?.textContent, null, { timeout: 45000 }).catch(() => {});
   results.hotelCount = await page.locator('li.hotel').count();
   results.hotelSummary = ((await page.textContent('#hsum').catch(() => '')) || '').trim();
   results.hotelFirst = results.hotelCount ? (await page.locator('li.hotel h3').first().textContent()).trim() : '';
   results.hotelError = results.hotelCount ? '' : ((await page.textContent('main')).match(/[^.]*(could not|try again|error)[^.]*\./i) || [''])[0];
   if (results.hotelCount) await page.screenshot({ path: SHOTS + 'live-04-hotels.png' });
-  step(`hotel search from Asheville: HTTP ${results.hotelStatus}, ${results.hotelCount} results`);
+  assert.ok(results.hotelCount > 0, 'hotel results'); step(`hotel search from Asheville: ${results.hotelStatus}, ${results.hotelCount} results`);
 
   results.foreign = foreign; results.errors = errors;
   assert.deepEqual(foreign, []); step('no third-party requests');

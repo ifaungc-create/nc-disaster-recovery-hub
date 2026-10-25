@@ -2,12 +2,14 @@ import { chromium } from 'playwright-core';
 const BASE = 'https://disaster-resources-lltd.netlify.app', SHOTS = '/workspace/nc-disaster-hub/screenshots/';
 const b = await chromium.launch({ executablePath: '/usr/bin/google-chrome', args: ['--no-sandbox'] });
 const ctx = await b.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true, permissions: ['geolocation'] });
+await ctx.addInitScript(() => { try { if (!localStorage.getItem('ncdrh.lang')) localStorage.setItem('ncdrh.lang', 'en'); } catch {} });
 const page = await ctx.newPage(); const foreign = [], posts = [];
 page.on('request', (r) => { const u = new URL(r.url()); if (u.origin !== BASE && !/^(data|blob):/.test(u.protocol)) foreign.push(r.url()); if (r.method() === 'POST') posts.push(u.pathname); });
 const out = {};
 for (const [city, la, lo] of [['Asheville', 35.5951, -82.5515], ['Raleigh', 35.7796, -78.6382], ['Wilmington', 34.2257, -77.9447]]) {
   // fresh browser profile per city (the app accepts a cached position up to 5 minutes old)
   const c2 = await b.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true, permissions: ['geolocation'], geolocation: { latitude: la, longitude: lo } });
+  await c2.addInitScript(() => { try { if (!localStorage.getItem('ncdrh.lang')) localStorage.setItem('ncdrh.lang', 'en'); } catch {} });
   const p2 = await c2.newPage(); p2.on('request', (r) => { const u = new URL(r.url()); if (u.origin !== BASE && !/^(data|blob):/.test(u.protocol)) foreign.push(r.url()); if (r.method() === 'POST') posts.push(city + ' ' + u.pathname); });
   await p2.goto(BASE + '/#hotels'); await p2.waitForSelector('#hloc');
   await p2.click('#hloc'); await p2.waitForFunction(() => document.querySelector('li.hotel') || /No hotels/.test(document.querySelector('#hsum').textContent), null, { timeout: 30000 });

@@ -7,6 +7,7 @@ const TAG = 'A project of C4I Veteran Services Corp.', MAIL = 'mailto:info@c4ive
 const DISC = 'None of the organizations or agencies listed in this app, whether government or private, are affiliated with this app or with C4I Veteran Services Corp. This app serves as a research and referral platform to help you recover from a disaster. We have done our best to confirm all information and keep it up to date, but information changes. Please let us know if a number does not work or a link is broken: info@c4iveteranservices.org.';
 const b = await chromium.launch({ executablePath: '/usr/bin/google-chrome', args: ['--no-sandbox'] });
 const ctx = await b.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true, permissions: ['geolocation'], geolocation: { latitude: 35.5951, longitude: -82.5515 } });
+await ctx.addInitScript(() => { try { if (!localStorage.getItem('ncdrh.lang')) localStorage.setItem('ncdrh.lang', 'en'); } catch {} });
 const page = await ctx.newPage(); const foreign = [];
 page.on('request', (r) => { const u = new URL(r.url()); if (u.origin !== BASE && !/^(data|blob):/.test(u.protocol)) foreign.push(r.url()); });
 let n = 0; const step = (m) => console.log(`  ✓ ${++n}. ${m}`);

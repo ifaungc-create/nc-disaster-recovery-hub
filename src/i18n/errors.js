@@ -24,6 +24,9 @@ export const ERRORS = [
   tk('Choose statewide or at least one county.'), tk('That code is not valid or has expired. Ask an administrator for a new one.'), tk('This account cannot claim admin access.'),
   tk('Nothing was changed.'), tk('Please confirm before deleting.'), tk('To delete your own account, use Settings.'), tk('The email you typed does not match this account.'),
   tk('You are signed in. To change your own password, use the admin recovery code on the sign-in page.'),
+  tk('Could not reach the server. Check your internet connection and try again. If it keeps happening, close the app completely and open it again.'),
+  tk('Signing in does not work inside Google Translate. Open the app directly at disaster-resources.app and choose Español with the language button.'),
+  tk('You are viewing this page through Google Translate. Signing in and accounts only work on the app itself.'), tk('Open the app to sign in'),
 ];
 // Labels defined in data/shared.js (also used by the server, so they stay English there) and shown with t(label).
 export const LABELS = [

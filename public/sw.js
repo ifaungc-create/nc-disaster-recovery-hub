@@ -1,6 +1,6 @@
 // Offline support: precache the app shell, built assets and the public resource data (/data/*.json),
 // network-first for pages, cache-first for static files. Never caches API/function calls or account data.
-const CACHE = 'ncdrh-v8';
+const CACHE = 'ncdrh-v9';
 const SHELL = ['/', '/index.html', '/manifest.webmanifest', '/icons/mark.svg', '/icons/icon-192.png', '/icons/icon-512.png'];
 const DATA = ['counties', 'fire-departments', 'school-districts', 'county-boundaries', 'zips', 'places', 'hotels', 'insurers', 'cultural-food'].map((n) => `/data/${n}.json`);
 self.addEventListener('install', (e) => {
@@ -14,7 +14,7 @@ self.addEventListener('install', (e) => {
 self.addEventListener('activate', (e) => { e.waitUntil(caches.keys().then((ks) => Promise.all(ks.filter((k) => k !== CACHE && k !== 'ncdrh-push').map((k) => caches.delete(k)))).then(() => self.clients.claim())); });
 self.addEventListener('fetch', (e) => {
   const req = e.request; const url = new URL(req.url);
-  if (req.method !== 'GET' || url.origin !== location.origin || url.pathname.startsWith('/.netlify/')) return;
+  if (req.method !== 'GET' || url.origin !== location.origin || url.pathname.startsWith('/.netlify/') || url.pathname === '/sw.js') return; // never cache functions/API
   // Pages: each public path (/hotels, /county/wake) has its own HTML copy; cache it under its own URL.
   if (req.mode === 'navigate') { const key = url.pathname === '/' ? '/index.html' : url.pathname; e.respondWith(fetch(req).then((r) => { if (r.ok) { const cp = r.clone(); caches.open(CACHE).then((c) => c.put(key, cp)); } return r; }).catch(async () => (await caches.match(key)) || caches.match('/index.html'))); return; }
   // Data files: serve cached copy, refresh in the background.

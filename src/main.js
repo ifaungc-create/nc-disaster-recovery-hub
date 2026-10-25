@@ -96,8 +96,10 @@ screens.home = () => {
     <div class="card warn"><h3>${t('Someone at the door offering to board up or clean?')}</h3><p>${t('Talk to your insurance company before you sign anything.')} <a href="#resources/boardup">${t('What to know')}</a></p></div>` };
 };
 
+const proxyNote = (route) => (onTranslateProxy() ? `<div class="card warn" id="proxynote"><p>${t('You are viewing this page through Google Translate. Signing in and accounts only work on the app itself.')}</p><a class="btn" href="https://disaster-resources.app/#${route}" target="_top" rel="noopener">${t('Open the app to sign in')}</a></div>` : '');
 screens.login = () => ({ html: `
   <h2>${t('Sign in')}</h2>
+  ${proxyNote('login')}
   <p class="brandline">${esc(APP_NAME)} · ${esc(t(APP_TAGLINE))}</p>
   <form id="f" class="card" novalidate>
     <label for="le">${t('Email')}</label><input id="le" name="email" type="email" autocomplete="email" required>
@@ -116,6 +118,7 @@ screens.login = () => ({ html: `
 
 screens.signup = () => ({ html: `
   <h2>${t('Create a free account')}</h2>
+  ${proxyNote('signup')}
   <p class="brandline">${esc(APP_NAME)} · ${esc(t(APP_TAGLINE))}</p>
   <p>${t('Your account opens right away. Your notes are private: only you can see them.')}</p>
   <form id="f" class="card" novalidate>
@@ -144,6 +147,7 @@ screens.signup = () => ({ html: `
 // (by phone or in person). Administrators can write a recovery code to the site's server log instead.
 screens.reset = () => ({ html: `
   <h2>${t('Reset your password')}</h2>
+  ${proxyNote('reset')}
   <p>${t('This app does not send emails. To reset your password, contact the administrator (see "Problems with the app?" in Settings). After checking who you are, they give you a one-time code by phone or in person. The code works once and expires in 2 hours.')}</p>
   <form id="rf" class="card" novalidate>
     <label for="re">${t('Email')}</label><input id="re" name="email" type="email" autocomplete="username" required>
@@ -247,5 +251,5 @@ if (onTranslateProxy()) document.addEventListener('click', (e) => {
   applyLang();
   ctx.me = await auth.currentUser();
   render();
-  if (import.meta.env.PROD && 'serviceWorker' in navigator) navigator.serviceWorker.register('/sw.js').catch(() => {});
+  if (import.meta.env.PROD && 'serviceWorker' in navigator) navigator.serviceWorker.register('/sw.js', { updateViaCache: 'none' }).then((r) => r.update()).catch(() => {});
 })();

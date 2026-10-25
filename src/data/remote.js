@@ -2,8 +2,14 @@
 // The session token is a short-lived HMAC token returned at login; it is kept in sessionStorage
 // (or localStorage if the person chose "keep me signed in"). No cookies are used.
 import { tokenStore } from '../auth.js';
+import { onTranslateProxy } from '../proxy.js';
+// Shown instead of the browser's raw "Failed to fetch" (also listed in i18n/errors.js, so it is translated).
+export const NET_ERROR = 'Could not reach the server. Check your internet connection and try again. If it keeps happening, close the app completely and open it again.';
+export const PROXY_ERROR = 'Signing in does not work inside Google Translate. Open the app directly at disaster-resources.app and choose Español with the language button.';
 async function rpc(action, ...args) {
-  const r = await fetch('/.netlify/functions/api', { method: 'POST', headers: { 'content-type': 'application/json', ...(tokenStore.get() ? { authorization: 'Bearer ' + tokenStore.get() } : {}) }, body: JSON.stringify({ action, args }) });
+  let r;
+  try { r = await fetch('/.netlify/functions/api', { method: 'POST', headers: { 'content-type': 'application/json', ...(tokenStore.get() ? { authorization: 'Bearer ' + tokenStore.get() } : {}) }, body: JSON.stringify({ action, args }), cache: 'no-store' }); }
+  catch { throw Object.assign(new Error(onTranslateProxy() ? PROXY_ERROR : NET_ERROR), { code: 0 }); }
   const j = await r.json().catch(() => ({}));
   if (!r.ok) throw Object.assign(new Error(j.error || 'Something went wrong. Please try again.'), { code: r.status });
   return j.result;

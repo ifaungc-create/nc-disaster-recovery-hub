@@ -24,3 +24,9 @@
 - Admin dn22: the function log shows an admin recovery code was issued for an existing account at 03:04 EDT (expires about 03:34 EDT). The code was not read. The owner can request a fresh one from the sign-in screen.
 - Manuals Version 1.1 (October 2026): fixed-gap statements removed; new Admin → Accounts chapter (private guide only); C4I Veteran Services Corp. logo on cover, headers and back page (1.6 in cover / 1.8 in back, about 450 ppi). Public guard passed. Private guide only at /workspace/manuals/private/.
 - Website: commit 138c79c pushed to main (no force). Logo in footer + home "About C4I" (alt EN "C4I Veteran Services Corp. logo", ES "Logotipo de C4I Veteran Services Corp."). Alerts page updated. Deploy 6addac0a898440b4ab80d9ef READY; 24 pages 200, 0 axe findings, no foreign requests; PDFs 200 and match local; Admin-Guide URL 404.
+
+## "Failed to fetch" at sign-in — FIXED Sun Oct 25 ~03:45 EDT
+- Server fine: real sign-up + sign-in + delete pass live (desktop, mobile, www). Function logs 03:05–03:20 EDT: no API calls from any real device (only our tests).
+- Reproduced exactly on the Google Translate proxy (disaster--resources-app.translate.goog): the API call is cross-origin there and blocked by CORS (by design), browser says "Failed to fetch" ("No se pudo obtener").
+- Fix (commit dd56705, deploy 6addaf477e0177920c59dd13): EN/ES message instead of raw "Failed to fetch" (proxy-specific and network-specific); banner + "Open the app to sign in" link on sign-in/sign-up/reset inside the proxy; SW ncdrh-v9, registered with updateViaCache 'none' + update(), still never touches /.netlify/ or POSTs.
+- Tests: unit (functions/push/i18n), e2e remote 86, e2e local 63 green. QA accounts created live were all deleted.

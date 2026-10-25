@@ -29,13 +29,23 @@ export const remote = {
   listCommunity: () => rpc('listCommunity'),
   submitRecord: (r) => rpc('submitRecord', r),
   mySubmissions: () => rpc('mySubmissions'),
-  // Admin area (server checks ADMIN_EMAILS on every call)
+  // Admin area (server checks on every call: email in ADMIN_EMAILS and admin access confirmed with a code)
   adminListResponders: () => rpc('adminListResponders'),
   adminDecideResponder: (uid, decision, reason) => rpc('adminDecideResponder', uid, decision, reason || ''),
   adminListSubmissions: (status) => rpc('adminListSubmissions', status),
   adminDecideSubmission: (owner, id, decision, edits, reason) => rpc('adminDecideSubmission', owner, id, decision, edits || null, reason || ''),
   adminUnpublish: (id, reason) => rpc('adminUnpublish', id, reason || ''),
   adminAudit: () => rpc('adminAudit'),
+  adminEditPublished: (id, edits, reason) => rpc('adminEditPublished', id, edits, reason || ''),
+  adminFindUser: (email) => rpc('adminFindUser', email),
+  adminDeleteUser: (uid, confirmEmail, confirmed, reason) => rpc('adminDeleteUser', uid, confirmEmail, confirmed, reason || ''),
+  adminIssueReset: (uid) => rpc('adminIssueReset', uid),
+  adminIssueClaim: (uid) => rpc('adminIssueClaim', uid),
+  // Password reset and admin confirmation with one-time codes (no email service)
+  resetPassword: (email, code, pw) => rpc('resetPassword', email, code, pw),
+  requestAdminCode: (email) => rpc('requestAdminCode', email),
+  adminClaimStart: () => rpc('adminClaimStart'),
+  adminClaimFinish: (code) => rpc('adminClaimFinish', code),
   // Push alerts (per device)
   pushKey: () => rpc('pushKey'),
   pushSubscribe: (sub, topics, lang) => rpc('pushSubscribe', sub, topics, lang),
@@ -44,4 +54,5 @@ export const remote = {
   adminPushCount: (target) => rpc('adminPushCount', target),
   adminPushSend: (msg, confirmed) => rpc('adminPushSend', msg, confirmed),
   adminPushLog: () => rpc('adminPushLog'),
+  adminPushTest: (sub, msg, lang) => rpc('adminPushTest', sub, msg, lang),
 };

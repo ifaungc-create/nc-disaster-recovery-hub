@@ -15,15 +15,15 @@ async function alerts() {
     return { html: `${head}<div class="card" id="pushnot"><h3>${t('Alerts are not available here')}</h3>${ios ? `<p>${t('On iPhone and iPad (iOS 16.4 or later), alerts work only after you add this app to your Home Screen:')}</p><ol class="steps"><li>${t('In Safari, tap the Share button.')}</li><li>${t('Tap <b>Add to Home Screen</b>, then <b>Add</b>.')}</li><li>${t('Open the app from your Home Screen and come back to this page.')}</li></ol>` : `<p>${t('This browser cannot receive alerts. Try a current version of Chrome, Edge, Firefox or Safari.')}</p>`}</div>` };
   }
   const st = await status(); const perm = permission();
-  const topics = new Set(st?.topics || ['statewide']);
+  const topics = new Set([...(st?.topics || []), 'statewide']); // statewide alerts reach every device with alerts on
   const loc = getLoc(); if (!st && loc?.county && NC_COUNTIES.includes(loc.county)) topics.add('county:' + loc.county);
   const counties = () => [...topics].filter((x) => x.startsWith('county:')).map((x) => x.slice(7));
   const chips = () => counties().length ? `<ul class="chips" id="pcounties">${counties().map((c) => `<li>${esc(t('{county} County', { county: c }))} <button type="button" class="chipx" data-rm="${esc(c)}" aria-label="${esc(t('Remove {county} County', { county: c }))}">×</button></li>`).join('')}</ul>` : `<p class="small" id="pcounties">${t('No counties chosen.')}</p>`;
   return { html: `${head}
     <form class="card" id="pf" novalidate><h3>${st ? t('Alerts are on for this device') : t('Choose your alerts')}</h3>
       <fieldset><legend>${t('What do you want alerts about?')}</legend>
-        <label class="opt"><input type="checkbox" id="pstate" ${topics.has('statewide') ? 'checked' : ''}><span>${t('Statewide news for North Carolina')}</span></label>
-        <label for="pcounty">${t('Add a county (up to {n})', { n: MAX })}</label>
+        <p id="pstate-note"><b>${t('Statewide alerts for North Carolina are always included.')}</b> ${t('Everyone who turns on alerts gets statewide alerts. Add counties to also get alerts for those counties.')}</p>
+        <label for="pcounty">${t('Also get alerts for a county (optional, up to {n})', { n: MAX })}</label>
         <div class="row"><select id="pcounty"><option value="">${t('Choose…')}</option>${NC_COUNTIES.map((c) => `<option value="${esc(c)}">${esc(c)}</option>`).join('')}</select><button type="button" class="btn secondary" id="padd">${t('Add county')}</button></div>
         <div id="pchips">${chips()}</div>
       </fieldset>
@@ -43,9 +43,7 @@ async function alerts() {
       if (!c) { err.textContent = t('Choose a county first.'); $('#pcounty').focus(); return; }
       if (counties().length >= MAX && !topics.has('county:' + c)) { err.textContent = t('You can choose up to {n} counties.', { n: MAX }); return; }
       topics.add('county:' + c); redraw(); msg.textContent = t('{county} County added.', { county: c }); };
-    $('#pstate').onchange = (e) => (e.target.checked ? topics.add('statewide') : topics.delete('statewide'));
     $('#pf').onsubmit = async (e) => { e.preventDefault(); err.textContent = ''; msg.textContent = '';
-      if (!topics.size) { err.textContent = t('Choose statewide news or at least one county.'); $('#pstate').focus(); return; }
       const b = $('#pon'); b.disabled = true; msg.textContent = t('Working…');
       try { await subscribe([...topics], getLang()); ctx.flash = t('Alerts are on. You can change or turn them off here any time.'); ctx.render(); }
       catch (x) { msg.textContent = ''; err.textContent = x.denied ? t('Notifications were not allowed. To get alerts, allow notifications for this app in your browser or phone settings.') : t(x.message || 'Something went wrong. Please try again.'); b.disabled = false; } };

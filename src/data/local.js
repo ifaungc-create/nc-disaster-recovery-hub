@@ -77,5 +77,7 @@ export const local = {
   submitRecord: serverOnly, mySubmissions: async () => [],
   adminListResponders: serverOnly, adminDecideResponder: serverOnly, adminListSubmissions: serverOnly,
   adminDecideSubmission: serverOnly, adminUnpublish: serverOnly, adminAudit: serverOnly,
-  pushKey: serverOnly, pushSubscribe: serverOnly, pushStatus: serverOnly, pushUnsubscribe: serverOnly, adminPushCount: serverOnly, adminPushSend: serverOnly, adminPushLog: serverOnly,
+  pushKey: serverOnly, pushSubscribe: serverOnly, pushStatus: serverOnly, pushUnsubscribe: serverOnly, adminPushCount: serverOnly, adminPushSend: serverOnly, adminPushLog: serverOnly, adminPushTest: serverOnly,
+  adminEditPublished: serverOnly, adminFindUser: serverOnly, adminDeleteUser: serverOnly, adminIssueReset: serverOnly, adminIssueClaim: serverOnly,
+  resetPassword: serverOnly, requestAdminCode: serverOnly, adminClaimStart: serverOnly, adminClaimFinish: serverOnly,
 };

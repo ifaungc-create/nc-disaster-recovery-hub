@@ -8,6 +8,7 @@
 //   community/approved  PUBLIC, plaintext: approved community records shown to everyone
 //   audit/<ts>-<rand>   admin action log: who (admin email), what, target id, when. No client data.
 //   rl/<group>/<bucket>/<ip-hash>  rate-limit counters (no raw IPs)
+//   code/<uid>          one-time code for password reset / admin confirmation: keyed hash only, expiry, tries (lib/codes.js)
 // All read-modify-write updates use ETag conditional writes (onlyIfMatch / onlyIfNew) with retry.
 import { getStore } from '@netlify/blobs';
 import { STORE_NAME } from './env.js';

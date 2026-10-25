@@ -21,6 +21,9 @@ export const ERRORS = [
   tk('The service is not configured yet.'),
   tk('Choose up to 10 counties.'), tk('Choose statewide alerts or at least one county.'), tk('This browser gave an invalid push address.'), tk('This browser\'s push service is not supported.'),
   tk('This browser gave invalid push keys.'), tk('Choose statewide or a county.'), tk('The link must start with https:// or /'), tk('Please confirm before sending.'), tk('Administrators only.'), tk('Too many attempts. Please wait a few minutes and try again.'),
+  tk('Choose statewide or at least one county.'), tk('That code is not valid or has expired. Ask an administrator for a new one.'), tk('This account cannot claim admin access.'),
+  tk('Nothing was changed.'), tk('Please confirm before deleting.'), tk('To delete your own account, use Settings.'), tk('The email you typed does not match this account.'),
+  tk('You are signed in. To change your own password, use the admin recovery code on the sign-in page.'),
 ];
 // Labels defined in data/shared.js (also used by the server, so they stay English there) and shown with t(label).
 export const LABELS = [

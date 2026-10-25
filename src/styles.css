@@ -132,3 +132,4 @@ legend { font-weight: 700; font-size: 18px; padding: 0; margin-bottom: 4px; }
 .chips { list-style: none; padding: 0; margin: 8px 0; display: flex; flex-wrap: wrap; gap: 8px; }
 .chips li { display: inline-flex; align-items: center; gap: 4px; background: #EAF1F8; border: 1px solid var(--brand); border-radius: 999px; padding: 0 0 0 14px; font-weight: 600; }
 .chipx { min-width: 48px; min-height: 48px; border: 0; background: transparent; font-size: 24px; line-height: 1; cursor: pointer; color: var(--brand); border-radius: 999px; }
+.warn-text { color: #8A1C00; margin: 8px 0 0; }

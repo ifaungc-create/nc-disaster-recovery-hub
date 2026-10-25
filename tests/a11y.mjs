@@ -19,7 +19,9 @@ const ADMIN = 'dn22@c4iveteranservices.org';
 const env = { ...process.env, VITE_DATA_ADAPTER: 'remote', NCDRH_BLOBS_DIR: BLOBS, NCDRH_DEV_INSECURE_SECRETS: '1', ADMIN_EMAILS: ADMIN };
 delete env.APP_SESSION_SECRET; delete env.DATA_ENCRYPTION_KEY;
 if (!process.env.SKIP_BUILD) execSync('npx vite build', { cwd: ROOT, stdio: 'ignore', env });
-const server = spawn('npx', ['vite', 'preview', '--port', String(PORT), '--strictPort'], { cwd: ROOT, stdio: 'ignore', detached: true, env });
+const server = spawn('npx', ['vite', 'preview', '--port', String(PORT), '--strictPort'], { cwd: ROOT, stdio: ['ignore', 'pipe', 'ignore'], detached: true, env });
+let serverOut = ''; server.stdout.on('data', (d) => { serverOut += d; }); // the operator log, where one-time admin codes are written
+const lastCode = () => [...serverOut.matchAll(/\[admin-code\][^\n]*: ([A-Z2-9]{5}-[A-Z2-9]{5}) \(single use/g)].pop()?.[1];
 const stop = () => { try { process.kill(-server.pid); } catch {} rmSync(BLOBS, { recursive: true, force: true }); };
 for (let i = 0; i < 80; i++) { try { await fetch(BASE); break; } catch { await new Promise((r) => setTimeout(r, 250)); } }
 
@@ -36,11 +38,13 @@ const axe = async (page, label) => {
   if (wide > 1) problems.push(`${label}: page scrolls sideways by ${wide}px`);
 };
 const go = async (page, hash) => { await page.goto(BASE + '/#' + hash); await page.waitForSelector('main h2'); await page.waitForTimeout(250); };
-const hashes = ['home', 'login', 'signup', 'resources', ...PUBLIC_PAGES.map((p) => p.route).filter((r) => r && r !== 'resources'), 'county/Wake', 'county/New Hanover', 'phone'];
+const hashes = ['home', 'login', 'signup', 'reset', 'resources', ...PUBLIC_PAGES.map((p) => p.route).filter((r) => r && r !== 'resources'), 'county/Wake', 'county/New Hanover', 'phone'];
 const uniq = [...new Set(hashes)];
 const signedIn = ['home', 'settings', 'notes/cases', 'notes/cases/new', 'notes/referrals', 'notes/referrals/new', 'share', 'submit', 'alerts', 'admin', 'delete-account'];
 
 try {
+  // a second account for the admin Accounts screen
+  assert.equal((await fetch(BASE + '/.netlify/functions/api', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ action: 'createUser', args: [{ email: 'qa-a11y@example.org', password: 'correct-horse-9', name: 'QA Person', role: 'affected', termsAccepted: true }] }) })).status, 200);
   // ---- first visit: language dialog
   { const c = await newCtx(null); const p = await c.newPage(); await p.goto(BASE + '/'); await p.waitForSelector('#langpick');
     await axe(p, 'language dialog');
@@ -54,7 +58,7 @@ try {
     await c.close(); }
 
   for (const lang of ['en', 'es']) {
-    const c = await newCtx(lang); const p = await c.newPage();
+    const c = await newCtx(lang); const p = await c.newPage(); p.on('dialog', (d) => d.accept());
     for (const h of uniq) await (go(p, h).then(() => axe(p, `${lang} #${h}`)));
     ok(`${lang.toUpperCase()}: ${uniq.length} signed-out screens audited`);
     // keyboard: skip link is first and moves focus to main
@@ -64,14 +68,24 @@ try {
     assert.equal(await p.evaluate(() => document.activeElement.id), 'main', 'skip link moves focus to main'); assert.equal(await p.evaluate(() => location.hash), hashBefore, 'skip link does not change the screen'); ok(`${lang.toUpperCase()}: skip link works by keyboard`);
     assert.equal(await p.getAttribute('html', 'lang'), lang); ok(`${lang.toUpperCase()}: <html lang> is "${lang}"`);
     // sign in (admin) and audit private screens
-    if (lang === 'en') { await go(p, 'signup'); await p.check('input[name=role][value=affected]'); await p.fill('#sn', 'Ada Admin'); await p.fill('#se', ADMIN); await p.fill('#sp', 'correct-horse-9'); await p.check('input[name=terms]'); await p.click('button[type=submit]'); await p.waitForSelector('main h2'); await p.waitForTimeout(800); }
+    if (lang === 'en') { await go(p, 'signup'); await p.check('input[name=role][value=affected]'); await p.fill('#sn', 'Ada Admin'); await p.fill('#se', ADMIN); await p.fill('#sp', 'correct-horse-9'); await p.check('input[name=terms]'); await p.click('button[type=submit]'); await p.waitForSelector('main h2'); await p.waitForTimeout(800);
+      await go(p, 'settings'); await p.waitForSelector('#claimcard'); await axe(p, 'en #settings (admin not confirmed yet)');
+      await p.click('#claimstart'); await p.waitForFunction(() => document.querySelector('#claimmsg').textContent.length > 0); for (let i = 0; i < 20 && !lastCode(); i++) await p.waitForTimeout(100);
+      await p.fill('#claimcode', lastCode()); await p.click('#claimf button[type=submit]'); await p.waitForSelector('#claimcard', { state: 'detached' }); }
     else { await go(p, 'login'); await p.fill('#le', ADMIN); await p.fill('#lp', 'correct-horse-9'); await p.click('button[type=submit]'); await p.waitForTimeout(1200); }
     await go(p, 'admin'); await p.waitForSelector('nav.tabs'); await go(p, 'alerts'); await p.waitForSelector('#pf');
     for (const h of signedIn) await (go(p, h).then(() => axe(p, `${lang} #${h} (signed in)`)));
-    const tabs = ['responders', 'submissions', 'published', 'alerts', 'audit'];
+    const tabs = ['responders', 'submissions', 'published', 'alerts', 'accounts', 'audit'];
     for (const tb of tabs) { await go(p, 'admin/' + tb); await p.waitForTimeout(400); await axe(p, `${lang} #admin/${tb}`); }
     await go(p, 'admin/alerts'); await p.click('#pa button[type=submit]'); await p.waitForTimeout(300); await axe(p, `${lang} #admin/alerts (empty submit)`);
     await p.fill('#pa_title', 'Test'); await p.fill('#pa_body', 'Body'); await p.fill('#pa_titleEs', 'Prueba'); await p.fill('#pa_bodyEs', 'Texto'); await p.click('#pa button[type=submit]'); await p.waitForSelector('#pa_send', { state: 'visible' }); await axe(p, `${lang} #admin/alerts (confirm step)`);
+    // alerts: several counties, no Spanish (warning shown in the confirm step)
+    await go(p, 'admin/alerts'); await p.reload(); await p.waitForSelector('#pa'); await p.check('#pa_cty'); for (const c of ['Wake', 'Buncombe']) { await p.selectOption('#pa_county', c); await p.click('#pa_add'); }
+    await p.fill('#pa_title', 'Test'); await p.fill('#pa_body', 'Body'); await p.click('#pa button[type=submit]'); await p.waitForSelector('#pa_nospanish'); await axe(p, `${lang} #admin/alerts (counties, no Spanish warning)`);
+    // accounts: find an account, see reset + delete
+    await go(p, 'admin/accounts'); await p.fill('#ua_email', 'qa-a11y@example.org'); await p.click('#ua button[type=submit]'); await p.waitForSelector('#ua_del'); await axe(p, `${lang} #admin/accounts (account found, delete form)`);
+    await p.click('#ua_del button[type=submit]'); await p.waitForFunction(() => document.querySelector('#ua_derr').textContent.length > 0); await axe(p, `${lang} #admin/accounts (delete without confirmation)`);
+    await p.click('#ua_reset'); await p.waitForSelector('#ua_code'); await axe(p, `${lang} #admin/accounts (reset code shown)`);
     // form errors are announced: submit an empty case form
     await go(p, 'notes/cases/new'); await p.click('main button[type=submit]'); await p.waitForTimeout(300); await axe(p, `${lang} #notes/cases/new (after empty submit)`);
     assert.ok(await p.evaluate(() => [...document.querySelectorAll('main [role=alert], main [aria-live]')].some((e) => e.textContent.trim())), 'form error is in a live region');

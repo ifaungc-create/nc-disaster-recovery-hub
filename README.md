@@ -25,8 +25,8 @@ The structure follows `/workspace/c4i-hub-app`: Vite plus vanilla JS, a hash rou
 
 | Area | What it does |
 |---|---|
-| **Accounts** | Server-side on Netlify Blobs (encrypted). *Person affected by a disaster* gets in right away; *Disaster responder* waits for admin approval. Admins come from `ADMIN_EMAILS`. Sessions end when the app closes unless you tick "keep me signed in". No cookies. |
-| **Responder records + admin** | Approved responders submit organizations, services, shelters, numbers and links with a source URL. Admins approve (optionally editing), reject or unpublish them; approved records appear in resource sections and county pages labeled "Added by a verified responder, approved <date>". Admin actions are logged. |
+| **Accounts** | Server-side on Netlify Blobs (encrypted). *Person affected by a disaster* gets in right away; *Disaster responder* waits for admin approval. Admins come from `ADMIN_EMAILS`, but an admin email gets admin rights only after it is proven with a one-time code (see *Admin access* below). Forgotten passwords are reset with a one-time code an admin gives by phone or in person (no email service). Admins can find an account by email and delete it permanently. Sessions end when the app closes unless you tick "keep me signed in". No cookies. |
+| **Responder records + admin** | Approved responders submit organizations, services, shelters, numbers and links with a source URL. Admins approve (optionally editing), reject, edit after publishing, or unpublish them; approved records appear in resource sections and county pages labeled "Added by a verified responder, approved <date>". Admin actions are logged. |
 | **Share cards** (responders) | A responder makes a card with their own contact details and next steps. The client gets it from a **QR code** or an **8-character short code** (e.g. `FH74-BE8T`). The client must tick a consent box before anything is saved, and the card becomes a note in the client's private notes. The responder never sees client data; they only see a save count. Cards expire after 30 days and can be turned off. The form warns responders not to include client PII. The QR code carries the card in the URL *fragment* (`#claim/d/…`), so it works on any device with no server, and the fragment is never sent to a server. |
 | **My Notes** (private) | **Case numbers** by agency (Red Cross, FEMA, insurance claim, SBA, NCEM, Other), each with a contact, phone, email, date opened and next-step date. **Free-form notes.** **Referral tracker**: referred by, referred to, for what, status (not started / contacted / waiting / done), follow-up date with due and past-due badges, and quick status changes. Full create, edit and delete. |
 | **Resources** | Housing & shelter, relocating, free legal help, jobs & income (NCWorks, DUA), step-by-step document replacement (SSA card, NCDMV license/ID, NC birth certificate through Vital Records or the Register of Deeds, bank and credit cards with fraud alerts and freezes, passport, Medicaid/Medicare/EBT cards), relief organizations, how to get a fire report (local FD, county fire marshal, what OSFM does), insurance (coverage basics, claims, NCDOI help line, NFIP, NCJUA/NCIUA, and a neutral alphabetical insurer list with a disclaimer), and board-up/cleanup companies (a prominent warning about work authorizations, AOB and direction-to-pay forms, citing NCDOI; uncovered costs; your right to choose the vendor; contractor license lookup). |
@@ -39,7 +39,7 @@ The structure follows `/workspace/c4i-hub-app`: Vite plus vanilla JS, a hash rou
 | **Crisis bar** | Always on screen: 911, 988, NC 211 (with 1-888-892-1162 in its label) and Red Cross 1-800-RED-CROSS (1-800-733-2767). |
 | **Privacy** | No analytics, trackers, ad SDKs, cookies, third-party fonts or CDNs (the e2e test fails on any non-same-origin request). There is a plain-language privacy page. Settings has "Download my data" (JSON export) and "Delete my account" (type DELETE to confirm). A strict CSP is set in `netlify.toml`. |
 | **Translation & interpreters** (`/translation`) | Free translation apps with official store links (Google Translate, Microsoft Translator, Apple Translate, Google Lens), step-by-step use of the translation built into iPhone, Android, Pixel and Samsung phones, free-interpreter rights only as far as the linked sources say (FEMA helpline languages, health programs that get federal money, NC 211), a note that the app itself is English/Spanish, and an **optional** "Open in Google Translate" link that is only followed when tapped (with a privacy note). Content: `src/content/translation.js`. |
-| **Alerts (Web Push)** (`/alerts`) | Opt-in only after a tap. Topics: statewide news and/or any counties. Works in the PWA, the Android app and on iPhone/iPad (iOS/iPadOS 16.4+ after Add to Home Screen). Stores only the push address, topics and language (encrypted, not linked to an account); "Turn off alerts" deletes it. Admins compose EN+ES messages and confirm before sending; every send is logged. Not an emergency alert system (the screen says so). |
+| **Alerts (Web Push)** (`/alerts`) | Opt-in only after a tap. Everyone who turns alerts on gets statewide alerts; they can also add up to 10 counties. Works in the PWA, the Android app and on iPhone/iPad (iOS/iPadOS 16.4+ after Add to Home Screen). Stores only the push address, topics and language (encrypted, not linked to an account); "Turn off alerts" deletes it. Admins send to Statewide or to several counties at once, compose EN+ES (a warning shows if the Spanish is empty), can send a test to their own device only, and confirm before sending; every send is logged. Not an emergency alert system (the screen says so). |
 | **Accessibility** (`/accessibility`) | WCAG 2.1 AA target, tested with axe-core and Lighthouse in English and Spanish; statement page with the contact email, linked from the footer and About. |
 | **Android app** | Trusted Web Activity in `android/` (package `app.disasterresources.nchub`, target SDK 36). See `android/README.md` and `docs/play-store/`. |
 | **Account deletion page** (`/delete-account`) | Public page (required by Google Play) explaining in-app deletion and email requests. |
@@ -60,6 +60,8 @@ npm test             # unit (77) + e2e on Netlify Blobs (45 checks) + e2e on-dev
 npm run test:unit    # functions against the official Netlify Blobs local server, in a temp folder
 npm run test:e2e     # Playwright on the production build, server adapter, Blobs local server
 npm run test:e2e:local   # same suite, on-device adapter (admin steps skipped)
+npm run test:a11y    # axe-core on every screen in English and Spanish, including the admin screens
+npm test             # all of the above
 npm run data         # rebuild public/data/*.json from data-raw/ (no network), then public/sitemap.xml (lastmod = today)
 npm run sitemap      # only rewrite public/sitemap.xml; pass a date to pin lastmod: npm run sitemap -- 2026-10-22
 python3 scripts/linkcheck.py [extra-urls.json] [--retry]   # re-check links (network)
@@ -81,31 +83,44 @@ When deployed on Netlify the app is built with `VITE_DATA_ADAPTER=remote` (set i
 | Concurrency | Every write is a conditional write (`onlyIfMatch` ETag / `onlyIfNew`) with up to 10 retries using jittered backoff; after that the API answers 409 and nothing is lost. Strong consistency reads. |
 | Share codes | Server-side, so a typed code works on any phone. 30-day expiry, revocable, consent checkbox required, save count only. The responder never sees who saved it. |
 | Rate limits | Per IP **hash** (HMAC of the IP, truncated; raw IPs are never stored) in fixed windows: login 10 per 15 min, register 5 per hour, share-code lookup 30 per 15 min, hotel search 30 per 15 min. Over the limit → 429 with `Retry-After`. |
-| Logging | Functions log only `[api] failed <action> <error name>`. No emails, notes, coordinates or IPs. |
+| Logging | Functions log only `[api] failed <action> <error name>`, plus `[admin-code]` lines that carry a one-time admin code and the first 8 characters of the account id (see *Admin access*). No emails, notes, coordinates or IPs. |
 | Limits / validation | 64 KB request body, 1,000 records per type, 300 share cards, 2 MB per blob. Every field is validated and trimmed server-side (`src/data/shared.js`, used by both adapters). |
-| Export / delete | Export returns JSON of everything (including records you submitted). Delete removes every blob for the user: account, email index, data, share cards, submissions and responder request. Records an admin already published stay public; they carry no submitter identity. |
-| Cleanup | `netlify/functions/cleanup.js` runs hourly (scheduled function). It deletes old rate-limit windows and share cards expired more than 7 days ago. |
+| Export / delete | Export returns JSON of everything (including records you submitted). Delete (by the person in Settings, or by an admin in **Admin → Accounts**) removes every blob for the user: account, email index, data, share cards, submissions, responder request and any open one-time code. The admin deletion is logged with the account id and reason only, never the name or email. Alert subscriptions are not linked to accounts, so they are not part of this; the app turns off alerts on the device when a person deletes their own account. Records an admin already published stay public; they carry no submitter identity. |
+| Cleanup | `netlify/functions/cleanup.js` runs hourly (scheduled function). It deletes old rate-limit windows, share cards expired more than 7 days ago, and expired one-time codes. |
+| One-time codes | Password reset (2 hours), admin recovery and admin claim (30 minutes). Format `XXXXX-XXXXX`; case and spaces don't matter. Stored only as an HMAC hash (`code/<uid>`), single use, 5 wrong tries end the code, a new code replaces the old one. Using a reset or recovery code signs the account out everywhere. |
 | Fail closed | If `APP_SESSION_SECRET` or `DATA_ENCRYPTION_KEY` is missing or too short, the API answers 503 and stores nothing. The dev-only escape hatch `NCDRH_DEV_INSECURE_SECRETS=1` is ignored when `CONTEXT=production`. |
 
-Blob keys: `user/<uid>` (sealed), `email/<hmac>` → uid, `data/<uid>` (sealed), `card/<code>` (sealed, expiry in metadata), `resp/<uid>` and `sub/<uid>/<id>` (sealed with the admin-queue key), `community/approved` (plaintext; public on purpose), `audit/<time>-<rand>`, `rl/<group>/<window>/<iphash>`.
+Blob keys: `user/<uid>` (sealed), `email/<hmac>` → uid, `data/<uid>` (sealed), `card/<code>` (sealed, expiry in metadata), `resp/<uid>` and `sub/<uid>/<id>` (sealed with the admin-queue key), `community/approved` (plaintext; public on purpose), `audit/<time>-<rand>`, `code/<uid>` (hashed one-time code), `rl/<group>/<window>/<iphash>`.
 
 ### Responder approval, record submissions and the admin area
 
 - **Affected people** get instant access. **Responders** register as *pending*. Until an admin approves them they can use the app like anyone else, but share cards and record submissions are blocked by the server (403) and the UI shows a "waiting for admin approval" notice.
 - **Approved responders** can submit records at `#submit`: an organization, service, shelter, phone number or link, with a category, a county or Statewide, a description, phone/link and a required https **source URL**. Submissions are visible only to the submitter and admins until approved. A responder can have at most 50 pending.
-- **Admins** are whoever's normalized email is listed in `ADMIN_EMAILS`. This is checked on every request, so removing an email takes effect immediately. The admin area at `#admin` has four tabs:
+- **Admins** are accounts whose normalized email is listed in `ADMIN_EMAILS` **and** that proved the email with a one-time code (see *Admin access*). Both are checked on every request, so removing an email takes effect immediately. The admin area at `#admin` has six tabs:
   - **Responders:** pending requests (approve, or deny with an optional reason), approved responders (revoke), and denied/revoked responders (approve after all). Deny and revoke also turn off all of that responder's share codes.
   - **Submissions:** each pending record is an editable form. Approve (with or without edits), or reject with an optional reason the responder sees.
-  - **Published:** unpublish a record.
+  - **Published:** edit a published record in place (with an optional reason; the changed fields go in the Log) or unpublish it.
+  - **Alerts:** see *Sending an alert* below.
+  - **Accounts:** find an account by email; give a password reset code (or, for another admin address, a claim code); delete the account permanently after typing its email again.
   - **Log:** the last 100 admin actions.
 - Approved records are merged into the matching resource section (by category) and the matching county page (by county). There is also an "Added by verified responders" list. Each record is labeled **"Added by a verified responder, approved <date>"** and cached on the device for offline use. Rejected and pending records are never returned by the public API.
 - The **audit log** stores the admin email, the action, a target id (`user:<uid>` / `submission:<id>`), the time and the optional reason. It never stores client data or record contents.
 - **Responders and admins never see client notes.** No API returns another user's notes, cases or referrals. Admin screens show only responder name/email/org and submitted public records.
 - On-device mode has no admin: responders are treated as approved, and submissions need the online version.
 
+### Admin access (claiming, recovery) and password reset
+
+There is no email service, so proof of an email works through the server's own log, which only people with access to the Netlify site can read.
+
+- **Claim admin:** register (or sign in) with the admin email. **Settings → Confirm admin access → Write a code to the server log.** Open Netlify → the site → **Logs → Functions → api** and find the line `[admin-code] Admin claim code for account …: XXXXX-XXXXX`. Type the code in Settings. Until then the account is an ordinary account and the admin area says so.
+- **Admin recovery** (forgot the password, or someone else registered the admin email first): on the sign-in page, **Forgot your password? → Administrators: get a recovery code**. The code appears in the function log; enter it with a new password on the same page. This also confirms admin access, and if the address belongs to an account that never confirmed it, that account's password is replaced and its sessions are ended.
+- **Everyone else:** an admin opens **Admin → Accounts**, finds the account, checks who they are by phone or in person, and taps **Give a password reset code**. The person enters email, code and a new password at **Sign in → Forgot your password?**. Every session for that account is signed out.
+- A confirmed admin can also give a claim code for another address in `ADMIN_EMAILS` from **Admin → Accounts**.
+- Limits: codes sit in plain text in the function log until they expire (30 minutes); asking again replaces an open code (rate-limited to 10 per hour per IP).
+
 ### Environment variables
 
-Set these in the Netlify UI (**Site configuration → Environment variables**), scope **Functions** (or All), for the Production context and any deploy previews you use. Do **not** put secrets in `netlify.toml`. Build-time variables from `netlify.toml` are not passed to functions at runtime.
+Set these in the Netlify UI (**Site configuration → Environment variables**), scope **Functions** (or All), for the Production context and any deploy previews you use. Do **not** put secrets in `netlify.toml`. Build-time variables from `netlify.toml` are not passed to functions at runtime. **After you add or change a variable, redeploy** (Deploys → Trigger deploy → Deploy site, or a new CLI deploy): running functions keep the old values until the next deploy.
 
 | Name | Secret? | Required | Value / how to generate |
 |---|---|---|---|
@@ -131,7 +146,7 @@ Site: `disaster-resources-lltd`, site ID `18e940b2-6480-491e-b478-a649e9cab395`,
 1. **Env vars** (Functions scope, Production): `APP_SESSION_SECRET`, `DATA_ENCRYPTION_KEY`, `ADMIN_EMAILS=dn22@c4iveteranservices.org`. Store copies of both secrets in a password manager.
 2. **Deploy** the repo with the build from `netlify.toml` (`npm run build`, publish `dist`, functions `netlify/functions`). Use either a Git-linked deploy or a CLI deploy (`netlify deploy --build --prod --site 18e940b2-6480-491e-b478-a649e9cab395` after `npm ci`). The scheduled `cleanup` function runs only on the published production deploy.
 3. **Smoke test while SSO protection is still on:** open the site, sign up as an affected person, add a note, then export and delete. Check **Logs → Functions** shows no errors (a 503 on `/api` means a secret is missing or malformed). Same-origin function calls carry the SSO session; to verify on the live site.
-4. **Bootstrap the admin before going public:** register `dn22@c4iveteranservices.org` while visitor protection is on. There is no email verification yet, so whoever registers an admin email first owns it.
+4. **Claim the admin account:** register `dn22@c4iveteranservices.org` and confirm it with a code from the function log (see *Admin access*). Registering the email alone gives no admin rights, and the admin recovery code takes the address back if someone else registered it first.
 5. **Custom domain:** in Netlify, **Domain management → Add a domain** → `disaster-resources.app`, and add `www.disaster-resources.app`. Make the apex primary. Then add the DNS records below, wait for verification, and let Netlify provision the Let's Encrypt certificate (HTTPS → force).
 6. Turn **visitor protection off** only when you are ready for the public. Print QR codes only after the domain works, because they point at `https://disaster-resources.app`.
 
@@ -154,7 +169,8 @@ The canonical URL is `SITE_URL` in `src/config.js` (`https://disaster-resources.
 | Piece | Status |
 |---|---|
 | Hotel data freshness | The on-device list is a snapshot. Refresh it with `python3 scripts/build_hotels.py north-carolina.osm.pbf north-carolina.state.txt` (needs `pip install osmium shapely`). The optional live check depends on volunteer-run public mirrors. |
-| Password reset, email verification | Not built. Needs an email provider. This is also why the admin must be bootstrapped while the site is private. |
+| Email verification, self-service password reset by email | Not built (needs an email provider). Instead, admins give one-time reset codes and admin emails are proven with a code from the function log. Ordinary accounts' emails are not verified. |
+| Alert subscriptions and accounts | Not linked. An admin deleting an account cannot turn off alerts on that person's device; the person can tap "Turn off alerts", and dead addresses are removed when a send fails. |
 | Encryption key rotation | Not built. |
 | Backups | Netlify Blobs has no point-in-time restore here. Decide on a periodic export if needed. |
 
@@ -189,10 +205,11 @@ The fire filter used to drop every FDID ending in 50-99, which hid most departme
 - **Counties: 100 of 100 complete.** Complete means EM, DSS, health and Register of Deeds each have a phone, and all five links are ok or blocked. 87 counties have every link strictly 2xx/3xx.
 - **Fire:** 2,093 listings, 1,213 FDIDs (1,212 current), 100/100 counties.
 - **Schools:** 115 LEAs + 2 state schools; all 117 links ok.
-- **Tests (2026-10-22):**
-  - Unit: 84 passed. They run against the Netlify Blobs local server and cover accounts, isolation, concurrent writes, size limits, encryption at rest, share cards, rate limits, cleanup, export/delete, fail-closed config, responder approval, submissions, admin edit/approve/reject/unpublish, the audit log, revoke and the hotel function.
-  - e2e (Blobs): 56 passed. The flow is: responder pending → admin approves → responder submits two records → admin edits and approves one, rejects one → the approved record shows on the Housing page and the Buncombe page with its label → the rejected one never shows.
-  - e2e (on-device): 45 passed.
+- **Tests (2026-10-25):**
+  - Unit: 124 function tests, 19 push tests and 8 i18n checks passed. They run against the Netlify Blobs local server and cover accounts, isolation, concurrent writes, size limits, encryption at rest, share cards, rate limits, cleanup, export/delete, fail-closed config, responder approval, submissions, admin edit/approve/reject/unpublish/edit-published, the audit log, revoke, admin claim and recovery codes, password reset codes (wrong, expired, reused, replaced, raced, cross-account), admin account deletion, alert targeting (statewide, several counties), test sends and the hotel function.
+  - e2e (Blobs): 86 passed. Includes: admin email gets no rights until claimed with a log code → responder approval → submissions → edit after publishing → password reset with an admin code → admin deletes an account → admin screens in Spanish → alerts to two counties, statewide warning without Spanish, test send to own device only.
+  - e2e (on-device): 63 passed.
+  - Accessibility: 12 checks passed, 0 axe findings, English and Spanish, including the new Settings, reset, Accounts and Alerts screens.
 
 ## Everything marked "Not verified" (shown to users as a "Not verified" badge)
 
@@ -224,7 +241,7 @@ Once a month, re-check everything the app shows and rebuild:
 
 12. **Translation page** (`src/content/translation.js`): open every app-store link (Google Play and App Store pages for each app), the Apple/Google/Samsung how-to sources, FEMA's language-access page and the NC 211 page; confirm the steps still match current iOS/Android menus, the FEMA Helpline number (1-800-621-3362) and that NC 211 still offers interpreters. Update `CHECKED` in that file.
 13. **Accessibility:** `npm run test:a11y` (axe, keyboard, reflow, target size) and `LIGHTHOUSE=$(which lighthouse) node scripts/lighthouse-a11y.mjs` (needs Chrome). Update `A11Y_TESTED` in `src/screens/legal.js` when you re-test, and answer any accessibility emails.
-14. **Alerts:** in Admin → Alerts look at the subscriber count and the send log; send a test to a county no one uses if you need to check delivery. **Android:** check Play Console for policy notices and the yearly target-API deadline (see `docs/play-store/README.md`).
+14. **Alerts:** in Admin → Alerts look at the subscriber count and the send log; use **Send test to my device only** to check delivery. **Android:** check Play Console for policy notices and the yearly target-API deadline (see `docs/play-store/README.md`).
 
 ## Search engines (sitemap, robots, crawlable paths)
 
@@ -266,7 +283,7 @@ The app does **not** give out numbers. What it would take:
 2. **App name: decided.** "NC Disaster Recovery Hub", a project of C4I Veteran Services Corp.
 3. **Domain: decided.** https://disaster-resources.app. Print QR codes only after it resolves with HTTPS.
 4. **Responder verification: decided (manual admin approval).** Open: should more admins be added to `ADMIN_EMAILS`? Should approval also check agency email domains?
-5. **Email verification and password reset:** not built. Needs an email provider. Until then, register admin emails while the site is private.
+5. **Email verification and password reset by email:** needs an email provider (not chosen). Until then, admin-issued one-time codes and log codes for admins (see *Admin access*).
 6. **Encryption key custody:** who holds the offline backup of `DATA_ENCRYPTION_KEY`?
 7. **Data maintenance:** county, fire and school data are a snapshot from 2026-10-22. Someone needs to own refreshing it, for example quarterly with `npm run data` plus a link check. Responder submissions can now fill gaps between refreshes.
 8. **Hotel data refresh:** re-run `scripts/build_hotels.py` as part of the monthly check below.
@@ -274,10 +291,11 @@ The app does **not** give out numbers. What it would take:
 ## Sending an alert (admins)
 
 1. Sign in with an email listed in `ADMIN_EMAILS` → **Admin → Alerts**.
-2. Choose who gets it: **Statewide** or one county (only devices that chose that county).
-3. Write a short title (80 characters max) and message (300 max) in English. Spanish is optional but strongly recommended: fill in **both** the Spanish title and message (or neither). Devices set to Spanish get the Spanish text; if there is none they get the English. Optional link when tapped: a page of this app (e.g. `/county/wake`) or an `https://` address.
-4. Tap **Review before sending** — the app shows how many devices will get it. Check the text, then **Send now** (or **Change the message**). Sending cannot be undone.
-5. **Sent alerts** lists every alert (time, target, devices matched/sent/failed, who sent it). Addresses that no longer work are removed automatically.
+2. Choose who gets it: **Statewide** (every device with alerts on, including people who only picked counties) or **Counties**: add one or more counties; a device gets it once if it chose any of them.
+3. Write a short title (80 characters max) and message (300 max) in English. Spanish is optional but strongly recommended: fill in **both** the Spanish title and message (or neither). If both are empty, the review step shows a warning but you can still send. Devices set to Spanish get the Spanish text; if there is none they get the English. Optional link when tapped: a page of this app (e.g. `/county/wake`) or an `https://` address.
+4. Optional: **Send test to my device only** (turn on alerts on this device first). The test is marked [TEST] / [PRUEBA], goes only to this device and is logged.
+5. Tap **Review before sending** — the app shows how many devices will get it. Check the text, then **Send now** (or **Change the message**). Sending cannot be undone.
+6. **Sent alerts** lists every alert (time, target, devices matched/sent/failed, who sent it). Addresses that no longer work are removed automatically.
 
 Use alerts for recovery news (a Disaster Recovery Center opening, FEMA deadlines, new county resources). Never for emergencies or warnings: people must rely on Wireless Emergency Alerts and 911. Do not put personal information in an alert.
 
@@ -291,4 +309,4 @@ Target: WCAG 2.1 AA. `npm run test:a11y` checks every public screen in English a
 
 ## Source control
 
-The repository is meant to be **private**. `.gitignore` keeps out `node_modules`, `dist`, `.netlify`, `.env*`, keystores, keys, Android build output and saved third-party web pages in `data-raw/` (they can contain other sites' API keys). Secrets live outside the repo (Netlify environment variables; the Android upload key in a password manager).
+The repository is **public** (MIT license), so nothing secret may be committed. `.gitignore` keeps out `node_modules`, `dist`, `.netlify`, `.env*`, keystores, keys, Android build output and saved third-party web pages in `data-raw/` (they can contain other sites' API keys). Secrets live outside the repo (Netlify environment variables; the Android upload key in a password manager).

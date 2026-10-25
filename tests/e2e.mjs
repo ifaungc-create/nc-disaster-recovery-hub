@@ -30,7 +30,10 @@ if (ADAPTER === 'remote') {
 }
 delete env.APP_SESSION_SECRET; delete env.DATA_ENCRYPTION_KEY;
 if (!process.env.SKIP_BUILD) execSync('npx vite build', { cwd: ROOT, stdio: 'ignore', env });
-const server = spawn('npx', ['vite', 'preview', '--port', '4174', '--strictPort'], { cwd: ROOT, stdio: 'ignore', detached: true, env });
+const server = spawn('npx', ['vite', 'preview', '--port', '4174', '--strictPort'], { cwd: ROOT, stdio: ['ignore', 'pipe', 'ignore'], detached: true, env });
+let serverOut = ''; server.stdout.on('data', (d) => { serverOut += d; }); // the operator log (Netlify function log in production), where one-time admin codes are written
+const lastCode = () => [...serverOut.matchAll(/\[admin-code\][^\n]*: ([A-Z2-9]{5}-[A-Z2-9]{5}) \(single use/g)].pop()?.[1];
+const waitCode = async (before) => { for (let i = 0; i < 50; i++) { const c = lastCode(); if (c && c !== before) return c; await new Promise((r) => setTimeout(r, 100)); } throw new Error('no code in the server log'); };
 console.log(`E2E on the ${ADAPTER === 'remote' ? 'server adapter (Netlify Blobs local server, ' + BLOBS + ')' : 'on-device adapter'}`);
 const stop = () => { try { process.kill(-server.pid); } catch {} try { pushSrv?.close(); } catch {} rmSync(BLOBS, { recursive: true, force: true }); };
 for (let i = 0; i < 60; i++) { try { await fetch(BASE); break; } catch { await new Promise((r) => setTimeout(r, 250)); } }
@@ -150,8 +153,14 @@ try {
     await shot('05a-responder-pending'); step('new responder is pending: share cards and submissions blocked');
     await logout();
     // Admin (in ADMIN_EMAILS) signs up and approves.
-    await signUp('affected', 'Admin', ADMIN); assert.ok(await page.locator('#adminlink').count());
-    await page.click('#adminlink'); await page.waitForSelector('h3:has-text("Waiting for approval (1)")');
+    await signUp('affected', 'Admin', ADMIN); assert.equal(await page.locator('#adminlink').count(), 0);
+    await go('admin'); assert.match(await page.textContent('main'), /Confirm admin access in Settings/); assert.equal(await page.locator('nav.tabs').count(), 0); step('an ADMIN_EMAILS account gets no admin rights until the email is proven');
+    await go('settings'); await page.waitForSelector('#claimcard'); await shotAt('30-settings-confirm-admin', '#claimcard');
+    const before = lastCode(); await page.click('#claimstart'); await page.waitForFunction(() => document.querySelector('#claimmsg').textContent.length > 0); const claim = await waitCode(before);
+    assert.doesNotMatch(serverOut, /\[admin-code\][^\n]*@/); await page.fill('#claimcode', 'AAAAA-AAAAA'); await page.click('#claimf button[type=submit]'); await page.waitForFunction(() => document.querySelector('#claimerr').textContent.length > 0);
+    await page.fill('#claimcode', claim); await page.click('#claimf button[type=submit]'); await page.waitForSelector('text=Admin access is confirmed'); assert.equal(await page.locator('#claimcard').count(), 0);
+    step('admin confirms access in Settings with a one-time code from the server log (wrong code refused; no email in the log)');
+    await go('home'); await page.click('#adminlink'); await page.waitForSelector('h3:has-text("Waiting for approval (1)")');
     const req = page.locator('[data-resp]', { hasText: 'Sam Rivera' }); assert.match(await req.textContent(), /sam@relief\.example[\s\S]*requested/);
     assert.doesNotMatch(await page.textContent('main'), /jordan|4827|Legal Aid of NC/i); await shot('15-admin-responders');
     await req.locator('button[data-act=approve]').click(); await page.waitForSelector('text=Responder approved.');
@@ -184,7 +193,7 @@ try {
     await fill({ kind: 'phone', category: 'legal', county: 'Statewide', title: 'Bad Record B', phone: '800-555-0100', sourceUrl: 'https://example.org/b' });
     await page.click('button[type=submit]'); await page.waitForSelector('#mine li:nth-child(2)');
     assert.equal(await page.locator('#mine .badge.s-waiting').count(), 2); await shot('16-submit-record'); step('approved responder submits two records (both waiting for review)');
-    await go('resources/housing'); assert.equal(await page.locator('text=Test Shelter A').count(), 0); step('pending records are not public');
+    await go('resources/housing'); await page.waitForTimeout(600); assert.equal(await page.locator('text=Test Shelter A').count(), 0); step('pending records are not public');
     await logout(); await login(ADMIN);
     await go('admin/submissions'); await page.waitForSelector('h3:has-text("Waiting for review (2)")');
     const fa = page.locator('form[data-sub]').filter({ has: page.locator('input[name=title][value="Test Shelter A"]') });
@@ -197,10 +206,14 @@ try {
     assert.match(log, /submission\.reject[\s\S]*submission\.approve\.edited[\s\S]*responder\.approve/); assert.match(log, new RegExp(ADMIN)); assert.doesNotMatch(log, /jordan|Riverside|828-555/i);
     await shot('18-admin-log'); step('admin actions logged (who, what, when), no client or record details');
     await go('admin/published'); assert.match(await page.textContent('main'), /Published records \(1\)[\s\S]*Riverside Family Shelter/);
+    const ef = page.locator('form[data-edit]').first(); await page.locator('details:has(form[data-edit]) summary').first().click();
+    await ef.locator('[name=description]').fill('Overnight beds for families. Pets welcome.'); await ef.locator('[name=_reason]').fill('Pet policy confirmed'); await shotAt('31-admin-edit-published', 'form[data-edit]');
+    await ef.locator('button[type=submit]').click(); await page.waitForSelector('text=Saved. The public record is updated.');
+    await go('admin/audit'); const elog = await page.textContent('#audit'); assert.match(elog, /community\.edit/); assert.match(elog, /Changed: Description/); step('admin edits a published record in place; the edit (changed fields) is in the Log');
     await logout();
     // ---- public: approved record merged into the resource list and the county page, labeled; rejected never shows
     await go('resources/housing'); await page.waitForSelector('[data-community]');
-    const card = await page.textContent('[data-community]'); assert.match(card, /Riverside Family Shelter[\s\S]*828-555-0199/);
+    const card = await page.textContent('[data-community]'); assert.match(card, /Riverside Family Shelter[\s\S]*828-555-0199/); assert.match(card, /Pets welcome/);
     assert.match(card, /Added by a verified responder, approved [A-Z][a-z]{2} \d{1,2}, \d{4}/); await shotAt('19-community-record', '[data-community]');
     step('approved record shows on the Housing page with "Added by a verified responder, approved <date>"');
     await go('county/Buncombe'); assert.match(await page.textContent('[data-community]'), /Riverside Family Shelter/); step('approved record shows on its county page');
@@ -209,6 +222,29 @@ try {
     await login('sam@relief.example'); await go('submit');
     assert.match(await page.textContent('#mine'), /Not approved[\s\S]*Reason: Could not verify number/); assert.match(await page.textContent('#mine'), /Riverside Family Shelter[\s\S]*Approved|Approved[\s\S]*Riverside Family Shelter/);
     step('responder sees approved / not approved with the reason');
+    // ---- forgotten password: admin gives a one-time code; person resets; admin deletes the account
+    await page.setExtraHTTPHeaders({ 'x-test-client-ip': '10.9.9.1' }); // dev-only header: its own sign-in rate-limit bucket
+    await logout(); await signUp('affected', 'QA Person', 'qa-e2e@example.org'); await logout();
+    await login(ADMIN); await go('admin/accounts'); await page.fill('#ua_email', 'QA-E2E@example.org'); await page.click('#ua button[type=submit]'); await page.waitForSelector('#ua_card');
+    assert.match(await page.textContent('#ua_card'), /QA Person[\s\S]*qa-e2e@example\.org/); await page.click('#ua_reset'); await page.waitForSelector('#ua_code');
+    const rcode = (await page.textContent('#ua_code span.code')).trim(); assert.match(rcode, /^[A-Z2-9]{5}-[A-Z2-9]{5}$/); await shotAt('32-admin-accounts', '#ua_card'); await logout();
+    await go('login'); await page.click('#forgot'); await page.waitForSelector('#rf'); await page.fill('#re', 'qa-e2e@example.org'); await page.fill('#rc', rcode); await page.fill('#rp', 'brand-new-pass-7');
+    await shot('33-reset-password'); await page.click('#rf button[type=submit]'); await page.waitForSelector('text=Your password was changed');
+    await page.fill('#le', 'qa-e2e@example.org'); await page.fill('#lp', 'brand-new-pass-7'); await page.click('button[type=submit]'); await page.waitForSelector('text=Hi, QA');
+    await logout(); await go('reset'); await page.fill('#re', 'qa-e2e@example.org'); await page.fill('#rc', rcode); await page.fill('#rp', 'another-pass-77'); await page.click('#rf button[type=submit]'); await page.waitForFunction(() => document.querySelector('#rerr').textContent.length > 0);
+    step('password reset with a one-time code from an admin (no email); the code works only once');
+    await login(ADMIN); await go('admin/accounts'); await page.fill('#ua_email', 'qa-e2e@example.org'); await page.click('#ua button[type=submit]'); await page.waitForSelector('#ua_del');
+    await page.fill('#ua_confirm', 'wrong@example.org'); await page.click('#ua_del button[type=submit]'); await page.waitForFunction(() => document.querySelector('#ua_derr').textContent.length > 0);
+    await page.fill('#ua_confirm', 'qa-e2e@example.org'); await page.fill('#ua_reason', 'QA cleanup'); await page.click('#ua_del button[type=submit]'); await page.waitForSelector('text=The account and all its data were deleted.');
+    await page.fill('#ua_email', 'qa-e2e@example.org'); await page.click('#ua button[type=submit]'); await page.waitForSelector('text=No account uses that email.');
+    await go('admin/audit'); const dlog = await page.textContent('#audit'); assert.match(dlog, /user\.delete/); assert.doesNotMatch(dlog, /qa-e2e|QA Person/);
+    // Spanish admin screens
+    await page.evaluate(() => localStorage.setItem('ncdrh.lang', 'es')); await go('admin/accounts'); await page.reload(); await page.waitForSelector('main h2'); assert.match(await page.textContent('main'), /Buscar la cuenta/); assert.equal(await page.getAttribute('html', 'lang'), 'es');
+    await shot('34-admin-accounts-es'); await go('admin/responders'); await page.waitForSelector('text=Trabajadores de ayuda aprobados'); await shot('35-admin-responders-es');
+    await go('admin/audit'); await page.waitForSelector('text=Eliminó una cuenta'); await page.evaluate(() => localStorage.setItem('ncdrh.lang', 'en')); await page.reload(); await page.waitForSelector('main h2');
+    assert.notEqual((await (await fetch(BASE + '/.netlify/functions/api', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ action: 'verifyLogin', args: ['qa-e2e@example.org', 'brand-new-pass-7'] }) })).status), 200);
+    step('admin finds the account by email, deletes it after typing the email (wrong email refused); Log has no name or email; admin screens in Spanish');
+    await page.setExtraHTTPHeaders({});
   }
   await logout();
 
@@ -432,20 +468,20 @@ try {
     const pp = await cP.newPage(); const fP = []; pp.on('request', (r) => { if (!r.url().startsWith(BASE) && !r.url().startsWith('data:')) fP.push(r.url()); }); const eP = []; pp.on('pageerror', (e) => eP.push(e.message));
     await pp.goto(BASE + '/#home'); await pp.click('.tile[href="#alerts"]'); await pp.waitForSelector('#pf');
     assert.equal(await pp.evaluate(() => window.__subscribeCalls), 0, 'nothing is requested before a tap');
-    assert.ok(await pp.isChecked('#pstate')); await pp.selectOption('#pcounty', 'Wake'); await pp.click('#padd'); await pp.waitForSelector('#pcounties li');
+    assert.match(await pp.textContent('#pstate-note'), /always included/); assert.equal(await pp.locator('#pstate').count(), 0); await pp.selectOption('#pcounty', 'Wake'); await pp.click('#padd'); await pp.waitForSelector('#pcounties li');
     await pp.screenshot({ path: SHOTS + 'live-32-alerts-choose.png' });
     await pp.click('#pon'); await pp.waitForSelector('#poff'); assert.equal(await pp.evaluate(() => window.__subscribeCalls), 1);
     assert.match(await pp.textContent('#pf h3'), /Alerts are on/); step('alerts: opt-in only after a tap; statewide + Wake County saved');
     await pp.reload(); await pp.waitForSelector('#poff'); assert.ok(await pp.locator('#pcounties li:has-text("Wake")').count()); step('alerts: device status is remembered (server status lookup)');
     // admin composes, reviews and sends
-    await go('login'); await page.fill('#le', ADMIN); await page.fill('#lp', 'correct-horse-9'); await page.click('button[type=submit]'); await page.waitForSelector('header :text("Admin")'); await go('admin/alerts'); await page.waitForSelector('#pa');
-    await page.selectOption('#pa_target', 'Wake'); await page.fill('#pa_title', 'Disaster Recovery Center open'); await page.fill('#pa_body', 'Wake County DRC is open today 9 to 6.');
+    await go('login'); await page.fill('#le', ADMIN); await page.fill('#lp', 'correct-horse-9'); await page.click('button[type=submit]'); await page.waitForFunction(() => location.hash !== '#login'); await go('admin/alerts'); await page.waitForSelector('#pa');
+    await page.check('#pa_cty'); for (const c of ['Wake', 'Buncombe']) { await page.selectOption('#pa_county', c); await page.click('#pa_add'); } await page.fill('#pa_title', 'Disaster Recovery Center open'); await page.fill('#pa_body', 'Wake County DRC is open today 9 to 6.');
     await page.fill('#pa_titleEs', 'Centro de Recuperación abierto'); await page.fill('#pa_bodyEs', 'El DRC del condado de Wake abre hoy de 9 a 6.'); await page.fill('#pa_url', '/county/wake');
-    await page.click('#pa button[type=submit]'); await page.waitForSelector('#pa_send', { state: 'visible' }); assert.match(await page.textContent('#pa_confirm'), /1 device/);
+    await page.click('#pa button[type=submit]'); await page.waitForSelector('#pa_send', { state: 'visible' }); assert.match(await page.textContent('#pa_confirm'), /1 device/); assert.match(await page.textContent('#pa_confirm'), /Buncombe County, Wake County/); assert.equal(await page.locator('#pa_nospanish').count(), 0);
     await page.screenshot({ path: SHOTS + 'live-33-admin-alert-confirm.png' });
     await page.click('#pa_send'); await page.waitForSelector('#pushlog li'); assert.match(await page.textContent('#pushlog'), /Wake[\s\S]*1/);
     assert.equal(pushGot.length, 1); assert.match(pushGot[0].headers.authorization, /^vapid t=/); assert.equal(pushGot[0].headers['content-encoding'], 'aes128gcm'); assert.ok(pushGot[0].len > 100);
-    step('admin: compose EN+ES, confirm "1 device", send; push service received an encrypted VAPID-signed message; send log updated');
+    step('admin: compose EN+ES for two counties in one send, confirm "1 device", send; push service received an encrypted VAPID-signed message; send log updated');
     // the service worker shows the notification (push event delivered through the DevTools protocol)
     const swTarget = await pp.evaluate(async () => (await navigator.serviceWorker.ready).scope);
     const cdp = await cP.newCDPSession(pp); await cdp.send('ServiceWorker.enable'); let regId = null; cdp.on('ServiceWorker.workerRegistrationUpdated', (e) => { for (const r of e.registrations) if (r.scopeURL === swTarget) regId = r.registrationId; });
@@ -454,9 +490,19 @@ try {
       let notes = []; for (let i = 0; i < 30 && !notes.length; i++) { await pp.waitForTimeout(100); notes = await pp.evaluate(async () => (await (await navigator.serviceWorker.ready).getNotifications()).map((n) => n.title + '|' + n.body + '|' + n.data?.url)); }
       assert.deepEqual(notes, ['Test alert|Hello|' + BASE + '/county/wake']); step('service worker shows the alert as a notification (title, text, link)'); }
     else console.log('  (skipped: service worker push delivery via DevTools not available)');
+    // statewide reaches county-only devices too
+    await page.reload(); await page.waitForSelector('#pa'); await page.check('#pa_state'); await page.fill('#pa_title', 'x'); await page.fill('#pa_body', 'y'); await page.click('#pa button[type=submit]'); await page.waitForSelector('#pa_nospanish');
+    assert.match(await page.textContent('#pa_confirm'), /1 device/); assert.ok(await page.isVisible('#pa_send')); await page.screenshot({ path: SHOTS + 'live-36-admin-alert-nospanish.png' }); await page.click('#pa_cancel');
+    step('statewide counts every device with alerts on; empty Spanish gives a warning but sending is still allowed');
+    // "Send test to my device only": admin signed in on the subscribed device
+    const pushBefore = pushGot.length; await pp.setExtraHTTPHeaders({ 'x-test-client-ip': '10.9.9.2' }); await pp.goto(BASE + '/#login'); await pp.fill('#le', ADMIN); await pp.fill('#lp', 'correct-horse-9'); await pp.click('button[type=submit]'); await pp.waitForSelector('text=Hi,');
+    await pp.goto(BASE + '/#admin/alerts'); await pp.waitForSelector('#pa'); await pp.fill('#pa_title', 'Testing'); await pp.fill('#pa_body', 'Only me'); await pp.click('#pa_test'); await pp.waitForSelector('text=Test sent to this device only.');
+    assert.equal(pushGot.length, pushBefore + 1); await pp.reload(); await pp.waitForSelector('#pushlog'); assert.match(await pp.textContent('#pushlog'), /Test: own device only/); await pp.screenshot({ path: SHOTS + 'live-37-admin-alert-test.png' });
+    await page.reload(); await page.waitForSelector('#pa'); await page.fill('#pa_title', 'x'); await page.fill('#pa_body', 'y'); await page.click('#pa_test'); await page.waitForFunction(() => document.querySelector('#pa_err').textContent.length > 0); assert.equal(pushGot.length, pushBefore + 1);
+    step('"Send test to my device only" delivers exactly one alert, to the admin\'s own subscribed device (none without a subscription)');
     // unsubscribe
     await pp.goto(BASE + '/#alerts'); await pp.waitForSelector('#poff'); await pp.click('#poff'); await pp.waitForSelector('#pon:has-text("Turn on alerts")');
-    await page.reload(); await page.waitForSelector('#pa'); await page.selectOption('#pa_target', 'statewide'); await page.fill('#pa_title', 'x'); await page.fill('#pa_body', 'y'); await page.fill('#pa_titleEs', 'x'); await page.fill('#pa_bodyEs', 'y');
+    await page.reload(); await page.waitForSelector('#pa'); await page.check('#pa_state'); await page.fill('#pa_title', 'x'); await page.fill('#pa_body', 'y'); await page.fill('#pa_titleEs', 'x'); await page.fill('#pa_bodyEs', 'y');
     await page.click('#pa button[type=submit]'); await page.waitForSelector('#pa_confirm'); assert.match(await page.textContent('#pa_confirm'), /\b0 devices/); await page.click('#pa_cancel');
     assert.deepEqual(fP, [], 'no third-party requests from the alerts screen'); assert.deepEqual(eP, []); await cP.close(); await logout();
     step('alerts: "Turn off alerts" removes the subscription (admin now sees 0 devices)');

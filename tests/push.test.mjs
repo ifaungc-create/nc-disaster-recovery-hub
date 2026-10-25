@@ -51,25 +51,41 @@ try {
   assert.equal(raw.length, 3); assert.ok(raw.every((r) => !r.includes('localhost') && !r.includes('Wake'))); ok('subscriptions are encrypted at rest, no account link');
 
   const u = (await call('createUser', [{ email: 'pat@example.org', password: 'longenough1', name: 'Pat', role: 'affected', termsAccepted: true }])).result.token;
-  const adm = (await call('createUser', [{ email: 'dn22@c4iveteranservices.org', password: 'admin-pass-123', name: 'Admin', role: 'affected', termsAccepted: true }])).result.token;
+  const admRes = (await call('createUser', [{ email: 'dn22@c4iveteranservices.org', password: 'admin-pass-123', name: 'Admin', role: 'affected', termsAccepted: true }])).result; const adm = admRes.token;
+  assert.equal((await call('adminPushCount', ['statewide'], adm)).status, 403); ok('an unconfirmed admin address cannot send alerts');
+  const realLog = console.log; let line = ''; console.log = (...x) => { line += x.join(' '); }; try { await call('adminClaimStart', [], adm); } finally { console.log = realLog; }
+  assert.equal((await call('adminClaimFinish', [line.match(/: ([A-Z2-9]{5}-[A-Z2-9]{5}) /)[1]], adm)).result.isAdmin, true);
   const msg = { target: 'statewide', title: 'Test alert', body: 'Disaster recovery center open', titleEs: 'Alerta de prueba', bodyEs: 'Centro de recuperación abierto', url: '/hotels' };
   assert.equal((await call('adminPushSend', [msg, true], u)).status, 403); assert.equal((await call('adminPushCount', ['statewide'])).status, 401); ok('only admins can count or send');
   assert.equal((await call('adminPushSend', [msg, false], adm)).status, 400); ok('send requires explicit confirmation');
   assert.equal((await call('adminPushSend', [{ ...msg, url: 'javascript:alert(1)' }, true], adm)).status, 400); assert.equal((await call('adminPushSend', [{ ...msg, bodyEs: '' }, true], adm)).status, 400); ok('rejects unsafe links and half-translated messages');
-  assert.equal((await call('adminPushCount', ['statewide'], adm)).result.count, 2); assert.equal((await call('adminPushCount', ['Wake'], adm)).result.count, 1); ok('count matches topic');
-  const r = await call('adminPushSend', [msg, true], adm); assert.equal(r.status, 200, r.error); assert.equal(r.result.sent, 2);
-  assert.deepEqual(got.map((g) => g.id).sort(), ['a', 'b']);
+  assert.equal((await call('adminPushCount', ['statewide'], adm)).result.count, 3); assert.equal((await call('adminPushCount', ['Wake'], adm)).result.count, 1);
+  assert.equal((await call('adminPushCount', [['Wake', 'Buncombe']], adm)).result.count, 2); assert.equal((await call('adminPushCount', [['Wake', 'Atlantis']], adm)).status, 400); assert.equal((await call('adminPushCount', [[]], adm)).status, 400);
+  ok('count: statewide reaches every subscribed device (county-only too); one or several counties; unknown or empty county list refused');
+  const r = await call('adminPushSend', [msg, true], adm); assert.equal(r.status, 200, r.error); assert.equal(r.result.sent, 3);
+  assert.deepEqual(got.map((g) => g.id).sort(), ['a', 'b', 'c']);
   const ga = got.find((g) => g.id === 'a'), gb = got.find((g) => g.id === 'b');
   assert.match(ga.headers.authorization, /^vapid t=.+, k=/); assert.equal(ga.headers['content-encoding'], 'aes128gcm'); assert.equal(ga.headers.ttl, '86400');
   const pa = decrypt(A, ga.body), pb = decrypt(B, gb.body);
   assert.equal(pa.title, 'Test alert'); assert.equal(pa.url, 'https://disaster-resources.app/hotels'); assert.equal(pb.title, 'Alerta de prueba'); assert.equal(pb.lang, 'es');
-  ok('statewide send delivered to the 2 statewide devices; payload decrypts (VAPID, aes128gcm); Spanish device gets Spanish');
+  ok('statewide send delivered to all 3 devices, including the county-only one; payload decrypts (VAPID, aes128gcm); Spanish device gets Spanish');
+  // multi-county send in one go
+  got.length = 0; const mc = await call('adminPushSend', [{ target: ['Wake', 'Buncombe', 'Wake'], title: 'Two counties', body: 'x' }, true], adm); assert.equal(mc.status, 200, mc.error);
+  assert.equal(mc.result.sent, 2); assert.deepEqual(got.map((g) => g.id).sort(), ['b', 'c']); assert.deepEqual(mc.result.target, ['Buncombe', 'Wake']); ok('one alert to several counties reaches each matching device once (not the statewide-only device)');
+  // test send: only to the admin's own device
+  got.length = 0; const T = device('t'); await call('pushSubscribe', [T.sub, ['county:Wake'], 'es']);
+  assert.equal((await call('adminPushTest', [T.sub, { title: 'Hi', body: 'test' }, 'en'], u)).status, 403);
+  const ts = await call('adminPushTest', [T.sub, { title: 'Hi', body: 'test', titleEs: 'Hola', bodyEs: 'prueba' }, 'en'], adm); assert.equal(ts.status, 200, ts.error);
+  assert.deepEqual(got.map((g) => g.id), ['t']); assert.equal(decrypt(T, got[0].body).title, '[PRUEBA] Hola'); assert.equal(ts.result.test, true); assert.equal(ts.result.matched, 1);
+  got.length = 0; const ts2 = await call('adminPushTest', [device('t2').sub, { title: 'Hi', body: 'only english' }, 'es'], adm); assert.equal(ts2.status, 200); assert.equal(got.length, 1); assert.equal(got[0].id, 't2');
+  ok('"send test to my device only": exactly one delivery, to the given device, in its language, marked [TEST]/[PRUEBA] and logged as a test');
+  await call('pushUnsubscribe', [T.sub]);
   got.length = 0; gone = new Set(['c']);
   const r2 = await call('adminPushSend', [{ target: 'Buncombe', title: 'Buncombe', body: 'x' }], adm); assert.equal(r2.status, 400);
   const r3 = await call('adminPushSend', [{ target: 'Buncombe', title: 'Buncombe', body: 'x' }, true], adm); assert.equal(r3.result.removed, 1); assert.equal(r3.result.sent, 0);
   assert.equal((await call('pushStatus', [C.sub])).result, null); ok('county send; expired (410) subscription removed automatically');
   assert.equal((await call('pushUnsubscribe', [A.sub])).status, 200); assert.equal((await call('pushStatus', [A.sub])).result, null); assert.equal((await call('adminPushCount', ['statewide'], adm)).result.count, 1); ok('unsubscribe deletes the subscription');
-  const log = (await call('adminPushLog', [], adm)).result; assert.equal(log.length, 2); assert.equal(log[0].target, 'Buncombe'); assert.equal(log[1].sent, 2); assert.ok(!JSON.stringify(log).includes('localhost')); ok('send log (newest first) with counts, no subscriber data');
+  const log = (await call('adminPushLog', [], adm)).result; assert.equal(log.length, 5); assert.deepEqual(log[0].target, ['Buncombe']); assert.equal(log[4].sent, 3); assert.equal(log.filter((l) => l.test).length, 2); assert.ok(!JSON.stringify(log).includes('localhost')); ok('send log (newest first) with counts, no subscriber data');
   const D = device('d'); await call('pushSubscribe', [D.sub, ['county:Wake'], 'en']); const D2 = device('d2');
   assert.equal((await call('pushResubscribe', [D.sub.endpoint, D2.sub])).status, 200); assert.deepEqual((await call('pushStatus', [D2.sub])).result.topics, ['county:Wake']); assert.equal((await call('pushStatus', [D.sub])).result, null); ok('resubscribe (browser rotated the subscription) keeps topics');
   delete process.env.VAPID_PRIVATE_KEY; assert.equal((await call('pushSubscribe', [A.sub, ['statewide'], 'en'])).status, 503); ok('fails closed without VAPID keys');

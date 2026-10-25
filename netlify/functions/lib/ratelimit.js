@@ -9,6 +9,7 @@ export const LIMITS = {
   code: { max: 30, windowS: 900 },       // 30 share-code lookups or saves / 15 min
   hotels: { max: 30, windowS: 900 },     // 30 hotel searches / 15 min
   push: { max: 30, windowS: 900 },       // 30 alert sign-ups/changes / 15 min
+  reset: { max: 10, windowS: 3600 },     // 10 password-reset or recovery-code tries / hour
 };
 export const clientIp = (req, context) => context?.ip || req.headers.get('x-nf-client-connection-ip') || 'unknown';
 export async function limit(group, req, context) {

@@ -53,8 +53,17 @@ export const subs = {
   async remove(endpoint) { await store().delete(subKey(endpoint)); },
   async *all() { for await (const p of store().list({ prefix: 'push/sub/', paginate: true })) for (const b of p.blobs) { const r = await store().get(b.key, { type: 'json' }); if (r) { try { yield { key: b.key, ...open(r, adminKey(), b.key) }; } catch {} } } },
 };
-export const matches = (sub, target) => (target === 'statewide' ? sub.topics.includes('statewide') : sub.topics.includes('county:' + target));
-export function cleanTarget(t) { if (t === 'statewide' || NC_COUNTIES.includes(t)) return t; throw err('Choose statewide or a county.'); }
+// Statewide alerts go to every subscribed device (people who chose only counties too). County alerts go to
+// devices that chose at least one of the target counties. A target is 'statewide' or a list of counties.
+export const matches = (sub, target) => (target === 'statewide' ? (sub.topics || []).length > 0 : (Array.isArray(target) ? target : [target]).some((c) => (sub.topics || []).includes('county:' + c)));
+export function cleanTarget(t) {
+  if (t === 'statewide') return t;
+  const list = Array.isArray(t) ? t : typeof t === 'string' ? [t] : [];
+  const out = [...new Set(list.filter((c) => typeof c === 'string'))];
+  if (!out.length || out.some((c) => !NC_COUNTIES.includes(c))) throw err('Choose statewide or at least one county.');
+  return out.sort();
+}
+export const targetLabel = (t) => (t === 'statewide' ? 'statewide' : (Array.isArray(t) ? t : [t]).join(','));
 // Link: a path in this app (/…, #…) or an https link. Stored and sent as a full https URL.
 export function cleanLink(l) {
   const s = String(l || '').trim(); if (!s) return SITE_URL + '/';
@@ -71,9 +80,8 @@ export function cleanMessage(m = {}) {
   return msg;
 }
 export async function count(target) { let n = 0; for await (const s of subs.all()) if (matches(s, target)) n++; return n; }
-export async function send(msg, by, { concurrency = 25 } = {}) {
+async function deliver(list, msg, by, { concurrency = 25, test = false } = {}) {
   const { pub, priv, subject } = vapid();
-  const list = []; for await (const s of subs.all()) if (matches(s, msg.target)) list.push(s);
   let sent = 0, failed = 0, removed = 0; const tag = 'ncdrh-' + Date.now();
   const one = async (s) => {
     const es = s.lang === 'es' && msg.titleEs;
@@ -82,13 +90,23 @@ export async function send(msg, by, { concurrency = 25 } = {}) {
       await webpush.sendNotification({ endpoint: s.endpoint, keys: s.keys }, payload, { vapidDetails: { subject, publicKey: pub, privateKey: priv }, TTL: 24 * 3600, urgency: 'high', timeout: 10000 });
       sent++;
     } catch (e) {
-      if (e?.statusCode === 404 || e?.statusCode === 410) { await store().delete(s.key); removed++; } else failed++;
+      if ((e?.statusCode === 404 || e?.statusCode === 410) && s.key) { await store().delete(s.key); removed++; } else failed++;
     }
   };
   for (let i = 0; i < list.length; i += concurrency) await Promise.all(list.slice(i, i + concurrency).map(one));
   const at = now();
-  const entry = { at, admin: by, target: msg.target, title: msg.title, body: msg.body, hasSpanish: !!msg.titleEs, url: msg.url, matched: list.length, sent, failed, removed };
+  const entry = { at, admin: by, target: msg.target, title: msg.title, body: msg.body, hasSpanish: !!msg.titleEs, url: msg.url, matched: list.length, sent, failed, removed, ...(test ? { test: true } : {}) };
   await store().setJSON(`push/log/${at}-${randomBytes(3).toString('hex')}`, entry);
   return entry;
+}
+export async function send(msg, by, opts) {
+  vapid(); const list = []; for await (const s of subs.all()) if (matches(s, msg.target)) list.push(s);
+  return deliver(list, msg, by, opts);
+}
+// Test send: only to the one device the admin is using (its own subscription), never to anyone else.
+export async function sendTest(sub, lang, msg, by) {
+  vapid(); const stored = await subs.get(sub.endpoint);
+  const dev = { endpoint: sub.endpoint, keys: sub.keys, lang: stored?.lang || (lang === 'es' ? 'es' : 'en'), ...(stored ? { key: subKey(sub.endpoint) } : {}) };
+  return deliver([dev], { ...msg, title: '[TEST] ' + msg.title, titleEs: msg.titleEs ? '[PRUEBA] ' + msg.titleEs : '' }, by, { test: true });
 }
 export async function sendLog(limit = 50) { const keys = []; for await (const p of store().list({ prefix: 'push/log/', paginate: true })) for (const b of p.blobs) keys.push(b.key); keys.sort().reverse(); const out = []; for (const k of keys.slice(0, limit)) out.push(await store().get(k, { type: 'json' })); return out; }

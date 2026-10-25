@@ -2,9 +2,11 @@
 // Storage: Netlify Blobs (lib/store.js). Per-user records are AES-256-GCM encrypted with a per-user key
 // derived from DATA_ENCRYPTION_KEY. Sessions: HMAC-SHA256 bearer tokens (APP_SESSION_SECRET), 12 h. No cookies.
 // Fails closed if secrets are missing. Logs no personal data: only the action name and an error class.
-// NOT DEPLOYED.
+// Admin rights need BOTH: the email is in ADMIN_EMAILS AND the account has confirmed it with a one-time code
+// (lib/codes.js). Password reset uses one-time codes too; no email service is used.
 import { createHmac, randomInt, randomUUID, timingSafeEqual } from 'node:crypto';
 import { users, data, cards, responders, submissions, community, audit } from './lib/store.js';
+import * as codes from './lib/codes.js';
 import { hashPassword, verifyPassword, emailIndex } from './lib/crypto.js';
 import { sessionSecret, ConfigError, isAdminEmail } from './lib/env.js';
 import { limit } from './lib/ratelimit.js';
@@ -20,16 +22,30 @@ export const verify = (t = '') => { try { const [b, s] = String(t).split('.'); i
 const json = (status, body, extra = {}) => new Response(JSON.stringify(body), { status, headers: { 'content-type': 'application/json', 'cache-control': 'no-store', ...extra } });
 const pub = (u) => u && { id: u.id, email: u.email, name: u.name, role: u.role, org: u.org, createdAt: u.createdAt };
 // Profile sent to the app: adds admin flag (from ADMIN_EMAILS) and the responder approval status.
+// An account is an admin only if its email is in ADMIN_EMAILS and it proved control with a one-time code
+// for that same email. Registering an ADMIN_EMAILS address alone gives no admin rights.
+export const adminConfirmed = (u) => !!u && isAdminEmail(u.email) && u.adminVerifiedEmail === u.email;
 async function profile(u) {
-  if (!u) return null; const isAdmin = isAdminEmail(u.email);
+  if (!u) return null; const isAdmin = adminConfirmed(u);
   const r = u.role === 'responder' ? await responders.get(u.id) : null;
-  return { ...pub(u), isAdmin, responderStatus: u.role === 'responder' ? (isAdmin ? 'approved' : r?.status || 'pending') : undefined, responderReason: r?.status === 'denied' || r?.status === 'revoked' ? r.reason || '' : undefined };
+  return { ...pub(u), isAdmin, adminPending: !isAdmin && isAdminEmail(u.email), responderStatus: u.role === 'responder' ? (isAdmin ? 'approved' : r?.status || 'pending') : undefined, responderReason: r?.status === 'denied' || r?.status === 'revoked' ? r.reason || '' : undefined };
 }
 const MAX_PENDING_SUBMISSIONS = 50;
 const reasonOf = (v) => (typeof v === 'string' ? v.trim().slice(0, 300) : '');
 const now = () => new Date().toISOString();
 const live = (c) => c && !c.revoked && c.expiresAt > now();
 const strip = ({ ownerId, ...c }) => c;
+const normEmail = (e) => String(e || '').trim().toLowerCase().slice(0, 200);
+const tokenFor = (u) => sign({ uid: u.id, role: u.role, sv: u.sv || 0 });
+const opLog = (purpose, uid, c) => console.log(`[admin-code] ${purpose} code for account ${uid.slice(0, 8)}: ${c.code} (single use, expires ${c.expiresAt})`); // operator channel: Netlify function log only; no email
+// Removes every record for one account (used by self-service and admin deletion). Published community
+// records stay; they carry no submitter identity. Push subscriptions are per device and not linked to accounts.
+async function deleteUserData(u) {
+  const d = await data.get(u.id);
+  for (const code of d.myCards || []) await cards.remove(code);
+  await submissions.removeAllFor(u.id); await responders.remove(u.id); await codes.remove(u.id);
+  await data.remove(u.id); await users.remove(u.id, emailIndex(u.email));
+}
 
 export default async (req, context) => {
   if (req.method !== 'POST') return json(405, { error: 'POST only' });
@@ -43,15 +59,16 @@ export default async (req, context) => {
     const a = Array.isArray(body?.args) ? body.args.slice(0, 6) : [];
     const session = verify((req.headers.get('authorization') || '').replace(/^Bearer /, ''));
     let me = null;
-    const need = async () => { if (!session) throw err('Please sign in again.', 401); me = await users.get(session.uid); if (!me) throw err('Please sign in again.', 401); return me.id; };
+    const need = async () => { if (!session) throw err('Please sign in again.', 401); me = await users.get(session.uid); if (!me || (me.sv || 0) !== (session.sv || 0)) throw err('Please sign in again.', 401); return me.id; };
     const needResponder = async () => {
-      const id = await need(); if (isAdminEmail(me.email)) return id;
+      const id = await need(); if (adminConfirmed(me)) return id;
       if (me.role !== 'responder') throw err('This is for disaster responder accounts.', 403);
       const r = await responders.get(id);
       if (r?.status !== 'approved') throw err(r?.status === 'pending' || !r ? 'Your responder account is waiting for admin approval.' : 'Your responder access is not active. Contact the administrator.', 403);
       return id;
     };
-    const needAdmin = async () => { const id = await need(); if (!isAdminEmail(me.email)) throw err('Administrators only.', 403); return id; };
+    const needAdmin = async () => { const id = await need(); if (!adminConfirmed(me)) throw err('Administrators only.', 403); return id; };
+    const findUser = async (email) => { const e = normEmail(email); const uid = e ? await users.uidForEmail(emailIndex(e)) : null; return uid ? users.get(uid) : null; };
     const kind = (k) => { if (!KINDS.includes(k)) throw err('Unknown record type.'); return k; };
     let result;
     switch (action) {
@@ -63,23 +80,49 @@ export default async (req, context) => {
         if (!(await users.claimEmail(idx, id))) throw err('An account with that email already exists. Try signing in.', 409);
         try {
           await users.create({ id, ...v, pw: await hashPassword(pw), createdAt: now(), privacyAcceptedAt: now() });
-          if (v.role === 'responder') await responders.create(id, { uid: id, name: v.name, email: v.email, org: v.org, status: isAdminEmail(v.email) ? 'approved' : 'pending', requestedAt: now() });
+          if (v.role === 'responder') await responders.create(id, { uid: id, name: v.name, email: v.email, org: v.org, status: 'pending', requestedAt: now() });
         } catch (e) { await users.remove(id, idx); await responders.remove(id); throw e; }
-        result = { ...(await profile(await users.get(id))), token: sign({ uid: id, role: v.role }) }; break;
+        result = { ...(await profile(await users.get(id))), token: sign({ uid: id, role: v.role, sv: 0 }) }; break;
       }
       case 'verifyLogin': {
         await limit('login', req, context);
         const email = String(a[0] || '').trim().toLowerCase().slice(0, 200); const pw = String(a[1] ?? '').slice(0, 256);
         const uid = email ? await users.uidForEmail(emailIndex(email)) : null; const u = uid ? await users.get(uid) : null;
         if (!(await verifyPassword(pw, u?.pw)) || !u) throw err('Email or password is incorrect.', 401);
-        result = { ...(await profile(u)), token: sign({ uid: u.id, role: u.role }) }; break;
+        result = { ...(await profile(u)), token: tokenFor(u) }; break;
       }
       case 'getUser': { const id = await need(); if (a[0] !== id) throw err('Forbidden', 403); result = await profile(me); break; }
       case 'deleteAccount': {
-        const id = await need(); const d = await data.get(id);
-        for (const code of d.myCards || []) await cards.remove(code);
-        await submissions.removeAllFor(id); await responders.remove(id); // published community records stay; they carry no submitter identity
-        await data.remove(id); await users.remove(id, emailIndex(me.email)); result = { ok: true }; break;
+        await need(); await deleteUserData(me); result = { ok: true }; break;
+      }
+      // ---------- password reset and admin confirmation (one-time codes, no email service)
+      case 'resetPassword': {
+        await limit('reset', req, context);
+        const pw = String(a[2] ?? ''); if (pw.length < 8) throw err('Password must be at least 8 characters.'); if (pw.length > 256) throw err('Password is too long (256 characters max).');
+        const u = await findUser(a[0]); const used = u ? await codes.consume(u.id, ['reset', 'recovery'], a[1]) : null;
+        if (!used) throw err('That code is not valid or has expired. Ask an administrator for a new one.', 400);
+        const pwHash = await hashPassword(pw);
+        const next = await users.mutate(u.id, (x) => ({ ...x, pw: pwHash, sv: (x.sv || 0) + 1, passwordChangedAt: now(),
+          ...(used.purpose === 'recovery' && isAdminEmail(x.email) ? { adminVerifiedEmail: x.email, adminVerifiedAt: now() } : {}) }));
+        await audit.log({ admin: used.by || 'operator code', action: used.purpose === 'recovery' ? 'admin.recovery' : 'account.password_reset', target: 'user:' + u.id });
+        result = { ok: true, isAdmin: adminConfirmed(next) }; break; // old sessions stop working (session version bumped)
+      }
+      case 'requestAdminCode': { // public; same answer whether or not the email is an admin address or has an account
+        await limit('reset', req, context); const e = normEmail(a[0]);
+        if (isAdminEmail(e)) { const u = await findUser(e); if (u) opLog('Admin recovery', u.id, await codes.issue(u.id, 'recovery', '')); else console.log('[admin-code] recovery requested for an admin address that has no account yet'); }
+        result = { ok: true }; break;
+      }
+      case 'adminClaimStart': {
+        await need(); if (!isAdminEmail(me.email) || adminConfirmed(me)) throw err('This account cannot claim admin access.', 403);
+        await limit('reset', req, context); const c = await codes.issue(me.id, 'claim', ''); opLog('Admin claim', me.id, c); result = { ok: true, expiresAt: c.expiresAt }; break;
+      }
+      case 'adminClaimFinish': {
+        await need(); if (!isAdminEmail(me.email) || adminConfirmed(me)) throw err('This account cannot claim admin access.', 403);
+        await limit('reset', req, context); const used = await codes.consume(me.id, ['claim'], a[0]);
+        if (!used) throw err('That code is not valid or has expired. Ask an administrator for a new one.', 400);
+        me = await users.mutate(me.id, (x) => ({ ...x, adminVerifiedEmail: x.email, adminVerifiedAt: now() }));
+        await audit.log({ admin: me.email, action: 'admin.claim', target: 'user:' + me.id, ...(used.by ? { reason: 'code from ' + used.by } : {}) });
+        result = await profile(me); break;
       }
       case 'exportData': {
         const id = await need(); const d = await data.get(id);
@@ -152,11 +195,16 @@ export default async (req, context) => {
         await limit('push', req, context); const old = await push.subs.get(String(a[0] || '')); if (!old) throw err('Not found', 404);
         const sub = push.cleanSubscription(a[1]); await push.subs.save(sub, old.topics, old.lang); if (sub.endpoint !== old.endpoint) await push.subs.remove(old.endpoint); result = { ok: true }; break;
       }
-      case 'adminPushCount': { await needAdmin(); result = { target: push.cleanTarget(a[0]), count: await push.count(push.cleanTarget(a[0])) }; break; }
+      case 'adminPushCount': { await needAdmin(); const tg = push.cleanTarget(a[0]); result = { target: tg, count: await push.count(tg) }; break; }
+      case 'adminPushTest': { // only to the device the admin is using right now
+        await needAdmin(); await limit('push', req, context); const sub = push.cleanSubscription(a[0]);
+        const msg = { ...push.cleanMessage({ ...(a[1] || {}), target: 'statewide' }), target: 'test' };
+        const entry = await push.sendTest(sub, a[2], msg, me.email); await audit.log({ admin: me.email, action: 'push.test', target: 'push:test-device' }); result = entry; break;
+      }
       case 'adminPushSend': {
         await needAdmin(); if (a[1] !== true) throw err('Please confirm before sending.');
         const msg = push.cleanMessage(a[0] || {}); const entry = await push.send(msg, me.email);
-        await audit.log({ admin: me.email, action: 'push.send', target: 'push:' + msg.target }); result = entry; break;
+        await audit.log({ admin: me.email, action: 'push.send', target: 'push:' + push.targetLabel(msg.target) }); result = entry; break;
       }
       case 'adminPushLog': { await needAdmin(); result = await push.sendLog(50); break; }
       // ---------- admin
@@ -198,6 +246,48 @@ export default async (req, context) => {
         await audit.log({ admin: me.email, action: 'community.unpublish', target: 'submission:' + rid, ...(reason ? { reason } : {}) }); result = { ok: true }; break;
       }
       case 'adminAudit': { await needAdmin(); result = await audit.recent(100); break; }
+      case 'adminEditPublished': {
+        await needAdmin(); const rid = String(a[0] || ''); const edits = a[1] && typeof a[1] === 'object' ? a[1] : {}; const reason = reasonOf(a[2]); let fields = [];
+        await community.mutate((c) => {
+          const i = c.records.findIndex((r) => r.id === rid); if (i < 0) throw err('Not found', 404);
+          const before = c.records[i]; const rec = cleanSubmission({ ...before, ...edits });
+          fields = Object.keys(rec).filter((k) => rec[k] !== before[k]); if (!fields.length) throw err('Nothing was changed.');
+          c.records[i] = { ...before, ...rec, editedAt: now() }; return c;
+        });
+        await audit.log({ admin: me.email, action: 'community.edit', target: 'submission:' + rid, fields, ...(reason ? { reason } : {}) });
+        result = (await community.list()).find((r) => r.id === rid); break;
+      }
+      // ---------- accounts (admin): find, delete, one-time codes
+      case 'adminFindUser': {
+        await needAdmin(); const u = await findUser(a[0]); if (!u) { result = { found: false }; break; }
+        const d = await data.get(u.id); const r = u.role === 'responder' ? await responders.get(u.id) : null;
+        const subs = u.role === 'responder' ? (await submissions.list(u.id)).length : 0;
+        await audit.log({ admin: me.email, action: 'user.find', target: 'user:' + u.id });
+        result = { found: true, ...pub(u), isSelf: u.id === me.id, adminEmail: isAdminEmail(u.email), adminConfirmed: adminConfirmed(u), responderStatus: r?.status, hasOpenCode: await codes.hasOpen(u.id),
+          counts: { cases: d.cases.length, notes: d.notes.length, referrals: d.referrals.length, shareCards: (d.myCards || []).length, submissions: subs } };
+        break;
+      }
+      case 'adminDeleteUser': {
+        await needAdmin(); const target = String(a[0] || ''); if (a[2] !== true) throw err('Please confirm before deleting.');
+        if (target === me.id) throw err('To delete your own account, use Settings.', 400);
+        const u = await users.get(target); if (!u) throw err('Not found', 404);
+        if (normEmail(a[1]) !== u.email) throw err('The email you typed does not match this account.');
+        await deleteUserData(u);
+        await audit.log({ admin: me.email, action: 'user.delete', target: 'user:' + target, ...(reasonOf(a[3]) ? { reason: reasonOf(a[3]) } : {}) }); // no name or email of the deleted person
+        result = { ok: true }; break;
+      }
+      case 'adminIssueReset': {
+        await needAdmin(); const target = String(a[0] || ''); if (target === me.id) throw err('You are signed in. To change your own password, use the admin recovery code on the sign-in page.', 400);
+        const u = await users.get(target); if (!u) throw err('Not found', 404);
+        const c = await codes.issue(u.id, 'reset', me.email); await audit.log({ admin: me.email, action: 'user.reset_code', target: 'user:' + u.id });
+        result = c; break; // shown once to the admin; only a hash is stored
+      }
+      case 'adminIssueClaim': {
+        await needAdmin(); const u = await users.get(String(a[0] || '')); if (!u) throw err('Not found', 404);
+        if (!isAdminEmail(u.email) || adminConfirmed(u)) throw err('This account cannot claim admin access.', 403);
+        const c = await codes.issue(u.id, 'claim', me.email); await audit.log({ admin: me.email, action: 'admin.claim_code', target: 'user:' + u.id });
+        result = c; break;
+      }
       default: throw err('Unknown action');
     }
     return json(200, { result });

@@ -106,6 +106,7 @@ screens.login = () => ({ html: `
     <p class="err" role="alert" id="err"></p>
     <button class="btn" type="submit">${t('Sign in')}</button>
   </form>
+  ${ADAPTER === 'remote' ? `<p><a href="#reset" id="forgot">${t('Forgot your password? Reset it with a code')}</a></p>` : ''}
   <a class="btn secondary" href="#signup">${t('Create a free account')}</a>
   ${ADAPTER === 'local' ? `<p class="small">${t('Prototype: accounts are stored only on this device.')}</p>` : ''}`,
   bind() {
@@ -139,6 +140,32 @@ screens.signup = () => ({ html: `
       try { ctx.me = await auth.signUp({ role: d.get('role'), name: d.get('name'), email: d.get('email'), password: d.get('password'), org: d.get('org') || '', termsAccepted: d.get('terms') === 'on' }, d.get('keep') === 'on'); ctx.flash = ctx.me.role === 'responder' && ctx.me.responderStatus === 'pending' ? t('Your account is ready. Your responder request was sent; an administrator will review it.') : t('Your account is ready.'); afterAuth(); } catch (x) { $('#err').textContent = t(x.message); } };
   } });
 
+// Password reset with a one-time code. There is no email service: an administrator gives the code
+// (by phone or in person). Administrators can write a recovery code to the site's server log instead.
+screens.reset = () => ({ html: `
+  <h2>${t('Reset your password')}</h2>
+  <p>${t('This app does not send emails. To reset your password, contact the administrator (see "Problems with the app?" in Settings). After checking who you are, they give you a one-time code by phone or in person. The code works once and expires in 2 hours.')}</p>
+  <form id="rf" class="card" novalidate>
+    <label for="re">${t('Email')}</label><input id="re" name="email" type="email" autocomplete="username" required>
+    <label for="rc">${t('One-time code')}</label><input id="rc" name="code" autocomplete="one-time-code" autocapitalize="characters" spellcheck="false" required>
+    <label for="rp">${t('New password')} <span class="small">${t('(8 or more characters)')}</span></label><input id="rp" name="password" type="password" autocomplete="new-password" minlength="8" required>
+    <p class="err" role="alert" id="rerr"></p>
+    <button class="btn" type="submit">${t('Set new password')}</button>
+  </form>
+  <details class="card" id="adminrec"><summary>${t('Administrators: get a recovery code')}</summary>
+    <p class="small">${t('For administrator accounts only. The code is not shown here and is not emailed: it is written to the site\'s server log, which only the people who run the site can read. The code works once and expires in 30 minutes. Using it also confirms admin access.')}</p>
+    <form id="af" novalidate><label for="ae">${t('Administrator email')}</label><input id="ae" type="email" autocomplete="username" required>
+    <p class="small" id="amsg" role="status" aria-live="polite"></p><button class="btn secondary" type="submit">${t('Write a recovery code to the server log')}</button></form>
+  </details>
+  <a class="btn secondary" href="#login">${t('Back to sign in')}</a>`,
+  bind() {
+    $('#rf').onsubmit = async (e) => { e.preventDefault(); const d = new FormData(e.target); $('#rerr').textContent = '';
+      if (!String(d.get('code') || '').trim()) { $('#rerr').textContent = t('Enter the one-time code.'); $('#rc').focus(); return; }
+      try { await api.resetPassword(String(d.get('email')).trim(), d.get('code'), d.get('password')); ctx.flash = t('Your password was changed. Sign in with your new password.'); go('login'); } catch (x) { $('#rerr').textContent = t(x.message); } };
+    $('#af').onsubmit = async (e) => { e.preventDefault(); $('#amsg').textContent = '';
+      try { await api.requestAdminCode($('#ae').value.trim()); $('#amsg').textContent = t('Done. If this is an administrator account, a recovery code is now in the server log (Netlify: Logs, Functions, api). Enter it above with a new password.'); } catch (x) { $('#amsg').textContent = t(x.message); } };
+  } });
+
 function afterAuth() { const p = sessionStorage.getItem('ncdrh.after'); sessionStorage.removeItem('ncdrh.after'); go(p || 'home'); }
 
 screens.settings = () => {
@@ -149,6 +176,9 @@ screens.settings = () => {
       <div class="actions"><button class="btn ${getLang() === 'en' ? '' : 'secondary'}" data-setlang="en" lang="en" aria-pressed="${getLang() === 'en'}">English</button><button class="btn ${getLang() === 'es' ? '' : 'secondary'}" data-setlang="es" lang="es" aria-pressed="${getLang() === 'es'}">Español</button></div></div>
     ${me ? `<div class="card"><h3>${t('Your account')}</h3><dl class="kv"><dt>${t('Name')}</dt><dd>${esc(me.name)}</dd><dt>${t('Email')}</dt><dd>${esc(me.email)}</dd><dt>${t('Account type')}</dt><dd>${esc(t(ROLES[me.role]))}${me.isAdmin ? ' · ' + t('Administrator') : ''}</dd>${me.role === 'responder' && ADAPTER === 'remote' ? `<dt>${t('Responder status')}</dt><dd>${esc(t(RESPONDER_STATUS[me.responderStatus] || ''))}</dd>` : ''}${me.org ? `<dt>${t('Organization')}</dt><dd>${esc(me.org)}</dd>` : ''}</dl>
       ${me.isAdmin ? `<a class="btn" href="#admin">${t('Admin area')}</a>` : ''}<button class="btn secondary" id="logout">${t('Sign out')}</button></div>
+      ${me.adminPending ? `<div class="card warn" id="claimcard"><h3>${t('Confirm admin access')}</h3><p>${t('This email is on the administrator list, but admin access stays off until you prove the account is yours with a one-time code. Get the code from the site\'s server log (only the people who run the site can read it) or from another administrator.')}</p>
+        <button class="btn secondary" type="button" id="claimstart">${t('Write a code to the server log')}</button><p class="small" id="claimmsg" role="status" aria-live="polite"></p>
+        <form id="claimf" novalidate><label for="claimcode">${t('One-time code')}</label><input id="claimcode" autocomplete="one-time-code" autocapitalize="characters" spellcheck="false"><p class="err" role="alert" id="claimerr"></p><button class="btn" type="submit">${t('Confirm admin access')}</button></form></div>` : ''}
       <div class="card"><h3>${t('Download my data')}</h3><p>${t('Save a copy of everything in your account (case numbers, notes, referrals) as a file.')}</p><button class="btn secondary" id="export">${t('Download my data (JSON)')}</button></div>
       <div class="card"><h3>${t('Delete my account')}</h3><p>${me.role === 'responder' ? t('Permanently deletes your account, notes, case numbers, referrals and share cards. This cannot be undone. Download your data first if you want a copy.') : t('Permanently deletes your account, notes, case numbers and referrals. This cannot be undone. Download your data first if you want a copy.')}</p>
       <label for="dc">${t('Type DELETE to confirm')}</label><input id="dc" autocomplete="off"><p class="err" id="derr" role="alert"></p><button class="btn danger" id="del">${t('Delete my account')}</button></div>`
@@ -164,10 +194,16 @@ screens.settings = () => {
     $('#clearloc') && ($('#clearloc').onclick = () => { clearLoc(); ctx.flash = t('Location forgotten.'); render(); });
     if (!me) return;
     $('#logout').onclick = () => { auth.logOut(); ctx.me = null; ctx.flash = t('You are signed out.'); go('home'); };
+    $('#claimstart') && ($('#claimstart').onclick = async () => { $('#claimmsg').textContent = '';
+      try { await api.adminClaimStart(); $('#claimmsg').textContent = t('A code was written to the server log (Netlify: Logs, Functions, api). It works once and expires in 30 minutes.'); } catch (x) { $('#claimmsg').textContent = t(x.message); } });
+    $('#claimf') && ($('#claimf').onsubmit = async (e) => { e.preventDefault(); $('#claimerr').textContent = '';
+      try { ctx.me = await api.adminClaimFinish($('#claimcode').value); ctx.flash = t('Admin access is confirmed for this account.'); render(); } catch (x) { $('#claimerr').textContent = t(x.message); } });
     $('#export').onclick = async () => download(`my-recovery-data-${today()}.json`, JSON.stringify(await api.exportData(me.id), null, 2));
     $('#del').onclick = async () => {
       if ($('#dc').value.trim().toUpperCase() !== 'DELETE') { $('#derr').textContent = t('Type DELETE in the box to confirm.'); return; }
-      await api.deleteAccount(me.id); auth.logOut(); ctx.me = null; ctx.flash = t('Your account and all its data were deleted.'); go('home');
+      await api.deleteAccount(me.id);
+      try { const { unsubscribe } = await import('./push.js'); await unsubscribe(); } catch {} // this device's alerts (not linked to the account) are turned off too
+      auth.logOut(); ctx.me = null; ctx.flash = t('Your account and all its data were deleted.'); go('home');
     };
   } };
 };

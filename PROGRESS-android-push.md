@@ -10,4 +10,4 @@
 - [x] Production deploy 6add7fe94cca755a483c545a READY (from clean git archive, no data-raw HTML)
 - [x] Live: assetlinks application/json, /translation /alerts /accessibility /delete-account 200, pushKey OK, CSP+HSTS
 - [x] Live smoke 12/12 + branding 7/7 pass (tests updated for language dialog + static hotel list); live-34..39 site screenshots
-- [ ] Final commit + report
+- [x] Final commit + report

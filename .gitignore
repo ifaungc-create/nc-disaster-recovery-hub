@@ -1,0 +1,45 @@
+# dependencies / build output
+node_modules/
+dist/
+.netlify/
+*.log
+a11y-report.json
+lighthouse/
+
+# environment and secrets — never commit
+.env
+.env.*
+secrets/
+*.jks
+*.keystore
+*.p12
+*.pem
+*.key
+keystore.properties
+vapid*.json
+
+# Android build output and machine-specific files
+android/.gradle/
+android/build/
+android/app/build/
+android/local.properties
+android/.idea/
+android/*.iml
+android/captures/
+# the signed release bundle is a build artifact (rebuild with android/README.md); not kept in git
+android/release/*.aab
+android/release/*.apk*
+
+# saved third-party web pages (can contain other sites' API keys) and large raw downloads
+data-raw/**/*.html
+data-raw/**/*.htm
+data-raw/pages/
+data-raw/**/*.bin
+data-raw/**/*.zip
+data-raw/**/*.pdf
+data-raw/2024_Gaz_*.txt
+
+# OS/editor
+.DS_Store
+.vscode/
+.idea/

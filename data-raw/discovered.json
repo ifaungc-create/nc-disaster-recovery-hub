@@ -1,0 +1,118 @@
+{
+ "Alexander|dss": {
+  "url": "https://dss.alexandercountync.gov/",
+  "text": "Social Services"
+ },
+ "Bertie|em": null,
+ "Bertie|dss": null,
+ "Bertie|rod": null,
+ "Bladen|em": {
+  "url": "https://bladennc.govoffice3.com/index.asp?SEC=CD1E624D-14AF-424E-9E96-A0530E8C7B0A&Type=B_BASIC",
+  "text": "Emergency Management"
+ },
+ "Bladen|dss": {
+  "url": "https://bladennc.govoffice3.com/index.asp?SEC=CCE85886-AFAF-418D-8E24-6954750327BA&Type=B_BASIC",
+  "text": "Health and Human Services"
+ },
+ "Brunswick|em": null,
+ "Burke|em": null,
+ "Caldwell|em": null,
+ "Camden|em": null,
+ "Catawba|em": null,
+ "Catawba|dss": null,
+ "Catawba|health": null,
+ "Catawba|rod": null,
+ "Clay|em": null,
+ "Cleveland|em": {
+  "url": "https://www.clevelandcounty.com/main/departments/emergency_services/index.php",
+  "text": "Emergency Services"
+ },
+ "Columbus|em": {
+  "url": "https://www.columbusco.org/emergency-services",
+  "text": "Emergency Services"
+ },
+ "Cumberland|health": {
+  "url": "https://www.cumberlandcountync.gov/departments/public-health-group/public-health",
+  "text": "Public Health"
+ },
+ "Currituck|em": {
+  "url": "https://currituckcountync.gov/emergency-management/",
+  "text": "Emergency Management"
+ },
+ "Franklin|health": null,
+ "Gaston|dss": null,
+ "Gates|em": {
+  "url": "https://gatescountync.gov/emergency-management",
+  "text": "Emergency Management"
+ },
+ "Graham|em": null,
+ "Guilford|em": null,
+ "Harnett|em": null,
+ "Harnett|dss": null,
+ "Harnett|health": null,
+ "Harnett|rod": null,
+ "Henderson|health": {
+  "url": "https://www.hendersoncountync.gov/behavioral",
+  "text": "Behavioral Health"
+ },
+ "Jones|em": {
+  "url": "https://jonescountync.gov/departments/emergency-services/",
+  "text": "Emergency Services"
+ },
+ "Jones|rod": {
+  "url": "https://jonescountync.gov/departments/register-of-deeds/",
+  "text": "Register of Deeds"
+ },
+ "Lee|em": {
+  "url": "https://leecountync.gov/departments/emergency_management/index.php",
+  "text": "Emergency Management"
+ },
+ "Lenoir|em": {
+  "url": "https://lenoircountync.gov/emergency-services-department/",
+  "text": "Emergency Services"
+ },
+ "Martin|em": {
+  "url": "https://www.martincountync.gov/departments/emergency_management/index.php",
+  "text": "Emergency Management"
+ },
+ "Nash|em": null,
+ "Nash|rod": null,
+ "New Hanover|em": null,
+ "Northampton|em": {
+  "url": "https://www.northamptonnc.com/m/newsflash/home/detail/26",
+  "text": "Emergency Management Services Resources"
+ },
+ "Orange|em": null,
+ "Orange|rod": {
+  "url": "https://www.orangecountync.gov/3010/Register-of-Deeds",
+  "text": "Register of Deeds"
+ },
+ "Pamlico|em": {
+  "url": "https://www.pamlicocounty.org/departments/emergency_management_fire_marshal/index.php",
+  "text": "Emergency Management/Fire Marshal"
+ },
+ "Pender|em": {
+  "url": "https://www.pendercountync.gov/m/newsflash/home/detail/303",
+  "text": "Pender County Emergency Services Conducting Hydrant Testing"
+ },
+ "Randolph|em": null,
+ "Richmond|dss": null,
+ "Stanly|em": null,
+ "Stokes|em": {
+  "url": "https://www.co.stokes.nc.us/departments/emergency_management.php",
+  "text": "Emergency Services"
+ },
+ "Surry|em": {
+  "url": "https://www.co.surry.nc.us/departments/emergency_services/index.php",
+  "text": "Emergency Services"
+ },
+ "Swain|em": {
+  "url": "https://www.swaincountync.gov/emergency-services/",
+  "text": "Emergency Services"
+ },
+ "Tyrrell|em": null,
+ "Tyrrell|dss": null,
+ "Union|em": null,
+ "Wilson|em": null,
+ "Yancey|dss": null
+}

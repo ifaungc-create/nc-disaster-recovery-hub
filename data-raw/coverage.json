@@ -1,0 +1,50 @@
+{
+ "built": "2026-10-22",
+ "fire": {
+  "records": 2093,
+  "stations": 2083,
+  "departments": 1213,
+  "departmentsInOct2026Directory": 1211,
+  "directoryDeptsWithoutStationPoint": 10,
+  "withoutCoordinates": 10,
+  "withoutPhone": 4,
+  "notInCurrentDirectory": 1,
+  "types": {
+   "Combination": 1052,
+   "Paid (career)": 355,
+   "unknown": 65,
+   "Volunteer": 621
+  },
+  "counties": 100
+ },
+ "counties": {
+  "counties": 100,
+  "complete": 100,
+  "allLinksStrictOk": 87,
+  "byField": {
+   "dss:blocked": 12,
+   "dss:ok": 88,
+   "em:blocked": 13,
+   "em:ok": 87,
+   "health:blocked": 10,
+   "health:ok": 90,
+   "rod:blocked": 8,
+   "rod:ok": 92,
+   "tribalEm:ok": 5,
+   "website:blocked": 13,
+   "website:ok": 87
+  },
+  "incomplete": []
+ },
+ "schools": {
+  "total": 117,
+  "LEAs": 115,
+  "county": 100,
+  "city": 15,
+  "state": 2,
+  "links": {
+   "ok": 117
+  },
+  "toVerify": []
+ }
+}

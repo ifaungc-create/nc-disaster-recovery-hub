@@ -1,0 +1,28 @@
+{
+ "_note": "Replacement links for state-directory links that were broken (404) when checked 2026-10-22. Each was found by web search on the county's own official site and then link-checked by scripts/linkcheck.py.",
+ "Brunswick|em": "https://www.brunswickcountync.gov/emergency/",
+ "Burke|em": "https://www.burkenc.org/1162/Emergency-Management",
+ "Caldwell|em": "https://caldwellcountync.org/174/Emergency-Management",
+ "Camden|em": "https://www.camdencountync.gov/221/Emergency-Management",
+ "Clay|em": "https://www.clayconc.com/ems",
+ "Guilford|em": "https://www.guilfordcountync.gov/government/departments-and-agencies/emergency-services/emergency-management",
+ "Nash|em": "https://www.nashcountync.gov/149/Emergency-Management",
+ "New Hanover|em": "https://www.nhcgov.com/196/Emergency-Management",
+ "Northampton|em": "https://www.northamptonnc.com/218/Emergency-Management",
+ "Orange|em": "https://www.orangecountync.gov/emergencyservices",
+ "Pender|em": "https://pendercountync.gov/em",
+ "Randolph|em": "https://www.randolphcountync.gov/205/Emergency-Management",
+ "Stanly|em": "https://www.stanlycountync.gov/435/Emergency-Management",
+ "Union|em": "https://www.unioncountync.gov/government/departments-a-e/emergency-services/emergency-management",
+ "Wilson|em": "https://www.wilsoncountync.gov/departments/emergency-management",
+ "Gaston|dss": "https://www.gastongov.com/441/Social-Services-Division",
+ "Richmond|dss": "https://richmondnc.com/149/SOCIAL-SERVICES",
+ "Franklin|health": "https://www.franklincountync.gov/188/Health-Department",
+ "Henderson|health": "https://www.hendersoncountync.gov/health",
+ "Catawba|dss": "https://www.catawbacountync.gov/county-services/social-services/",
+ "_httpOnly": [
+  "bertiecounty.nc.gov",
+  "tyrrellcounty.org"
+ ],
+ "_httpOnlyNote": "These county sites answer only over http (https times out or returns 500, checked 2026-10-22); the build keeps http:// for them instead of upgrading to https."
+}

@@ -1,0 +1,126 @@
+{
+ "tool": "Lighthouse (accessibility category)",
+ "date": "2026-10-24",
+ "pages": {
+  "en_": {
+   "url": "/",
+   "score": 100,
+   "failingAudits": []
+  },
+  "en__login": {
+   "url": "/#login",
+   "score": 100,
+   "failingAudits": []
+  },
+  "en__signup": {
+   "url": "/#signup",
+   "score": 100,
+   "failingAudits": []
+  },
+  "en_about": {
+   "url": "/about",
+   "score": 100,
+   "failingAudits": []
+  },
+  "en_accessibility": {
+   "url": "/accessibility",
+   "score": 100,
+   "failingAudits": []
+  },
+  "en_alerts": {
+   "url": "/alerts",
+   "score": 100,
+   "failingAudits": []
+  },
+  "en_county_wake": {
+   "url": "/county/wake",
+   "score": 100,
+   "failingAudits": []
+  },
+  "en_delete-account": {
+   "url": "/delete-account",
+   "score": 100,
+   "failingAudits": []
+  },
+  "en_hotels": {
+   "url": "/hotels",
+   "score": 100,
+   "failingAudits": []
+  },
+  "en_insurance": {
+   "url": "/insurance",
+   "score": 100,
+   "failingAudits": []
+  },
+  "en_privacy": {
+   "url": "/privacy",
+   "score": 100,
+   "failingAudits": []
+  },
+  "en_translation": {
+   "url": "/translation",
+   "score": 100,
+   "failingAudits": []
+  },
+  "es_": {
+   "url": "/",
+   "score": 100,
+   "failingAudits": []
+  },
+  "es__login": {
+   "url": "/#login",
+   "score": 100,
+   "failingAudits": []
+  },
+  "es__signup": {
+   "url": "/#signup",
+   "score": 100,
+   "failingAudits": []
+  },
+  "es_about": {
+   "url": "/about",
+   "score": 100,
+   "failingAudits": []
+  },
+  "es_accessibility": {
+   "url": "/accessibility",
+   "score": 100,
+   "failingAudits": []
+  },
+  "es_alerts": {
+   "url": "/alerts",
+   "score": 100,
+   "failingAudits": []
+  },
+  "es_county_wake": {
+   "url": "/county/wake",
+   "score": 100,
+   "failingAudits": []
+  },
+  "es_delete-account": {
+   "url": "/delete-account",
+   "score": 100,
+   "failingAudits": []
+  },
+  "es_hotels": {
+   "url": "/hotels",
+   "score": 100,
+   "failingAudits": []
+  },
+  "es_insurance": {
+   "url": "/insurance",
+   "score": 100,
+   "failingAudits": []
+  },
+  "es_privacy": {
+   "url": "/privacy",
+   "score": 100,
+   "failingAudits": []
+  },
+  "es_translation": {
+   "url": "/translation",
+   "score": 100,
+   "failingAudits": []
+  }
+ }
+}

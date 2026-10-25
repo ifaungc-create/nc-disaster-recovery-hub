@@ -1,0 +1,10 @@
+{
+ "_note": "URLs the build box could not reach (its network blocks some hosts/ports) that were opened successfully with a separate web fetcher on 2026-10-22.",
+ "urls": [
+  "https://www.catawbacountync.gov/county-services/emergency-services/emergency-management/",
+  "https://www.catawbacountync.gov/county-services/public-health/",
+  "https://www.catawbacountync.gov/county-services/social-services/",
+  "https://www.catawbacountync.gov/",
+  "https://www.catawbacountync.gov"
+ ]
+}

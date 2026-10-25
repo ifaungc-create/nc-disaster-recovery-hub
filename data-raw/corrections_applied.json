@@ -1,0 +1,2296 @@
+[
+ {
+  "cid": "C079",
+  "record": {
+   "id": "01255",
+   "st": 1
+  },
+  "path": "v",
+  "confidence": "high",
+  "result": "already applied"
+ },
+ {
+  "cid": "C080",
+  "record": {
+   "id": "01258",
+   "st": 1
+  },
+  "path": "v",
+  "confidence": "high",
+  "result": "already applied"
+ },
+ {
+  "cid": "C081",
+  "record": {
+   "id": "01259",
+   "st": 1
+  },
+  "path": "v",
+  "confidence": "high",
+  "result": "already applied"
+ },
+ {
+  "cid": "C082",
+  "record": {
+   "id": "01260",
+   "st": 1
+  },
+  "path": "v",
+  "confidence": "high",
+  "result": "already applied"
+ },
+ {
+  "cid": "C083",
+  "record": {
+   "id": "01262",
+   "st": 1
+  },
+  "path": "v",
+  "confidence": "high",
+  "result": "already applied"
+ },
+ {
+  "cid": "C084",
+  "record": {
+   "id": "01262",
+   "st": 2
+  },
+  "path": "v",
+  "confidence": "high",
+  "result": "already applied"
+ },
+ {
+  "cid": "C085",
+  "record": {
+   "id": "01263",
+   "st": 1
+  },
+  "path": "v",
+  "confidence": "high",
+  "result": "already applied"
+ },
+ {
+  "cid": "C086",
+  "record": {
+   "id": "01263",
+   "st": 2
+  },
+  "path": "v",
+  "confidence": "high",
+  "result": "already applied"
+ },
+ {
+  "cid": "C087",
+  "record": {
+   "id": "01264",
+   "st": 1
+  },
+  "path": "v",
+  "confidence": "high",
+  "result": "already applied"
+ },
+ {
+  "cid": "C088",
+  "record": {
+   "id": "01264",
+   "st": 2
+  },
+  "path": "v",
+  "confidence": "high",
+  "result": "already applied"
+ },
+ {
+  "cid": "C089",
+  "record": {
+   "id": "01266",
+   "st": 1
+  },
+  "path": "v",
+  "confidence": "high",
+  "result": "already applied"
+ },
+ {
+  "cid": "C090",
+  "record": {
+   "id": "01267",
+   "st": 1
+  },
+  "path": "v",
+  "confidence": "high",
+  "result": "already applied"
+ },
+ {
+  "cid": "C091",
+  "record": {
+   "id": "01268",
+   "st": 1
+  },
+  "path": "v",
+  "confidence": "high",
+  "result": "already applied"
+ },
+ {
+  "cid": "C092",
+  "record": {
+   "id": "01269",
+   "st": 1
+  },
+  "path": "v",
+  "confidence": "high",
+  "result": "already applied"
+ },
+ {
+  "cid": "C093",
+  "record": {
+   "id": "01270",
+   "st": 1
+  },
+  "path": "v",
+  "confidence": "high",
+  "result": "already applied"
+ },
+ {
+  "cid": "C094",
+  "record": {
+   "id": "01270",
+   "st": 2
+  },
+  "path": "v",
+  "confidence": "high",
+  "result": "already applied"
+ },
+ {
+  "cid": "C095",
+  "record": {
+   "id": "01270",
+   "st": 3
+  },
+  "path": "v",
+  "confidence": "high",
+  "result": "already applied"
+ },
+ {
+  "cid": "C096",
+  "record": {
+   "id": "01273",
+   "st": 1
+  },
+  "path": "v",
+  "confidence": "high",
+  "result": "already applied"
+ },
+ {
+  "cid": "C097",
+  "record": {
+   "id": "01274",
+   "st": 1
+  },
+  "path": "v",
+  "confidence": "high",
+  "result": "already applied"
+ },
+ {
+  "cid": "C098",
+  "record": {
+   "id": "01274",
+   "st": 2
+  },
+  "path": "v",
+  "confidence": "high",
+  "result": "already applied"
+ },
+ {
+  "cid": "C099",
+  "record": {
+   "id": "01275",
+   "st": 1
+  },
+  "path": "v",
+  "confidence": "high",
+  "result": "already applied"
+ },
+ {
+  "cid": "C100",
+  "record": {
+   "id": "01275",
+   "st": 2
+  },
+  "path": "v",
+  "confidence": "high",
+  "result": "already applied"
+ },
+ {
+  "cid": "C101",
+  "record": {
+   "id": "01276",
+   "st": 1
+  },
+  "path": "v",
+  "confidence": "high",
+  "result": "already applied"
+ },
+ {
+  "cid": "C102",
+  "record": {
+   "id": "01277",
+   "st": 1
+  },
+  "path": "v",
+  "confidence": "high",
+  "result": "already applied"
+ },
+ {
+  "cid": "C103",
+  "record": {
+   "id": "01277",
+   "st": 2
+  },
+  "path": "v",
+  "confidence": "high",
+  "result": "already applied"
+ },
+ {
+  "cid": "C104",
+  "record": {
+   "id": "01277",
+   "st": 3
+  },
+  "path": "v",
+  "confidence": "high",
+  "result": "already applied"
+ },
+ {
+  "cid": "C105",
+  "record": {
+   "id": "01278",
+   "st": 1
+  },
+  "path": "v",
+  "confidence": "high",
+  "result": "already applied"
+ },
+ {
+  "cid": "C106",
+  "record": {
+   "id": "01279",
+   "st": 1
+  },
+  "path": "v",
+  "confidence": "high",
+  "result": "already applied"
+ },
+ {
+  "cid": "C107",
+  "record": {
+   "id": "01654",
+   "st": 1
+  },
+  "path": "v",
+  "confidence": "high",
+  "result": "already applied"
+ },
+ {
+  "cid": "C108",
+  "record": {
+   "id": "01654",
+   "st": 2
+  },
+  "path": "v",
+  "confidence": "high",
+  "result": "already applied"
+ },
+ {
+  "cid": "C109",
+  "record": {
+   "id": "01657",
+   "st": 1
+  },
+  "path": "v",
+  "confidence": "high",
+  "result": "already applied"
+ },
+ {
+  "cid": "C110",
+  "record": {
+   "id": "01664",
+   "st": 1
+  },
+  "path": "v",
+  "confidence": "high",
+  "result": "already applied"
+ },
+ {
+  "cid": "C111",
+  "record": {
+   "id": "01671",
+   "st": 1
+  },
+  "path": "v",
+  "confidence": "high",
+  "result": "already applied"
+ },
+ {
+  "cid": "C112",
+  "record": {
+   "id": "02557",
+   "st": 1
+  },
+  "path": "v",
+  "confidence": "high",
+  "result": "already applied"
+ },
+ {
+  "cid": "C113",
+  "record": {
+   "id": "02557",
+   "st": 2
+  },
+  "path": "v",
+  "confidence": "high",
+  "result": "already applied"
+ },
+ {
+  "cid": "C114",
+  "record": {
+   "id": "02557",
+   "st": 3
+  },
+  "path": "v",
+  "confidence": "high",
+  "result": "already applied"
+ },
+ {
+  "cid": "C115",
+  "record": {
+   "id": "06351",
+   "st": 1
+  },
+  "path": "v",
+  "confidence": "high",
+  "result": "already applied"
+ },
+ {
+  "cid": "C116",
+  "record": {
+   "id": "06352",
+   "st": 1
+  },
+  "path": "v",
+  "confidence": "high",
+  "result": "already applied"
+ },
+ {
+  "cid": "C117",
+  "record": {
+   "id": "06361",
+   "st": 1
+  },
+  "path": "v",
+  "confidence": "high",
+  "result": "already applied"
+ },
+ {
+  "cid": "C118",
+  "record": {
+   "id": "06361",
+   "st": 2
+  },
+  "path": "v",
+  "confidence": "high",
+  "result": "already applied"
+ },
+ {
+  "cid": "C119",
+  "record": {
+   "id": "06362",
+   "st": 1
+  },
+  "path": "v",
+  "confidence": "high",
+  "result": "already applied"
+ },
+ {
+  "cid": "C120",
+  "record": {
+   "id": "06363",
+   "st": 1
+  },
+  "path": "v",
+  "confidence": "high",
+  "result": "already applied"
+ },
+ {
+  "cid": "C121",
+  "record": {
+   "id": "06371",
+   "st": 1
+  },
+  "path": "v",
+  "confidence": "high",
+  "result": "already applied"
+ },
+ {
+  "cid": "C122",
+  "record": {
+   "id": "06381",
+   "st": 1
+  },
+  "path": "v",
+  "confidence": "high",
+  "result": "already applied"
+ },
+ {
+  "cid": "C123",
+  "record": {
+   "id": "06381",
+   "st": 2
+  },
+  "path": "v",
+  "confidence": "high",
+  "result": "already applied"
+ },
+ {
+  "cid": "C124",
+  "record": {
+   "id": "06391",
+   "st": 1
+  },
+  "path": "v",
+  "confidence": "high",
+  "result": "already applied"
+ },
+ {
+  "cid": "C125",
+  "record": {
+   "id": "06391",
+   "st": 2
+  },
+  "path": "v",
+  "confidence": "high",
+  "result": "already applied"
+ },
+ {
+  "cid": "C126",
+  "record": {
+   "id": "07451",
+   "st": 1
+  },
+  "path": "v",
+  "confidence": "high",
+  "result": "already applied"
+ },
+ {
+  "cid": "C127",
+  "record": {
+   "id": "07452",
+   "st": 1
+  },
+  "path": "v",
+  "confidence": "high",
+  "result": "already applied"
+ },
+ {
+  "cid": "C128",
+  "record": {
+   "id": "07454",
+   "st": 1
+  },
+  "path": "v",
+  "confidence": "high",
+  "result": "already applied"
+ },
+ {
+  "cid": "C129",
+  "record": {
+   "id": "07455",
+   "st": 1
+  },
+  "path": "v",
+  "confidence": "high",
+  "result": "already applied"
+ },
+ {
+  "cid": "C130",
+  "record": {
+   "id": "07455",
+   "st": 2
+  },
+  "path": "v",
+  "confidence": "high",
+  "result": "already applied"
+ },
+ {
+  "cid": "C131",
+  "record": {
+   "id": "07455",
+   "st": 3
+  },
+  "path": "v",
+  "confidence": "high",
+  "result": "already applied"
+ },
+ {
+  "cid": "C132",
+  "record": {
+   "id": "07455",
+   "st": 4
+  },
+  "path": "v",
+  "confidence": "high",
+  "result": "already applied"
+ },
+ {
+  "cid": "C133",
+  "record": {
+   "id": "07455",
+   "st": 5
+  },
+  "path": "v",
+  "confidence": "high",
+  "result": "already applied"
+ },
+ {
+  "cid": "C134",
+  "record": {
+   "id": "07455",
+   "st": 6
+  },
+  "path": "v",
+  "confidence": "high",
+  "result": "already applied"
+ },
+ {
+  "cid": "C135",
+  "record": {
+   "id": "07456",
+   "st": 1
+  },
+  "path": "v",
+  "confidence": "high",
+  "result": "already applied"
+ },
+ {
+  "cid": "C136",
+  "record": {
+   "id": "08050",
+   "st": 1
+  },
+  "path": "v",
+  "confidence": "high",
+  "result": "already applied"
+ },
+ {
+  "cid": "C137",
+  "record": {
+   "id": "08050",
+   "st": 2
+  },
+  "path": "v",
+  "confidence": "high",
+  "result": "already applied"
+ },
+ {
+  "cid": "C138",
+  "record": {
+   "id": "08050",
+   "st": 3
+  },
+  "path": "v",
+  "confidence": "high",
+  "result": "already applied"
+ },
+ {
+  "cid": "C139",
+  "record": {
+   "id": "08050",
+   "st": 4
+  },
+  "path": "v",
+  "confidence": "high",
+  "result": "already applied"
+ },
+ {
+  "cid": "C140",
+  "record": {
+   "id": "08050",
+   "st": 5
+  },
+  "path": "v",
+  "confidence": "high",
+  "result": "already applied"
+ },
+ {
+  "cid": "C141",
+  "record": {
+   "id": "08054",
+   "st": 1
+  },
+  "path": "v",
+  "confidence": "high",
+  "result": "already applied"
+ },
+ {
+  "cid": "C142",
+  "record": {
+   "id": "08055",
+   "st": 1
+  },
+  "path": "v",
+  "confidence": "high",
+  "result": "already applied"
+ },
+ {
+  "cid": "C143",
+  "record": {
+   "id": "08055",
+   "st": 2
+  },
+  "path": "v",
+  "confidence": "high",
+  "result": "already applied"
+ },
+ {
+  "cid": "C144",
+  "record": {
+   "id": "08057",
+   "st": 1
+  },
+  "path": "v",
+  "confidence": "high",
+  "result": "already applied"
+ },
+ {
+  "cid": "C145",
+  "record": {
+   "id": "08058",
+   "st": 1
+  },
+  "path": "v",
+  "confidence": "high",
+  "result": "already applied"
+ },
+ {
+  "cid": "C146",
+  "record": {
+   "id": "08058",
+   "st": 2
+  },
+  "path": "v",
+  "confidence": "high",
+  "result": "already applied"
+ },
+ {
+  "cid": "C147",
+  "record": {
+   "id": "08059",
+   "st": 1
+  },
+  "path": "v",
+  "confidence": "high",
+  "result": "already applied"
+ },
+ {
+  "cid": "C148",
+  "record": {
+   "id": "08059",
+   "st": 2
+  },
+  "path": "v",
+  "confidence": "high",
+  "result": "already applied"
+ },
+ {
+  "cid": "C149",
+  "record": {
+   "id": "08061",
+   "st": 1
+  },
+  "path": "v",
+  "confidence": "high",
+  "result": "already applied"
+ },
+ {
+  "cid": "C150",
+  "record": {
+   "id": "08061",
+   "st": 2
+  },
+  "path": "v",
+  "confidence": "high",
+  "result": "already applied"
+ },
+ {
+  "cid": "C151",
+  "record": {
+   "id": "08061",
+   "st": 3
+  },
+  "path": "v",
+  "confidence": "high",
+  "result": "already applied"
+ },
+ {
+  "cid": "C152",
+  "record": {
+   "id": "08064",
+   "st": 1
+  },
+  "path": "v",
+  "confidence": "high",
+  "result": "already applied"
+ },
+ {
+  "cid": "C153",
+  "record": {
+   "id": "08064",
+   "st": 2
+  },
+  "path": "v",
+  "confidence": "high",
+  "result": "already applied"
+ },
+ {
+  "cid": "C154",
+  "record": {
+   "id": "08069",
+   "st": 1
+  },
+  "path": "v",
+  "confidence": "high",
+  "result": "already applied"
+ },
+ {
+  "cid": "C155",
+  "record": {
+   "id": "08069",
+   "st": 2
+  },
+  "path": "v",
+  "confidence": "high",
+  "result": "already applied"
+ },
+ {
+  "cid": "C156",
+  "record": {
+   "id": "08070",
+   "st": 1
+  },
+  "path": "v",
+  "confidence": "high",
+  "result": "already applied"
+ },
+ {
+  "cid": "C157",
+  "record": {
+   "id": "08070",
+   "st": 1
+  },
+  "path": "p",
+  "confidence": "high",
+  "result": "already applied"
+ },
+ {
+  "cid": "C158",
+  "record": {
+   "id": "08071",
+   "st": 1
+  },
+  "path": "v",
+  "confidence": "high",
+  "result": "already applied"
+ },
+ {
+  "cid": "C159",
+  "record": {
+   "id": "08071",
+   "st": 2
+  },
+  "path": "v",
+  "confidence": "high",
+  "result": "already applied"
+ },
+ {
+  "cid": "C160",
+  "record": {
+   "id": "08072",
+   "st": 1
+  },
+  "path": "v",
+  "confidence": "high",
+  "result": "already applied"
+ },
+ {
+  "cid": "C161",
+  "record": {
+   "id": "08073",
+   "st": 1
+  },
+  "path": "v",
+  "confidence": "high",
+  "result": "already applied"
+ },
+ {
+  "cid": "C162",
+  "record": {
+   "id": "08074",
+   "st": 1
+  },
+  "path": "v",
+  "confidence": "high",
+  "result": "already applied"
+ },
+ {
+  "cid": "C163",
+  "record": {
+   "id": "08074",
+   "st": 1
+  },
+  "path": "n",
+  "confidence": "high",
+  "result": "already applied"
+ },
+ {
+  "cid": "C164",
+  "record": {
+   "id": "08075",
+   "st": 1
+  },
+  "path": "v",
+  "confidence": "high",
+  "result": "already applied"
+ },
+ {
+  "cid": "C165",
+  "record": {
+   "id": "08076",
+   "st": 1
+  },
+  "path": "v",
+  "confidence": "high",
+  "result": "already applied"
+ },
+ {
+  "cid": "C166",
+  "record": {
+   "id": "08077",
+   "st": 1
+  },
+  "path": "v",
+  "confidence": "high",
+  "result": "already applied"
+ },
+ {
+  "cid": "C167",
+  "record": {
+   "id": "08661",
+   "st": 1
+  },
+  "path": "v",
+  "confidence": "high",
+  "result": "already applied"
+ },
+ {
+  "cid": "C168",
+  "record": {
+   "id": "08661",
+   "st": 1
+  },
+  "path": "p",
+  "confidence": "high",
+  "result": "already applied"
+ },
+ {
+  "cid": "C169",
+  "record": {
+   "id": "08663",
+   "st": 1
+  },
+  "path": "v",
+  "confidence": "high",
+  "result": "already applied"
+ },
+ {
+  "cid": "C170",
+  "record": {
+   "id": "08664",
+   "st": 1
+  },
+  "path": "v",
+  "confidence": "high",
+  "result": "already applied"
+ },
+ {
+  "cid": "C171",
+  "record": {
+   "id": "08665",
+   "st": 1
+  },
+  "path": "v",
+  "confidence": "high",
+  "result": "already applied"
+ },
+ {
+  "cid": "C172",
+  "record": {
+   "id": "08665",
+   "st": 2
+  },
+  "path": "v",
+  "confidence": "high",
+  "result": "already applied"
+ },
+ {
+  "cid": "C173",
+  "record": {
+   "id": "08666",
+   "st": 1
+  },
+  "path": "v",
+  "confidence": "high",
+  "result": "already applied"
+ },
+ {
+  "cid": "C174",
+  "record": {
+   "id": "08667",
+   "st": 1
+  },
+  "path": "v",
+  "confidence": "high",
+  "result": "already applied"
+ },
+ {
+  "cid": "C175",
+  "record": {
+   "id": "08668",
+   "st": 1
+  },
+  "path": "v",
+  "confidence": "high",
+  "result": "already applied"
+ },
+ {
+  "cid": "C176",
+  "record": {
+   "id": "08668",
+   "st": 1
+  },
+  "path": "n",
+  "confidence": "high",
+  "result": "already applied"
+ },
+ {
+  "cid": "C177",
+  "record": {
+   "id": "08669",
+   "st": 1
+  },
+  "path": "v",
+  "confidence": "high",
+  "result": "already applied"
+ },
+ {
+  "cid": "C178",
+  "record": {
+   "id": "08671",
+   "st": 1
+  },
+  "path": "v",
+  "confidence": "high",
+  "result": "already applied"
+ },
+ {
+  "cid": "C179",
+  "record": {
+   "id": "08671",
+   "st": 2
+  },
+  "path": "v",
+  "confidence": "high",
+  "result": "already applied"
+ },
+ {
+  "cid": "C180",
+  "record": {
+   "id": "08672",
+   "st": 1
+  },
+  "path": "v",
+  "confidence": "high",
+  "result": "already applied"
+ },
+ {
+  "cid": "C181",
+  "record": {
+   "id": "08672",
+   "st": 2
+  },
+  "path": "v",
+  "confidence": "high",
+  "result": "already applied"
+ },
+ {
+  "cid": "C182",
+  "record": {
+   "id": "08672",
+   "st": 3
+  },
+  "path": "v",
+  "confidence": "high",
+  "result": "already applied"
+ },
+ {
+  "cid": "C183",
+  "record": {
+   "id": "08673",
+   "st": 1
+  },
+  "path": "v",
+  "confidence": "high",
+  "result": "already applied"
+ },
+ {
+  "cid": "C184",
+  "record": {
+   "id": "08674",
+   "st": 1
+  },
+  "path": "v",
+  "confidence": "high",
+  "result": "already applied"
+ },
+ {
+  "cid": "C185",
+  "record": {
+   "id": "08674",
+   "st": 2
+  },
+  "path": "v",
+  "confidence": "high",
+  "result": "already applied"
+ },
+ {
+  "cid": "C186",
+  "record": {
+   "id": "08674",
+   "st": 3
+  },
+  "path": "v",
+  "confidence": "high",
+  "result": "already applied"
+ },
+ {
+  "cid": "C187",
+  "record": {
+   "id": "08675",
+   "st": 1
+  },
+  "path": "v",
+  "confidence": "high",
+  "result": "already applied"
+ },
+ {
+  "cid": "C188",
+  "record": {
+   "id": "08675",
+   "st": 2
+  },
+  "path": "v",
+  "confidence": "high",
+  "result": "already applied"
+ },
+ {
+  "cid": "C189",
+  "record": {
+   "id": "08676",
+   "st": 1
+  },
+  "path": "v",
+  "confidence": "high",
+  "result": "already applied"
+ },
+ {
+  "cid": "C190",
+  "record": {
+   "id": "08677",
+   "st": 1
+  },
+  "path": "v",
+  "confidence": "high",
+  "result": "already applied"
+ },
+ {
+  "cid": "C191",
+  "record": {
+   "id": "08677",
+   "st": 2
+  },
+  "path": "v",
+  "confidence": "high",
+  "result": "already applied"
+ },
+ {
+  "cid": "C192",
+  "record": {
+   "id": "08678",
+   "st": 1
+  },
+  "path": "v",
+  "confidence": "high",
+  "result": "already applied"
+ },
+ {
+  "cid": "C193",
+  "record": {
+   "id": "08679",
+   "st": 1
+  },
+  "path": "v",
+  "confidence": "high",
+  "result": "already applied"
+ },
+ {
+  "cid": "C194",
+  "record": {
+   "id": "08679",
+   "st": 1
+  },
+  "path": "p",
+  "confidence": "high",
+  "result": "already applied"
+ },
+ {
+  "cid": "C196",
+  "record": {
+   "id": "00707",
+   "st": 1
+  },
+  "path": "n",
+  "confidence": "high",
+  "result": "applied"
+ },
+ {
+  "cid": "C197",
+  "record": {
+   "id": "00707",
+   "st": 1
+  },
+  "path": "p",
+  "confidence": "high",
+  "result": "applied"
+ },
+ {
+  "cid": "C198",
+  "record": {
+   "id": "00707",
+   "st": 1
+  },
+  "path": "v",
+  "confidence": "high",
+  "result": "applied"
+ },
+ {
+  "cid": "C199",
+  "record": {
+   "id": "01815",
+   "st": 1
+  },
+  "path": "v",
+  "confidence": "high",
+  "result": "applied"
+ },
+ {
+  "cid": "C200",
+  "record": {
+   "id": "01815",
+   "st": 2
+  },
+  "path": "v",
+  "confidence": "high",
+  "result": "applied"
+ },
+ {
+  "cid": "C201",
+  "record": {
+   "id": "01815",
+   "st": 3
+  },
+  "path": "v",
+  "confidence": "high",
+  "result": "applied"
+ },
+ {
+  "cid": "C202",
+  "record": {
+   "id": "01815",
+   "st": 4
+  },
+  "path": "v",
+  "confidence": "high",
+  "result": "applied"
+ },
+ {
+  "cid": "C204",
+  "record": {
+   "id": "02925",
+   "st": 1
+  },
+  "path": "n",
+  "confidence": "high",
+  "result": "applied"
+ },
+ {
+  "cid": "C205",
+  "record": {
+   "id": "02925",
+   "st": 1
+  },
+  "path": "p",
+  "confidence": "high",
+  "result": "applied"
+ },
+ {
+  "cid": "C206",
+  "record": {
+   "id": "02925",
+   "st": 1
+  },
+  "path": "v",
+  "confidence": "high",
+  "result": "applied"
+ },
+ {
+  "cid": "C208",
+  "record": {
+   "id": "04103",
+   "st": 1
+  },
+  "path": "n",
+  "confidence": "high",
+  "result": "applied"
+ },
+ {
+  "cid": "C209",
+  "record": {
+   "id": "04103",
+   "st": 1
+  },
+  "path": "p",
+  "confidence": "high",
+  "result": "applied"
+ },
+ {
+  "cid": "C210",
+  "record": {
+   "id": "04103",
+   "st": 1
+  },
+  "path": "v",
+  "confidence": "high",
+  "result": "applied"
+ },
+ {
+  "cid": "C212",
+  "record": {
+   "id": "04103",
+   "st": 2
+  },
+  "path": "n",
+  "confidence": "high",
+  "result": "applied"
+ },
+ {
+  "cid": "C213",
+  "record": {
+   "id": "04103",
+   "st": 2
+  },
+  "path": "p",
+  "confidence": "high",
+  "result": "applied"
+ },
+ {
+  "cid": "C214",
+  "record": {
+   "id": "04103",
+   "st": 2
+  },
+  "path": "v",
+  "confidence": "high",
+  "result": "applied"
+ },
+ {
+  "cid": "C215",
+  "record": {
+   "id": "05707",
+   "st": 1
+  },
+  "path": "(record)",
+  "confidence": "medium-high",
+  "result": "applied"
+ },
+ {
+  "cid": "C216",
+  "record": {
+   "id": "05707",
+   "st": 2
+  },
+  "path": "(record)",
+  "confidence": "medium-high",
+  "result": "applied"
+ },
+ {
+  "cid": "C218",
+  "record": {
+   "id": "07106",
+   "st": 1
+  },
+  "path": "n",
+  "confidence": "high",
+  "result": "applied"
+ },
+ {
+  "cid": "C219",
+  "record": {
+   "id": "07106",
+   "st": 1
+  },
+  "path": "p",
+  "confidence": "high",
+  "result": "applied"
+ },
+ {
+  "cid": "C220",
+  "record": {
+   "id": "07106",
+   "st": 1
+  },
+  "path": "v",
+  "confidence": "high",
+  "result": "applied"
+ },
+ {
+  "cid": "C222",
+  "record": {
+   "id": "07106",
+   "st": 2
+  },
+  "path": "n",
+  "confidence": "high",
+  "result": "applied"
+ },
+ {
+  "cid": "C223",
+  "record": {
+   "id": "07106",
+   "st": 2
+  },
+  "path": "p",
+  "confidence": "high",
+  "result": "applied"
+ },
+ {
+  "cid": "C224",
+  "record": {
+   "id": "07106",
+   "st": 2
+  },
+  "path": "v",
+  "confidence": "high",
+  "result": "applied"
+ },
+ {
+  "cid": "C226",
+  "record": {
+   "id": "07108",
+   "st": 1
+  },
+  "path": "n",
+  "confidence": "high",
+  "result": "applied"
+ },
+ {
+  "cid": "C227",
+  "record": {
+   "id": "07108",
+   "st": 1
+  },
+  "path": "p",
+  "confidence": "high",
+  "result": "applied"
+ },
+ {
+  "cid": "C228",
+  "record": {
+   "id": "07108",
+   "st": 1
+  },
+  "path": "v",
+  "confidence": "high",
+  "result": "applied"
+ },
+ {
+  "cid": "C229",
+  "record": {
+   "id": "07816",
+   "st": 1
+  },
+  "path": "v",
+  "confidence": "high (that it is closing); unknown (transition date and new covering department)",
+  "result": "skipped: confidence below medium"
+ },
+ {
+  "cid": "C231",
+  "record": {
+   "id": "07916",
+   "st": 1
+  },
+  "path": "n",
+  "confidence": "medium-high",
+  "result": "applied"
+ },
+ {
+  "cid": "C232",
+  "record": {
+   "id": "07916",
+   "st": 1
+  },
+  "path": "p",
+  "confidence": "medium-high",
+  "result": "applied"
+ },
+ {
+  "cid": "C233",
+  "record": {
+   "id": "07916",
+   "st": 1
+  },
+  "path": "v",
+  "confidence": "medium-high",
+  "result": "applied"
+ },
+ {
+  "cid": "C235",
+  "record": {
+   "id": "08115",
+   "st": 1
+  },
+  "path": "n",
+  "confidence": "high",
+  "result": "applied"
+ },
+ {
+  "cid": "C236",
+  "record": {
+   "id": "08115",
+   "st": 1
+  },
+  "path": "p",
+  "confidence": "high",
+  "result": "applied"
+ },
+ {
+  "cid": "C237",
+  "record": {
+   "id": "08115",
+   "st": 1
+  },
+  "path": "v",
+  "confidence": "high",
+  "result": "applied"
+ },
+ {
+  "cid": "C239",
+  "record": {
+   "id": "09618",
+   "st": 1
+  },
+  "path": "n",
+  "confidence": "high",
+  "result": "applied"
+ },
+ {
+  "cid": "C240",
+  "record": {
+   "id": "09618",
+   "st": 1
+  },
+  "path": "p",
+  "confidence": "high",
+  "result": "applied"
+ },
+ {
+  "cid": "C241",
+  "record": {
+   "id": "09618",
+   "st": 1
+  },
+  "path": "v",
+  "confidence": "high",
+  "result": "applied"
+ },
+ {
+  "cid": "L004",
+  "record": {
+   "id": "07816",
+   "st": 1
+  },
+  "path": "x",
+  "confidence": "high",
+  "result": "applied"
+ },
+ {
+  "cid": "C195",
+  "record": {
+   "id": "00707",
+   "st": 1
+  },
+  "path": "id",
+  "confidence": "high",
+  "result": "applied"
+ },
+ {
+  "cid": "C203",
+  "record": {
+   "id": "02925",
+   "st": 1
+  },
+  "path": "id",
+  "confidence": "high",
+  "result": "applied"
+ },
+ {
+  "cid": "C207",
+  "record": {
+   "id": "04103",
+   "st": 1
+  },
+  "path": "id",
+  "confidence": "high",
+  "result": "applied"
+ },
+ {
+  "cid": "C211",
+  "record": {
+   "id": "04103",
+   "st": 2
+  },
+  "path": "id",
+  "confidence": "high",
+  "result": "applied"
+ },
+ {
+  "cid": "C217",
+  "record": {
+   "id": "07106",
+   "st": 1
+  },
+  "path": "id",
+  "confidence": "high",
+  "result": "applied"
+ },
+ {
+  "cid": "C221",
+  "record": {
+   "id": "07106",
+   "st": 2
+  },
+  "path": "id",
+  "confidence": "high",
+  "result": "applied"
+ },
+ {
+  "cid": "C225",
+  "record": {
+   "id": "07108",
+   "st": 1
+  },
+  "path": "id",
+  "confidence": "high",
+  "result": "applied"
+ },
+ {
+  "cid": "C230",
+  "record": {
+   "id": "07916",
+   "st": 1
+  },
+  "path": "id",
+  "confidence": "medium-high",
+  "result": "applied"
+ },
+ {
+  "cid": "C234",
+  "record": {
+   "id": "08115",
+   "st": 1
+  },
+  "path": "id",
+  "confidence": "high",
+  "result": "applied"
+ },
+ {
+  "cid": "C238",
+  "record": {
+   "id": "09618",
+   "st": 1
+  },
+  "path": "id",
+  "confidence": "high",
+  "result": "applied"
+ },
+ {
+  "cid": "C001",
+  "record": {
+   "name": "Bertie"
+  },
+  "path": "website.url",
+  "confidence": "high",
+  "result": "applied"
+ },
+ {
+  "cid": "C002",
+  "record": {
+   "name": "Bertie"
+  },
+  "path": "website.check",
+  "confidence": "high",
+  "result": "applied"
+ },
+ {
+  "cid": "C003",
+  "record": {
+   "name": "Bertie"
+  },
+  "path": "em.url",
+  "confidence": "high",
+  "result": "applied"
+ },
+ {
+  "cid": "C004",
+  "record": {
+   "name": "Bertie"
+  },
+  "path": "em.check",
+  "confidence": "high",
+  "result": "applied"
+ },
+ {
+  "cid": "C005",
+  "record": {
+   "name": "Bertie"
+  },
+  "path": "dss.url",
+  "confidence": "high",
+  "result": "applied"
+ },
+ {
+  "cid": "C006",
+  "record": {
+   "name": "Bertie"
+  },
+  "path": "dss.check",
+  "confidence": "high",
+  "result": "applied"
+ },
+ {
+  "cid": "C007",
+  "record": {
+   "name": "Bertie"
+  },
+  "path": "rod.url",
+  "confidence": "high",
+  "result": "applied"
+ },
+ {
+  "cid": "C008",
+  "record": {
+   "name": "Bertie"
+  },
+  "path": "rod.check",
+  "confidence": "medium-high",
+  "result": "applied"
+ },
+ {
+  "cid": "C009",
+  "record": {
+   "name": "Graham"
+  },
+  "path": "website.url",
+  "confidence": "high",
+  "result": "applied"
+ },
+ {
+  "cid": "C010",
+  "record": {
+   "name": "Graham"
+  },
+  "path": "website.check",
+  "confidence": "high",
+  "result": "applied"
+ },
+ {
+  "cid": "C011",
+  "record": {
+   "name": "Graham"
+  },
+  "path": "em.url",
+  "confidence": "medium",
+  "result": "applied"
+ },
+ {
+  "cid": "C012",
+  "record": {
+   "name": "Graham"
+  },
+  "path": "em.check",
+  "confidence": "high",
+  "result": "applied"
+ },
+ {
+  "cid": "C013",
+  "record": {
+   "name": "Cherokee"
+  },
+  "path": "tribalEm.url",
+  "confidence": "high",
+  "result": "applied"
+ },
+ {
+  "cid": "C014",
+  "record": {
+   "name": "Cherokee"
+  },
+  "path": "tribalEm.check",
+  "confidence": "high",
+  "result": "applied"
+ },
+ {
+  "cid": "C015",
+  "record": {
+   "name": "Graham"
+  },
+  "path": "tribalEm.url",
+  "confidence": "high",
+  "result": "applied"
+ },
+ {
+  "cid": "C016",
+  "record": {
+   "name": "Graham"
+  },
+  "path": "tribalEm.check",
+  "confidence": "high",
+  "result": "applied"
+ },
+ {
+  "cid": "C017",
+  "record": {
+   "name": "Haywood"
+  },
+  "path": "tribalEm.url",
+  "confidence": "high",
+  "result": "applied"
+ },
+ {
+  "cid": "C018",
+  "record": {
+   "name": "Haywood"
+  },
+  "path": "tribalEm.check",
+  "confidence": "high",
+  "result": "applied"
+ },
+ {
+  "cid": "C019",
+  "record": {
+   "name": "Jackson"
+  },
+  "path": "tribalEm.url",
+  "confidence": "high",
+  "result": "applied"
+ },
+ {
+  "cid": "C020",
+  "record": {
+   "name": "Jackson"
+  },
+  "path": "tribalEm.check",
+  "confidence": "high",
+  "result": "applied"
+ },
+ {
+  "cid": "C021",
+  "record": {
+   "name": "Swain"
+  },
+  "path": "tribalEm.url",
+  "confidence": "high",
+  "result": "applied"
+ },
+ {
+  "cid": "C022",
+  "record": {
+   "name": "Swain"
+  },
+  "path": "tribalEm.check",
+  "confidence": "high",
+  "result": "applied"
+ },
+ {
+  "cid": "C023",
+  "record": {
+   "name": "Harnett"
+  },
+  "path": "website.check",
+  "confidence": "medium-high",
+  "result": "applied"
+ },
+ {
+  "cid": "C024",
+  "record": {
+   "name": "Harnett"
+  },
+  "path": "em.check",
+  "confidence": "medium-high",
+  "result": "applied"
+ },
+ {
+  "cid": "C025",
+  "record": {
+   "name": "Harnett"
+  },
+  "path": "health.check",
+  "confidence": "medium-high",
+  "result": "applied"
+ },
+ {
+  "cid": "C026",
+  "record": {
+   "name": "Harnett"
+  },
+  "path": "dss.check",
+  "confidence": "medium-high",
+  "result": "applied"
+ },
+ {
+  "cid": "C027",
+  "record": {
+   "name": "Harnett"
+  },
+  "path": "rod.url",
+  "confidence": "medium-high",
+  "result": "applied"
+ },
+ {
+  "cid": "C028",
+  "record": {
+   "name": "Harnett"
+  },
+  "path": "rod.check",
+  "confidence": "medium-high",
+  "result": "applied"
+ },
+ {
+  "cid": "C029",
+  "record": {
+   "name": "Nash"
+  },
+  "path": "rod.url",
+  "confidence": "high",
+  "result": "applied"
+ },
+ {
+  "cid": "C030",
+  "record": {
+   "name": "Nash"
+  },
+  "path": "rod.check",
+  "confidence": "high",
+  "result": "applied"
+ },
+ {
+  "cid": "C031",
+  "record": {
+   "name": "Tyrrell"
+  },
+  "path": "website.url",
+  "confidence": "high",
+  "result": "applied"
+ },
+ {
+  "cid": "C032",
+  "record": {
+   "name": "Tyrrell"
+  },
+  "path": "website.check",
+  "confidence": "high",
+  "result": "applied"
+ },
+ {
+  "cid": "C033",
+  "record": {
+   "name": "Tyrrell"
+  },
+  "path": "em.url",
+  "confidence": "high",
+  "result": "applied"
+ },
+ {
+  "cid": "C034",
+  "record": {
+   "name": "Tyrrell"
+  },
+  "path": "em.check",
+  "confidence": "high",
+  "result": "applied"
+ },
+ {
+  "cid": "C035",
+  "record": {
+   "name": "Tyrrell"
+  },
+  "path": "dss.url",
+  "confidence": "high",
+  "result": "applied"
+ },
+ {
+  "cid": "C036",
+  "record": {
+   "name": "Tyrrell"
+  },
+  "path": "dss.check",
+  "confidence": "high",
+  "result": "applied"
+ },
+ {
+  "cid": "C037",
+  "record": {
+   "name": "Yancey"
+  },
+  "path": "dss.url",
+  "confidence": "high",
+  "result": "applied"
+ },
+ {
+  "cid": "C038",
+  "record": {
+   "name": "Yancey"
+  },
+  "path": "dss.check",
+  "confidence": "high",
+  "result": "applied"
+ },
+ {
+  "cid": "C039",
+  "record": {
+   "name": "Bladen"
+  },
+  "path": "rod.orderVitalRecords",
+  "confidence": "high",
+  "result": "applied"
+ },
+ {
+  "cid": "C040",
+  "record": {
+   "name": "Bladen"
+  },
+  "path": "rod.orderVitalRecordsCheck",
+  "confidence": "high",
+  "result": "applied"
+ },
+ {
+  "cid": "C041",
+  "record": {
+   "name": "Camden"
+  },
+  "path": "rod.orderVitalRecords",
+  "confidence": "high",
+  "result": "applied"
+ },
+ {
+  "cid": "C042",
+  "record": {
+   "name": "Camden"
+  },
+  "path": "rod.orderVitalRecordsCheck",
+  "confidence": "high",
+  "result": "applied"
+ },
+ {
+  "cid": "C043",
+  "record": {
+   "name": "Catawba"
+  },
+  "path": "rod.orderVitalRecords",
+  "confidence": "high",
+  "result": "applied"
+ },
+ {
+  "cid": "C044",
+  "record": {
+   "name": "Catawba"
+  },
+  "path": "rod.orderVitalRecordsCheck",
+  "confidence": "high",
+  "result": "applied"
+ },
+ {
+  "cid": "C045",
+  "record": {
+   "name": "Gates"
+  },
+  "path": "rod.orderVitalRecords",
+  "confidence": "high",
+  "result": "applied"
+ },
+ {
+  "cid": "C046",
+  "record": {
+   "name": "Gates"
+  },
+  "path": "rod.orderVitalRecordsCheck",
+  "confidence": "high",
+  "result": "applied"
+ },
+ {
+  "cid": "C047",
+  "record": {
+   "name": "Greene"
+  },
+  "path": "rod.orderVitalRecords",
+  "confidence": "high",
+  "result": "applied"
+ },
+ {
+  "cid": "C048",
+  "record": {
+   "name": "Greene"
+  },
+  "path": "rod.orderVitalRecordsCheck",
+  "confidence": "high",
+  "result": "applied"
+ },
+ {
+  "cid": "C049",
+  "record": {
+   "name": "Martin"
+  },
+  "path": "rod.orderVitalRecords",
+  "confidence": "high",
+  "result": "applied"
+ },
+ {
+  "cid": "C050",
+  "record": {
+   "name": "Martin"
+  },
+  "path": "rod.orderVitalRecordsCheck",
+  "confidence": "high",
+  "result": "applied"
+ },
+ {
+  "cid": "C051",
+  "record": {
+   "name": "Northampton"
+  },
+  "path": "rod.orderVitalRecords",
+  "confidence": "high",
+  "result": "applied"
+ },
+ {
+  "cid": "C052",
+  "record": {
+   "name": "Northampton"
+  },
+  "path": "rod.orderVitalRecordsCheck",
+  "confidence": "high",
+  "result": "applied"
+ },
+ {
+  "cid": "C053",
+  "record": {
+   "name": "Pender"
+  },
+  "path": "rod.orderVitalRecords",
+  "confidence": "high",
+  "result": "applied"
+ },
+ {
+  "cid": "C054",
+  "record": {
+   "name": "Pender"
+  },
+  "path": "rod.orderVitalRecordsCheck",
+  "confidence": "high",
+  "result": "applied"
+ },
+ {
+  "cid": "C055",
+  "record": {
+   "name": "Rockingham"
+  },
+  "path": "rod.orderVitalRecords",
+  "confidence": "high",
+  "result": "applied"
+ },
+ {
+  "cid": "C056",
+  "record": {
+   "name": "Rockingham"
+  },
+  "path": "rod.orderVitalRecordsCheck",
+  "confidence": "high",
+  "result": "applied"
+ },
+ {
+  "cid": "C057",
+  "record": {
+   "name": "Rutherford"
+  },
+  "path": "rod.orderVitalRecords",
+  "confidence": "high",
+  "result": "applied"
+ },
+ {
+  "cid": "C058",
+  "record": {
+   "name": "Rutherford"
+  },
+  "path": "rod.orderVitalRecordsCheck",
+  "confidence": "high",
+  "result": "applied"
+ },
+ {
+  "cid": "C059",
+  "record": {
+   "name": "Scotland"
+  },
+  "path": "rod.orderVitalRecords",
+  "confidence": "high",
+  "result": "applied"
+ },
+ {
+  "cid": "C060",
+  "record": {
+   "name": "Scotland"
+  },
+  "path": "rod.orderVitalRecordsCheck",
+  "confidence": "high",
+  "result": "applied"
+ },
+ {
+  "cid": "C061",
+  "record": {
+   "name": "Stokes"
+  },
+  "path": "rod.orderVitalRecords",
+  "confidence": "high",
+  "result": "applied"
+ },
+ {
+  "cid": "C062",
+  "record": {
+   "name": "Stokes"
+  },
+  "path": "rod.orderVitalRecordsCheck",
+  "confidence": "high",
+  "result": "applied"
+ },
+ {
+  "cid": "C063",
+  "record": {
+   "name": "Washington"
+  },
+  "path": "fireMarshal",
+  "confidence": "medium",
+  "result": "applied"
+ },
+ {
+  "cid": "L001",
+  "record": {
+   "name": "Washington"
+  },
+  "path": "em.url",
+  "confidence": "high",
+  "result": "applied"
+ },
+ {
+  "cid": "L002",
+  "record": {
+   "name": "Washington"
+  },
+  "path": "em.check",
+  "confidence": "high",
+  "result": "applied"
+ },
+ {
+  "cid": "L003",
+  "record": {
+   "name": "Washington"
+  },
+  "path": "fireMarshal.check",
+  "confidence": "high",
+  "result": "applied"
+ },
+ {
+  "cid": "C064",
+  "record": {
+   "code": "422",
+   "name": "Weldon City Schools"
+  },
+  "path": "url",
+  "confidence": "high",
+  "result": "applied"
+ },
+ {
+  "cid": "C065",
+  "record": {
+   "code": "422",
+   "name": "Weldon City Schools"
+  },
+  "path": "check",
+  "confidence": "high",
+  "result": "applied"
+ },
+ {
+  "cid": "C066",
+  "record": {
+   "code": "440",
+   "name": "Haywood County Schools"
+  },
+  "path": "check",
+  "confidence": "high",
+  "result": "applied"
+ },
+ {
+  "cid": "C067",
+  "record": {
+   "code": "590",
+   "name": "McDowell County Schools"
+  },
+  "path": "check",
+  "confidence": "high",
+  "result": "applied"
+ },
+ {
+  "cid": "C068",
+  "record": {
+   "code": "670",
+   "name": "Onslow County Schools"
+  },
+  "path": "url",
+  "confidence": "high",
+  "result": "applied"
+ },
+ {
+  "cid": "C069",
+  "record": {
+   "code": "670",
+   "name": "Onslow County Schools"
+  },
+  "path": "check",
+  "confidence": "high",
+  "result": "applied"
+ }
+]

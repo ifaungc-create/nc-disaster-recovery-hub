@@ -1,0 +1,9 @@
+{
+ "https://consumer.ftc.gov/articles/credit-freezes-and-fraud-alerts": "WebFetch 200 2026-10-22",
+ "https://www.nclbgc.org/": "WebFetch 200 2026-10-22",
+ "https://www.farmers.com/": "WebFetch 200 2026-10-22",
+ "https://www.ssa.gov/myaccount/": "WebFetch 200 2026-10-22",
+ "https://travel.state.gov/content/travel/en/passports/have-passport/lost-stolen.html": "WebFetch 200 2026-10-22",
+ "https://www.fcc.gov/lifeline-consumers": "WebFetch 200 2026-10-22 (earlier)",
+ "https://www.ssa.gov/number-card/replace-card": "WebFetch 200 2026-10-22 (earlier)"
+}

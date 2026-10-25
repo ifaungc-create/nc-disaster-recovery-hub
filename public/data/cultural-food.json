@@ -1,0 +1,1975 @@
+{
+ "updated": "2026-10-24",
+ "foodbanks": [
+  {
+   "id": "manna",
+   "name": "MANNA FoodBank",
+   "area": {
+    "en": "Western NC (16 counties)",
+    "es": "Oeste de Carolina del Norte (16 condados)"
+   },
+   "phone": "828-290-9749",
+   "phoneLabel": "Food Helpline",
+   "url": "https://mannafoodbank.org/find-food/"
+  },
+  {
+   "id": "shnwnc",
+   "name": "Second Harvest Food Bank of Northwest NC",
+   "area": {
+    "en": "Northwest NC / Triad",
+    "es": "Noroeste de Carolina del Norte / Triad"
+   },
+   "phone": "336-784-5770",
+   "url": "https://foodfinder.secondharvestnwnc.org/"
+  },
+  {
+   "id": "shmetrolina",
+   "name": "Second Harvest Food Bank of Metrolina",
+   "area": {
+    "en": "Charlotte region",
+    "es": "Región de Charlotte"
+   },
+   "phone": "704-376-1785",
+   "url": "https://www.secondharvestmetrolina.org/need-food/find-food-near-you"
+  },
+  {
+   "id": "fbcenc",
+   "name": "Food Bank of Central & Eastern North Carolina",
+   "area": {
+    "en": "Central and eastern NC (34 counties)",
+    "es": "Centro y este de Carolina del Norte (34 condados)"
+   },
+   "phone": "919-875-0707",
+   "url": "https://foodbankcenc.org/find-food-resources/"
+  },
+  {
+   "id": "iffs",
+   "name": "Inter-Faith Food Shuttle",
+   "area": {
+    "en": "Triangle area",
+    "es": "Área del Triángulo"
+   },
+   "phone": "919-250-0043",
+   "url": "https://foodshuttle.org/findfood/"
+  },
+  {
+   "id": "shsenc",
+   "name": "Second Harvest Food Bank of Southeast North Carolina",
+   "area": {
+    "en": "Fayetteville / southeast NC (7 counties)",
+    "es": "Fayetteville / sureste de Carolina del Norte (7 condados)"
+   },
+   "phone": "910-485-6923",
+   "url": "https://hungercantwait.org/find-help/find-food/"
+  },
+  {
+   "id": "fba",
+   "name": "Food Bank of the Albemarle",
+   "area": {
+    "en": "Northeast NC",
+    "es": "Noreste de Carolina del Norte"
+   },
+   "phone": "252-335-4035",
+   "url": "https://afoodbank.org/get-help/food-locator/"
+  }
+ ],
+ "helpers": [
+  {
+   "id": "nc211",
+   "name": "NC 211 (United Way of NC)",
+   "phone": "211",
+   "phone2": "1-888-892-1162",
+   "url": "https://nc211.org/",
+   "note": {
+    "en": "Free, confidential referrals to food and other help near you.",
+    "es": "Referencias gratuitas y confidenciales a alimentos y otra ayuda cerca de usted."
+   }
+  },
+  {
+   "id": "fns",
+   "name": "NCDHHS Food and Nutrition Services (FNS / SNAP)",
+   "url": "https://www.ncdhhs.gov/divisions/child-and-family-well-being/food-and-nutrition-services-food-stamps",
+   "url_es": "https://www.ncdhhs.gov/divisions/child-and-family-well-being/food-and-nutrition-services-food-stamps/servicios-de-alimentos-y-nutricion-cupones-para-alimentos",
+   "apply": "https://epass.nc.gov/",
+   "note": {
+    "en": "Apply for food benefits online through ePASS or at your county DSS.",
+    "es": "Solicite beneficios de alimentos en línea por ePASS o en el DSS de su condado."
+   }
+  }
+ ],
+ "kosherTips": {
+  "url": "https://www.chabadofcary.org/templates/articlecco_cdo/aid/2249819/jewish/Kosher-Information.htm",
+  "en": "Chabad of Cary lists Triangle stores with kosher sections: Food Lion in North Raleigh (largest local kosher section), Wegmans on Davis Drive in Morrisville/Cary (fresh kosher meat and chicken), Trader Joe's and Publix (kosher poultry and frozen goods), and Golden Hex in Cary (Israeli kosher items). Selection changes; check labels for a kosher symbol.",
+  "es": "Chabad of Cary indica tiendas del Triángulo con sección kosher: Food Lion en North Raleigh (la sección kosher más grande de la zona), Wegmans en Davis Drive en Morrisville/Cary (carne y pollo kosher frescos), Trader Joe's y Publix (aves kosher y congelados) y Golden Hex en Cary (productos kosher israelíes). La oferta cambia; busque el símbolo kosher en la etiqueta."
+ },
+ "items": [
+  {
+   "id": "rcjfs",
+   "name": "Raleigh-Cary Jewish Family Services Food Pantry",
+   "types": [
+    "kosher",
+    "jewish"
+   ],
+   "county": "Wake",
+   "city": "Raleigh",
+   "address": "8210 Creedmoor Road, Suite 104, Raleigh, NC 27613",
+   "phone": "919-676-2295",
+   "ext": "112",
+   "hours": "By appointment only",
+   "url": "https://www.raleighcaryjfs.org/financial-and-food-assistance",
+   "verified": true,
+   "note": {
+    "en": "JFS says it is the only food pantry in Wake County with a kosher section. Serves residents across Wake County. Also offers Mitzvah Meals (kosher-style prepared meals).",
+    "es": "JFS indica que es la única despensa de alimentos del condado de Wake con una sección kosher. Atiende a residentes de todo el condado de Wake. También ofrece Mitzvah Meals (comidas preparadas estilo kosher)."
+   },
+   "kind": "pantry",
+   "region": "triangle"
+  },
+  {
+   "id": "jfsclt",
+   "name": "Jewish Family Services of Greater Charlotte Food Pantry",
+   "types": [
+    "jewish"
+   ],
+   "county": "Mecklenburg",
+   "city": "Charlotte",
+   "address": "5007 Providence Rd, Suite 105, Charlotte, NC 28226",
+   "phone": "704-364-6594",
+   "url": "https://jfscharlotte.org/supportservices/",
+   "verified": true,
+   "note": {
+    "en": "Food, personal care items and other necessities. The page does not say whether kosher food is available; ask when you call.",
+    "es": "Alimentos, artículos de cuidado personal y otras necesidades. La página no indica si hay alimentos kosher; pregunte al llamar."
+   },
+   "kind": "pantry",
+   "region": "charlotte"
+  },
+  {
+   "id": "jfswnc",
+   "name": "Jewish Family Services of WNC Food Pantry",
+   "types": [
+    "jewish"
+   ],
+   "county": "Buncombe",
+   "city": "Asheville",
+   "address": "20 Fall Pippin Lane, Suite 202, Asheville, NC 28803",
+   "phone": "828-253-2900",
+   "url": "https://jfswnc.org/services-and-programs/crisis/",
+   "verified": true,
+   "note": {
+    "en": "Pantry for anyone needing temporary help; partner agency of MANNA FoodBank. Kosher availability is not stated.",
+    "es": "Despensa para cualquier persona que necesite ayuda temporal; agencia asociada de MANNA FoodBank. No se indica si hay alimentos kosher."
+   },
+   "kind": "pantry",
+   "region": "west"
+  },
+  {
+   "id": "gsojfs",
+   "name": "Jewish Family Services ~ David D. Frazier Food Pantry",
+   "types": [
+    "jewish"
+   ],
+   "county": "Guilford",
+   "city": "Greensboro",
+   "address": "5509-C West Friendly Avenue, Greensboro, NC 27410",
+   "phone": "336-852-4829",
+   "hours": "Wednesdays 11:00 am–1:00 pm (do not arrive before 10:30 am)",
+   "url": "https://findfood.ghpfa.org/findfood/services_1676604904375_5/2660980/13056549",
+   "verified": true,
+   "note": {
+    "en": "Listed on the Greater Guilford Food Finder. Households may come weekly; first visit needs an intake form. May close for bad weather or holidays, so call ahead.",
+    "es": "Aparece en Greater Guilford Food Finder. Los hogares pueden venir cada semana; la primera visita requiere un formulario de admisión. Puede cerrar por mal tiempo o días festivos; llame antes."
+   },
+   "kind": "pantry",
+   "region": "triad"
+  },
+  {
+   "id": "jfg",
+   "name": "Jewish for Good Food Pantry",
+   "types": [
+    "jewish"
+   ],
+   "county": "Durham",
+   "city": "Durham",
+   "address": "1937 West Cornwallis Road, Durham, NC 27705",
+   "phone": "919-354-4959",
+   "url": "https://www.jewishforgood.org/about",
+   "verified": true,
+   "note": {
+    "en": "The agency says it offers a food pantry. Hours, eligibility and kosher availability are not on the page; call first.",
+    "es": "La agencia indica que ofrece una despensa de alimentos. El horario, los requisitos y si hay alimentos kosher no aparecen en la página; llame primero."
+   },
+   "kind": "pantry",
+   "region": "triangle"
+  },
+  {
+   "id": "iar",
+   "name": "Islamic Association of Raleigh Food Pantry",
+   "types": [
+    "halal",
+    "muslim"
+   ],
+   "county": "Wake",
+   "city": "Raleigh",
+   "address": "808 Atwater St, Raleigh, NC 27607",
+   "phone": "919-834-9572",
+   "hours": "First Saturday of each month 10 am–12 pm (every Saturday during Ramadan)",
+   "url": "https://raleighmasjid.org/services/social-services-welfare/food-pantry-service/",
+   "verified": true,
+   "note": {
+    "en": "Rice, oil, sugar, flour, milk, eggs, juice and zabiha (halal) meat. Open to everyone, Muslim and non-Muslim. Register on your first visit. Pantry is at the Al Iman School building / Red Brick Building facing Ligon Street.",
+    "es": "Arroz, aceite, azúcar, harina, leche, huevos, jugo y carne zabiha (halal). Abierta a todos, musulmanes y no musulmanes. Regístrese en su primera visita. La despensa está en el edificio de Al Iman School / edificio de ladrillo rojo frente a Ligon Street."
+   },
+   "kind": "pantry",
+   "region": "triangle"
+  },
+  {
+   "id": "mycc",
+   "name": "Muslim Youth & Community Center (MYCC) Food Pantry",
+   "types": [
+    "halal",
+    "muslim"
+   ],
+   "county": "Wake",
+   "city": "Raleigh",
+   "address": "5017 Deah Way, Raleigh, NC 27616",
+   "phone": "919-238-6424",
+   "hours": "Third Saturday of each month 11 am–1 pm",
+   "url": "https://mycc-rdu.org/food-pantry/",
+   "verified": true,
+   "note": {
+    "en": "Monthly food pantry. Ask whether halal meat is included that month.",
+    "es": "Despensa mensual. Pregunte si ese mes incluye carne halal."
+   },
+   "kind": "pantry",
+   "region": "triangle"
+  },
+  {
+   "id": "icna-durham",
+   "name": "ICNA Relief Food Pantry (Durham)",
+   "types": [
+    "muslim"
+   ],
+   "county": "Durham",
+   "city": "Durham",
+   "address": "3034 Fayetteville St, Durham, NC",
+   "phone": "866-354-0102",
+   "ext": "2004",
+   "hours": "Drive-thru food distribution, 2nd Saturday of each month 2–4 pm",
+   "url": "https://icnarelief.org/north-carolina/",
+   "verified": true,
+   "note": {
+    "en": "Run by ICNA Relief, a Muslim relief organization.",
+    "es": "Administrada por ICNA Relief, una organización musulmana de ayuda."
+   },
+   "kind": "pantry",
+   "region": "triangle"
+  },
+  {
+   "id": "mec",
+   "name": "Muslim Education Center – Charlotte Food Program",
+   "types": [
+    "muslim"
+   ],
+   "county": "Mecklenburg",
+   "city": "Charlotte",
+   "address": "4301 Shamrock Dr, Charlotte, NC 28215",
+   "phone": "704-290-2000",
+   "url": "https://www.meccharlotte.org/charlotte-food-program",
+   "verified": false,
+   "note": {
+    "en": "The center has a \"Charlotte Food Program\" page, but it does not show hours or who can get food. Call to confirm.",
+    "es": "El centro tiene una página del \"Charlotte Food Program\", pero no muestra horario ni quién puede recibir alimentos. Llame para confirmar."
+   },
+   "kind": "pantry",
+   "region": "charlotte"
+  },
+  {
+   "id": "icg",
+   "name": "Islamic Center of Greensboro Food Pantry",
+   "types": [
+    "muslim"
+   ],
+   "county": "Guilford",
+   "city": "Greensboro",
+   "address": "2023 Sixteenth St, Greensboro, NC 27405",
+   "phone": "336-375-4908",
+   "url": "https://icgmasjid.org/food-pantry/",
+   "verified": true,
+   "note": {
+    "en": "Free, confidential walk-in pantry, open to everyone.",
+    "es": "Despensa gratuita y confidencial, sin cita, abierta a todos."
+   },
+   "kind": "pantry",
+   "region": "triad"
+  },
+  {
+   "id": "wdm",
+   "name": "Halimah's Pantry – W.D. Mohammed Islamic Center",
+   "types": [
+    "muslim"
+   ],
+   "county": "Guilford",
+   "city": "Greensboro",
+   "address": "3015 E. Bessemer Avenue, Greensboro, NC 27405",
+   "phone": "336-285-5992",
+   "hours": "Tue, Wed, Thu 11:30 am–1:00 pm",
+   "url": "https://wdmicgso.org/",
+   "verified": true,
+   "note": {
+    "en": "Fresh groceries, open to all in need. New clients complete an intake form; pickup at the rear of the building.",
+    "es": "Alimentos frescos, abierta a todas las personas necesitadas. Los clientes nuevos llenan un formulario; se recoge en la parte trasera del edificio."
+   },
+   "kind": "pantry",
+   "region": "triad"
+  },
+  {
+   "id": "cmws",
+   "name": "Al-Ma'un Food Bank – Community Mosque of Winston-Salem",
+   "types": [
+    "muslim"
+   ],
+   "county": "Forsyth",
+   "city": "Winston-Salem",
+   "address": "1419 Waughtown Street, Winston-Salem, NC 27107",
+   "phone": "336-650-1095",
+   "hours": "Third Saturday of each month 11:00 am–12:30 pm",
+   "url": "https://communitymosque.com/food-bank-%26-services",
+   "verified": true,
+   "note": {
+    "en": "Fresh groceries. ICNA Relief also lists a drive-thru food / hot meal distribution here on the 3rd Saturday, 11 am–1 pm.",
+    "es": "Alimentos frescos. ICNA Relief también anuncia aquí una distribución de alimentos / comida caliente (drive-thru) el 3.er sábado, de 11 am a 1 pm."
+   },
+   "kind": "pantry",
+   "region": "triad"
+  },
+  {
+   "id": "omar",
+   "name": "Masjid Omar Ibn Sayyid – Monthly Food Drive",
+   "types": [
+    "muslim"
+   ],
+   "county": "Cumberland",
+   "city": "Fayetteville",
+   "address": null,
+   "phone": "910-488-7322",
+   "hours": "Third Saturday of each month, 9 am",
+   "url": "https://www.masjidomaribnsayyid.org/",
+   "verified": false,
+   "note": {
+    "en": "The masjid lists a monthly food drive. It is not clear whether food is handed out to the public; call first.",
+    "es": "La mezquita anuncia una colecta mensual de alimentos. No está claro si se entregan alimentos al público; llame primero."
+   },
+   "kind": "pantry",
+   "region": "southeast"
+  },
+  {
+   "id": "sgnc",
+   "name": "Sikh Gurudwara of North Carolina – Langar",
+   "types": [
+    "sikh",
+    "vegetarian"
+   ],
+   "county": "Durham",
+   "city": "Durham",
+   "address": "3214 E. Banner St, Durham, NC 27704",
+   "phone": "919-220-0630",
+   "hours": "Sundays: 12:45 pm Bhog followed by Langar",
+   "url": "https://sgncweb.org/program/",
+   "verified": true,
+   "kind": "meal",
+   "note": {
+    "en": "Langar is a free community meal. Visitors of all backgrounds are welcome. Please cover your head and remove shoes per gurdwara custom (see the visitors page).",
+    "es": "El langar es una comida comunitaria gratuita. Se recibe a visitantes de todos los orígenes. Por costumbre del gurdwara, cúbrase la cabeza y quítese los zapatos (vea la página para visitantes)."
+   },
+   "region": "triangle"
+  },
+  {
+   "id": "gsclt",
+   "name": "Gurdwara Sahib Charlotte – Guru Ka Langar",
+   "types": [
+    "sikh",
+    "vegetarian"
+   ],
+   "county": "Mecklenburg",
+   "city": "Charlotte",
+   "address": "5715 University City Blvd., Charlotte, NC 28262",
+   "phone": "704-509-2828",
+   "hours": "Sundays 1:15 pm",
+   "url": "https://gurdwarasahibcharlotte.org/services/",
+   "verified": true,
+   "kind": "meal",
+   "note": {
+    "en": "Free vegetarian community meal, open to people of any background.",
+    "es": "Comida comunitaria vegetariana gratuita, abierta a personas de cualquier origen."
+   },
+   "region": "charlotte"
+  },
+  {
+   "id": "gkd",
+   "name": "Gurudwara Sahib Khalsa Darbar – Langar (Free Kitchen)",
+   "types": [
+    "sikh",
+    "vegetarian"
+   ],
+   "county": "Mecklenburg",
+   "city": "Charlotte",
+   "address": "401 E Arrowood Rd, Charlotte, NC 28217",
+   "phone": null,
+   "url": "https://gurdwarakhalsadarbar.org/services/",
+   "verified": false,
+   "kind": "meal",
+   "note": {
+    "en": "The gurdwara lists a langar (free kitchen). Days and times are not on the page.",
+    "es": "El gurdwara anuncia un langar (cocina gratuita). Los días y horarios no aparecen en la página."
+   },
+   "region": "charlotte"
+  },
+  {
+   "id": "camino",
+   "name": "Camino Food Farmacy",
+   "types": [
+    "latino"
+   ],
+   "county": "Mecklenburg",
+   "city": "Charlotte",
+   "address": "201 Stetson Dr, Charlotte, NC 28262",
+   "phone": "704-596-5606",
+   "url": "https://camino.org/the-food-farmacy-takes-a-bite-out-of-hunger/",
+   "verified": true,
+   "note": {
+    "en": "Bilingual (English/Spanish) nonprofit serving Latino families. Apply online or call; walk-ins and appointments accepted. Published hours vary between sources, so call for current hours.",
+    "es": "Organización bilingüe (inglés/español) que atiende a familias latinas. Solicite en línea o llame; aceptan visitas sin cita y con cita. El horario publicado varía según la fuente; llame para confirmar."
+   },
+   "kind": "pantry",
+   "region": "charlotte"
+  },
+  {
+   "id": "unidxs",
+   "name": "UNIDXS WNC Food Pantry",
+   "types": [
+    "latino"
+   ],
+   "county": "Jackson",
+   "city": "Sylva",
+   "address": "503 Mill Street, Sylva, NC 28779",
+   "phone": null,
+   "hours": "Open pantry and pre-packed food boxes (check current schedule)",
+   "url": "https://unidxswnc.org/warehouse",
+   "url_es": "https://unidxswnc.org/es/warehouse",
+   "verified": true,
+   "note": {
+    "en": "Bilingual (English/Spanish) community organization. Site also points to the MANNA Food Helpline 828-290-9749.",
+    "es": "Organización comunitaria bilingüe (inglés/español). El sitio también remite a la línea de ayuda de MANNA: 828-290-9749."
+   },
+   "kind": "pantry",
+   "region": "west"
+  },
+  {
+   "id": "kosherclt",
+   "name": "Kosher Charlotte (take-out at Chabad of Charlotte)",
+   "types": [
+    "kosher"
+   ],
+   "county": "Mecklenburg",
+   "city": "Charlotte",
+   "address": "6619 Sardis Road, Charlotte, NC 28270 (back entrance)",
+   "phone": "704-256-0134",
+   "hours": "Take-out Mon–Thu 11 am–6 pm",
+   "url": "https://www.chabadnc.org/templates/articlecco_cdo/aid/5022613/jewish/Kosher-food-in-Charlotte.htm",
+   "verified": true,
+   "kind": "store",
+   "note": {
+    "en": "Kosher prepared food for purchase (not free). Listed by Chabad of Charlotte.",
+    "es": "Comida kosher preparada a la venta (no es gratis). Según Chabad of Charlotte."
+   },
+   "region": "charlotte"
+  },
+  {
+   "id": "node-12290937401",
+   "name": "Albaraka Mediterranean Market and Grill",
+   "types": [
+    "halal",
+    "middle-eastern"
+   ],
+   "county": "Wake",
+   "city": "Raleigh",
+   "address": "3815 Hillsborough Street, Raleigh, NC 27607",
+   "phone": "919-838-5155",
+   "url": "https://albarakamarketnc.com/",
+   "osm": "https://www.openstreetmap.org/node/12290937401",
+   "verified": true,
+   "kind": "store",
+   "note": {
+    "en": "Store website says its meat is 100% halal-certified.",
+    "es": "El sitio web de la tienda dice que su carne tiene certificación 100% halal."
+   },
+   "region": "triangle"
+  },
+  {
+   "id": "node-14068833301",
+   "name": "Indian Fresh Market",
+   "types": [
+    "south-asian",
+    "halal"
+   ],
+   "county": "Iredell",
+   "city": "Mooresville",
+   "address": "115 J Commons Dr, Mooresville, NC 28117",
+   "phone": "704-828-8280",
+   "url": "https://ifmgrocery.store/",
+   "osm": "https://www.openstreetmap.org/node/14068833301",
+   "verified": true,
+   "kind": "store",
+   "note": {
+    "en": "Store website mentions halal meats (certification not stated).",
+    "es": "El sitio web de la tienda menciona carnes halal (no indica certificación)."
+   },
+   "region": "charlotte"
+  },
+  {
+   "id": "node-1315065159",
+   "name": "Grand Asia Market",
+   "types": [
+    "asian"
+   ],
+   "county": "Wake",
+   "city": "Raleigh",
+   "address": "1253 Buck Jones Rd, Raleigh, NC 27606",
+   "phone": "919-468-2988",
+   "url": "https://www.grandasiamarket.com/",
+   "osm": "https://www.openstreetmap.org/node/1315065159",
+   "verified": true,
+   "kind": "store",
+   "note": null,
+   "region": "triangle"
+  },
+  {
+   "id": "node-11537827987",
+   "name": "Kim's Asian Market",
+   "types": [
+    "asian"
+   ],
+   "county": "Buncombe",
+   "city": "Asheville",
+   "address": "5 Regent Park Blvd Unit 110, Asheville, NC 28806",
+   "phone": "828-254-7235",
+   "url": "https://www.kasianmarket.com/",
+   "osm": "https://www.openstreetmap.org/node/11537827987",
+   "verified": true,
+   "kind": "store",
+   "note": null,
+   "region": "west"
+  },
+  {
+   "id": "node-12459330444",
+   "name": "Carniceria El Kora",
+   "types": [
+    "latino"
+   ],
+   "county": "Guilford",
+   "city": "Greensboro",
+   "address": "4516 W Market St, Greensboro, NC 27407",
+   "phone": "336-632-9623",
+   "url": "https://carniceriataqueriaelkoranc.com/",
+   "osm": "https://www.openstreetmap.org/node/12459330444",
+   "verified": true,
+   "kind": "store",
+   "note": null,
+   "region": "triad"
+  },
+  {
+   "id": "node-13939038046",
+   "name": "Euro Deli Mart",
+   "types": [
+    "eastern-european"
+   ],
+   "county": "Guilford",
+   "city": "Greensboro",
+   "address": "602 Hickory Ridge Drive, Greensboro, NC 27409",
+   "phone": "336-841-3397",
+   "url": "https://eurodelimart.com/",
+   "osm": "https://www.openstreetmap.org/node/13939038046",
+   "verified": true,
+   "kind": "store",
+   "note": null,
+   "region": "triad"
+  },
+  {
+   "id": "way-64153620",
+   "name": "Patel Brothers",
+   "types": [
+    "south-asian"
+   ],
+   "county": "Wake",
+   "city": "Cary",
+   "address": "802 E. Chatham St., Cary, NC 27511",
+   "phone": "919-380-0113",
+   "url": "https://www.patelbros.com/locations",
+   "osm": "https://www.openstreetmap.org/way/32076810",
+   "verified": true,
+   "kind": "store",
+   "note": null,
+   "region": "triangle"
+  },
+  {
+   "id": "node-12986821401",
+   "name": "Patel Brothers",
+   "types": [
+    "south-asian"
+   ],
+   "county": "Mecklenburg",
+   "city": "Charlotte",
+   "address": "8109 University City Blvd Suite A, Charlotte, NC 28213",
+   "phone": "704-509-2305",
+   "url": "https://www.patelbros.com/locations",
+   "osm": "https://www.openstreetmap.org/node/12986821401",
+   "verified": true,
+   "kind": "store",
+   "note": null,
+   "region": "charlotte"
+  },
+  {
+   "id": "node-8372695647",
+   "name": "Little India",
+   "types": [
+    "south-asian"
+   ],
+   "county": "Durham",
+   "city": "Durham",
+   "address": "4201 University Drive, Durham, NC 27707",
+   "phone": "919-489-9084",
+   "url": "https://littleindia.online/",
+   "osm": "https://www.openstreetmap.org/node/8372695647",
+   "verified": true,
+   "kind": "store",
+   "note": null,
+   "region": "triangle"
+  },
+  {
+   "id": "node-2344426891",
+   "name": "Casablanca Market",
+   "types": [
+    "halal",
+    "middle-eastern"
+   ],
+   "county": "Wake",
+   "city": "Cary",
+   "address": "1365 Southeast Maynard Road, Cary, NC 27511",
+   "phone": "919-469-5761",
+   "url": null,
+   "osm": "https://www.openstreetmap.org/node/2344426891",
+   "verified": false,
+   "kind": "store",
+   "note": null,
+   "region": "triangle"
+  },
+  {
+   "id": "node-12532759516",
+   "name": "Jubba Halal Market",
+   "types": [
+    "halal"
+   ],
+   "county": "Wake",
+   "city": "Raleigh",
+   "address": "6715 Hillsborough Street, Raleigh, NC 27606",
+   "phone": null,
+   "url": null,
+   "osm": "https://www.openstreetmap.org/node/12532759516",
+   "verified": false,
+   "kind": "store",
+   "note": null,
+   "region": "triangle"
+  },
+  {
+   "id": "node-7391352486",
+   "name": "Harmony Mediterranean Market",
+   "types": [
+    "middle-eastern"
+   ],
+   "county": "Wake",
+   "city": "Cary",
+   "address": "663 Cary Towne Boulevard, Cary, NC 27511",
+   "phone": "919-388-4464",
+   "url": null,
+   "osm": "https://www.openstreetmap.org/node/7391352486",
+   "verified": false,
+   "kind": "store",
+   "note": null,
+   "region": "triangle"
+  },
+  {
+   "id": "node-12795683736",
+   "name": "Mediterranean Mart",
+   "types": [
+    "middle-eastern"
+   ],
+   "county": "Cumberland",
+   "city": "Fayetteville",
+   "address": "5924 Cliffdale Road, Fayetteville, NC 28314",
+   "phone": null,
+   "url": null,
+   "osm": "https://www.openstreetmap.org/node/12795683736",
+   "verified": false,
+   "kind": "store",
+   "note": null,
+   "region": "southeast"
+  },
+  {
+   "id": "node-14190196915",
+   "name": "Bosna Market",
+   "types": [
+    "eastern-european"
+   ],
+   "county": "Mecklenburg",
+   "city": "Charlotte",
+   "address": "2719 Central Avenue, Charlotte, NC 28205",
+   "phone": "704-343-9828",
+   "url": null,
+   "osm": "https://www.openstreetmap.org/node/14190196915",
+   "verified": false,
+   "kind": "store",
+   "note": null,
+   "region": "charlotte"
+  },
+  {
+   "id": "node-14201719226",
+   "name": "Nadinah African Market",
+   "types": [
+    "african"
+   ],
+   "county": "Guilford",
+   "city": null,
+   "address": "3808 West Gate City Boulevard, NC",
+   "phone": null,
+   "url": null,
+   "osm": "https://www.openstreetmap.org/node/14201719226",
+   "verified": false,
+   "kind": "store",
+   "note": null,
+   "region": "triad"
+  },
+  {
+   "id": "way-429117308",
+   "name": "H Mart",
+   "types": [
+    "asian"
+   ],
+   "county": "Wake",
+   "city": "Cary",
+   "address": "1961 High House Road, Cary, NC 27519",
+   "phone": "919-535-5900",
+   "url": "https://www.hmart.com/store/cary-nc-27519/56106753-370a-42bd-b08f-1f87709ddfb2",
+   "osm": "https://www.openstreetmap.org/way/214558654",
+   "verified": false,
+   "kind": "store",
+   "note": null,
+   "region": "triangle"
+  },
+  {
+   "id": "way-455481090",
+   "name": "Super G Mart",
+   "types": [
+    "asian",
+    "international"
+   ],
+   "county": "Mecklenburg",
+   "city": "Pineville",
+   "address": "10500 Centrum Parkway, Pineville, NC 28134",
+   "phone": "980-999-6487",
+   "url": "https://supergmart.com/pvl",
+   "osm": "https://www.openstreetmap.org/way/227740545",
+   "verified": false,
+   "kind": "store",
+   "note": null,
+   "region": "charlotte"
+  },
+  {
+   "id": "node-5298628322",
+   "name": "Super G Mart",
+   "types": [
+    "asian",
+    "international"
+   ],
+   "county": "Guilford",
+   "city": null,
+   "address": "4927 West Market Street, NC",
+   "phone": "336-252-1055",
+   "url": "https://www.supergmart.com/gso",
+   "osm": "https://www.openstreetmap.org/node/5298628322",
+   "verified": false,
+   "kind": "store",
+   "note": null,
+   "region": "triad"
+  },
+  {
+   "id": "way-647155624",
+   "name": "Asian Market",
+   "types": [
+    "asian"
+   ],
+   "county": "Mecklenburg",
+   "city": "Charlotte",
+   "address": "4430 The Plaza, Charlotte, NC 28215",
+   "phone": "704-595-9998",
+   "url": "https://asianmarketplaza.com",
+   "osm": "https://www.openstreetmap.org/way/323577812",
+   "verified": false,
+   "kind": "store",
+   "note": null,
+   "region": "charlotte"
+  },
+  {
+   "id": "node-3789861480",
+   "name": "Li Ming's Global Mart",
+   "types": [
+    "asian"
+   ],
+   "county": "Durham",
+   "city": "Durham",
+   "address": "3400 Westgate Dr, Durham, NC 27707",
+   "phone": "919-401-5212",
+   "url": null,
+   "osm": "https://www.openstreetmap.org/node/3789861480",
+   "verified": false,
+   "kind": "store",
+   "note": null,
+   "region": "triangle"
+  },
+  {
+   "id": "node-4108864535",
+   "name": "Li Ming's Global Market",
+   "types": [
+    "asian"
+   ],
+   "county": "Guilford",
+   "city": null,
+   "address": "3703-A West Gate City Boulevard, NC",
+   "phone": "336-218-8008",
+   "url": null,
+   "osm": "https://www.openstreetmap.org/node/4108864535",
+   "verified": false,
+   "kind": "store",
+   "note": null,
+   "region": "triad"
+  },
+  {
+   "id": "node-2696902557",
+   "name": "Mikyin’s Asian Market",
+   "types": [
+    "asian"
+   ],
+   "county": "Orange",
+   "city": "Carrboro",
+   "address": "104 NC 54, Carrboro, NC 27510",
+   "phone": "919-240-4641",
+   "url": null,
+   "osm": "https://www.openstreetmap.org/node/2696902557",
+   "verified": false,
+   "kind": "store",
+   "note": null,
+   "region": "triangle"
+  },
+  {
+   "id": "node-13458107997",
+   "name": "YZ Asian Market",
+   "types": [
+    "asian"
+   ],
+   "county": "Buncombe",
+   "city": "Asheville",
+   "address": "22 New Leicester Highway, Asheville, NC 28806",
+   "phone": "828-785-1653",
+   "url": null,
+   "osm": "https://www.openstreetmap.org/node/13458107997",
+   "verified": false,
+   "kind": "store",
+   "note": null,
+   "region": "west"
+  },
+  {
+   "id": "node-6433304928",
+   "name": "South East Asian Market",
+   "types": [
+    "asian"
+   ],
+   "county": "Guilford",
+   "city": "High Point",
+   "address": "1229 South Main Street, High Point, NC 27260",
+   "phone": "336-781-0668",
+   "url": null,
+   "osm": "https://www.openstreetmap.org/node/6433304928",
+   "verified": false,
+   "kind": "store",
+   "note": null,
+   "region": "triad"
+  },
+  {
+   "id": "node-3070806911",
+   "name": "Laos Lanxang Asian Grocery Store",
+   "types": [
+    "asian"
+   ],
+   "county": "Burke",
+   "city": "Morganton",
+   "address": "402 West Fleming Drive, Morganton, NC 28655",
+   "phone": null,
+   "url": null,
+   "osm": "https://www.openstreetmap.org/node/3070806911",
+   "verified": false,
+   "kind": "store",
+   "note": null,
+   "region": "west"
+  },
+  {
+   "id": "node-12074153535",
+   "name": "Grace Kayah Asian Market",
+   "types": [
+    "asian"
+   ],
+   "county": "Forsyth",
+   "city": "Winston-Salem",
+   "address": "325 Jonestown Road, Winston-Salem, NC 27104",
+   "phone": "336-829-5337",
+   "url": null,
+   "osm": "https://www.openstreetmap.org/node/12074153535",
+   "verified": false,
+   "kind": "store",
+   "note": null,
+   "region": "triad"
+  },
+  {
+   "id": "node-13389075959",
+   "name": "Plei Ku Asian Market LLC",
+   "types": [
+    "asian"
+   ],
+   "county": "Guilford",
+   "city": null,
+   "address": "1207 Fairview Street, NC",
+   "phone": null,
+   "url": null,
+   "osm": "https://www.openstreetmap.org/node/13389075959",
+   "verified": false,
+   "kind": "store",
+   "note": null,
+   "region": "triad"
+  },
+  {
+   "id": "node-13527820020",
+   "name": "Asian Market",
+   "types": [
+    "asian"
+   ],
+   "county": "Stanly",
+   "city": "Albemarle",
+   "address": "757 NC 24/27 Bypass East, Albemarle, NC 28001",
+   "phone": null,
+   "url": null,
+   "osm": "https://www.openstreetmap.org/node/13527820020",
+   "verified": false,
+   "kind": "store",
+   "note": null,
+   "region": "charlotte"
+  },
+  {
+   "id": "node-13556735755",
+   "name": "Asian Food Market",
+   "types": [
+    "asian"
+   ],
+   "county": "Stanly",
+   "city": "Albemarle",
+   "address": "720 NC 24/27 Bypass East, Albemarle, NC 28001",
+   "phone": null,
+   "url": null,
+   "osm": "https://www.openstreetmap.org/node/13556735755",
+   "verified": false,
+   "kind": "store",
+   "note": null,
+   "region": "charlotte"
+  },
+  {
+   "id": "way-2262479738",
+   "name": "Super Global Mart",
+   "types": [
+    "international"
+   ],
+   "county": "Mecklenburg",
+   "city": "Charlotte",
+   "address": "7323 East Independence Boulevard, Charlotte, NC 28227",
+   "phone": null,
+   "url": null,
+   "osm": "https://www.openstreetmap.org/way/1131239869",
+   "verified": false,
+   "kind": "store",
+   "note": null,
+   "region": "charlotte"
+  },
+  {
+   "id": "way-238909826",
+   "name": "Fresh International Market",
+   "types": [
+    "international"
+   ],
+   "county": "Wake",
+   "city": null,
+   "address": "10341 Moncreiffe Road, NC",
+   "phone": "984-389-8535",
+   "url": null,
+   "osm": "https://www.openstreetmap.org/way/119454913",
+   "verified": false,
+   "kind": "store",
+   "note": null,
+   "region": "triangle"
+  },
+  {
+   "id": "node-821995268",
+   "name": "International Foods",
+   "types": [
+    "international"
+   ],
+   "county": "Wake",
+   "city": null,
+   "address": "2215 New Hope Church Rd, NC",
+   "phone": "919-850-2400",
+   "url": null,
+   "osm": "https://www.openstreetmap.org/node/821995268",
+   "verified": false,
+   "kind": "store",
+   "note": null,
+   "region": "triangle"
+  },
+  {
+   "id": "node-9395638216",
+   "name": "NC International Grocery Store",
+   "types": [
+    "international"
+   ],
+   "county": "Wake",
+   "city": "Raleigh",
+   "address": "1731 Trawick Road, Raleigh, NC 27604",
+   "phone": null,
+   "url": null,
+   "osm": "https://www.openstreetmap.org/node/9395638216",
+   "verified": false,
+   "kind": "store",
+   "note": null,
+   "region": "triangle"
+  },
+  {
+   "id": "node-12942912864",
+   "name": "Dynasty International Food & Gifts",
+   "types": [
+    "international"
+   ],
+   "county": "Guilford",
+   "city": null,
+   "address": "4103 Spring Garden Street, NC",
+   "phone": null,
+   "url": null,
+   "osm": "https://www.openstreetmap.org/node/12942912864",
+   "verified": false,
+   "kind": "store",
+   "note": null,
+   "region": "triad"
+  },
+  {
+   "id": "node-2178025823",
+   "name": "Kadhambam Spices",
+   "types": [
+    "south-asian"
+   ],
+   "county": "Wake",
+   "city": "Morrisville",
+   "address": "3516 Davis Drive, Morrisville, NC 27560",
+   "phone": "919-463-9667",
+   "url": null,
+   "osm": "https://www.openstreetmap.org/node/2178025823",
+   "verified": false,
+   "kind": "store",
+   "note": null,
+   "region": "triangle"
+  },
+  {
+   "id": "node-2589647508",
+   "name": "Spice Bazaar",
+   "types": [
+    "south-asian"
+   ],
+   "county": "Durham",
+   "city": "Durham",
+   "address": "4125 Durham-Chapel Hill Boulevard, Durham, NC 27707",
+   "phone": null,
+   "url": null,
+   "osm": "https://www.openstreetmap.org/node/2589647508",
+   "verified": false,
+   "kind": "store",
+   "note": null,
+   "region": "triangle"
+  },
+  {
+   "id": "node-9024045517",
+   "name": "Spices Hut Indian Groceries",
+   "types": [
+    "south-asian"
+   ],
+   "county": "Wake",
+   "city": null,
+   "address": "9601 Suite 124 Chapel Hill Road, NC 27560",
+   "phone": null,
+   "url": null,
+   "osm": "https://www.openstreetmap.org/node/9024045517",
+   "verified": false,
+   "kind": "store",
+   "note": null,
+   "region": "triangle"
+  },
+  {
+   "id": "node-7056360933",
+   "name": "Apna Bazaar",
+   "types": [
+    "south-asian"
+   ],
+   "county": "Wake",
+   "city": "Morrisville",
+   "address": "3607 Davis Drive, Morrisville, NC 27560",
+   "phone": null,
+   "url": null,
+   "osm": "https://www.openstreetmap.org/node/7056360933",
+   "verified": false,
+   "kind": "store",
+   "note": null,
+   "region": "triangle"
+  },
+  {
+   "id": "node-12532759518",
+   "name": "Royal India Mart",
+   "types": [
+    "south-asian"
+   ],
+   "county": "Wake",
+   "city": "Raleigh",
+   "address": "6715 Hillsborough Street, Raleigh, NC 27606",
+   "phone": null,
+   "url": null,
+   "osm": "https://www.openstreetmap.org/node/12532759518",
+   "verified": false,
+   "kind": "store",
+   "note": null,
+   "region": "triangle"
+  },
+  {
+   "id": "node-14106065398",
+   "name": "Angadi - Indian Grocery Store",
+   "types": [
+    "south-asian"
+   ],
+   "county": "Wake",
+   "city": "Fuquay-Varina",
+   "address": "405 East Broad Street, Fuquay-Varina, NC 27526",
+   "phone": "919-586-7041",
+   "url": null,
+   "osm": "https://www.openstreetmap.org/node/14106065398",
+   "verified": false,
+   "kind": "store",
+   "note": null,
+   "region": "triangle"
+  },
+  {
+   "id": "way-478530880",
+   "name": "Taj Food Shop",
+   "types": [
+    "south-asian"
+   ],
+   "county": "Durham",
+   "city": null,
+   "address": "101 East Cornwallis Road, NC 27707",
+   "phone": "919-493-6968",
+   "url": null,
+   "osm": "https://www.openstreetmap.org/way/239265440",
+   "verified": false,
+   "kind": "store",
+   "note": null,
+   "region": "triangle"
+  },
+  {
+   "id": "way-2326963778",
+   "name": "Monroe Convenience Store & Nepali/Indian Grocery",
+   "types": [
+    "south-asian"
+   ],
+   "county": "Mecklenburg",
+   "city": "Charlotte",
+   "address": "4726 Monroe Road, Charlotte, NC 28205",
+   "phone": null,
+   "url": null,
+   "osm": "https://www.openstreetmap.org/way/1163481889",
+   "verified": false,
+   "kind": "store",
+   "note": null,
+   "region": "charlotte"
+  },
+  {
+   "id": "node-9710455961",
+   "name": "Compare Foods",
+   "types": [
+    "latino",
+    "international"
+   ],
+   "county": "Mecklenburg",
+   "city": "Charlotte",
+   "address": "818 East Arrowood Rd, Charlotte, NC 28217",
+   "phone": "704-716-1170",
+   "url": "https://www.compareclt.com/stores/compare-foods-e-arrowood",
+   "osm": "https://www.openstreetmap.org/node/9710455961",
+   "verified": false,
+   "kind": "store",
+   "note": null,
+   "region": "charlotte"
+  },
+  {
+   "id": "node-3013098370",
+   "name": "Compare Foods",
+   "types": [
+    "latino",
+    "international"
+   ],
+   "county": "Durham",
+   "city": "Durham",
+   "address": "1233 University Drive, Durham, NC 27707",
+   "phone": "919-419-8346",
+   "url": null,
+   "osm": "https://www.openstreetmap.org/node/3013098370",
+   "verified": false,
+   "kind": "store",
+   "note": null,
+   "region": "triangle"
+  },
+  {
+   "id": "way-1391355214",
+   "name": "Compare Foods",
+   "types": [
+    "latino",
+    "international"
+   ],
+   "county": "Mecklenburg",
+   "city": "Charlotte",
+   "address": "4316 North Tryon Street, Charlotte, NC 28213",
+   "phone": null,
+   "url": null,
+   "osm": "https://www.openstreetmap.org/way/695677607",
+   "verified": false,
+   "kind": "store",
+   "note": null,
+   "region": "charlotte"
+  },
+  {
+   "id": "node-6823351212",
+   "name": "Compare Foods",
+   "types": [
+    "latino",
+    "international"
+   ],
+   "county": "Johnston",
+   "city": "Clayton",
+   "address": "421 East 2nd Street, Clayton, NC 27520",
+   "phone": null,
+   "url": null,
+   "osm": "https://www.openstreetmap.org/node/6823351212",
+   "verified": false,
+   "kind": "store",
+   "note": null,
+   "region": "triangle"
+  },
+  {
+   "id": "node-6855026950",
+   "name": "Compare Foods",
+   "types": [
+    "latino",
+    "international"
+   ],
+   "county": "Johnston",
+   "city": "Smithfield",
+   "address": "826 South 3rd Street, Smithfield, NC 27577",
+   "phone": "919-934-4240",
+   "url": null,
+   "osm": "https://www.openstreetmap.org/node/6855026950",
+   "verified": false,
+   "kind": "store",
+   "note": null,
+   "region": "triangle"
+  },
+  {
+   "id": "node-9390898995",
+   "name": "Compare Foods",
+   "types": [
+    "latino",
+    "international"
+   ],
+   "county": "Wilson",
+   "city": "Wilson",
+   "address": "4000 Ward Boulevard, Wilson, NC 27893",
+   "phone": null,
+   "url": null,
+   "osm": "https://www.openstreetmap.org/node/9390898995",
+   "verified": false,
+   "kind": "store",
+   "note": null,
+   "region": "east"
+  },
+  {
+   "id": "node-9995439205",
+   "name": "Compare Foods",
+   "types": [
+    "latino",
+    "international"
+   ],
+   "county": "Cumberland",
+   "city": "Spring Lake",
+   "address": "1159 North Bragg Boulevard, Spring Lake, NC 28390",
+   "phone": null,
+   "url": null,
+   "osm": "https://www.openstreetmap.org/node/9995439205",
+   "verified": false,
+   "kind": "store",
+   "note": null,
+   "region": "southeast"
+  },
+  {
+   "id": "way-1630199440",
+   "name": "Compare Foods of Zebulon",
+   "types": [
+    "latino",
+    "international"
+   ],
+   "county": "Wake",
+   "city": "Zebulon",
+   "address": "506 West Gannon Avenue, Zebulon, NC 27597",
+   "phone": "919-269-9481",
+   "url": null,
+   "osm": "https://www.openstreetmap.org/way/815099720",
+   "verified": false,
+   "kind": "store",
+   "note": null,
+   "region": "triangle"
+  },
+  {
+   "id": "node-9718270382",
+   "name": "Compare Foods of Angier",
+   "types": [
+    "latino",
+    "international"
+   ],
+   "county": "Harnett",
+   "city": "Angier",
+   "address": "559 North Raleigh Street, Angier, NC 27501",
+   "phone": "919-639-9235",
+   "url": null,
+   "osm": "https://www.openstreetmap.org/node/9718270382",
+   "verified": false,
+   "kind": "store",
+   "note": null,
+   "region": "triangle"
+  },
+  {
+   "id": "node-13963531429",
+   "name": "Super Compare Foods",
+   "types": [
+    "latino",
+    "international"
+   ],
+   "county": "Durham",
+   "city": "Durham",
+   "address": "2000 Avondale Drive A, Durham, NC 27704",
+   "phone": null,
+   "url": null,
+   "osm": "https://www.openstreetmap.org/node/13963531429",
+   "verified": false,
+   "kind": "store",
+   "note": null,
+   "region": "triangle"
+  },
+  {
+   "id": "node-6418535478",
+   "name": "Oasis Tienda Latina",
+   "types": [
+    "latino"
+   ],
+   "county": "Guilford",
+   "city": "Greensboro",
+   "address": "1203 South Holden Road, Greensboro, NC 27407",
+   "phone": "336-855-3366",
+   "url": null,
+   "osm": "https://www.openstreetmap.org/node/6418535478",
+   "verified": false,
+   "kind": "store",
+   "note": null,
+   "region": "triad"
+  },
+  {
+   "id": "node-12879410941",
+   "name": "Carnicería el Rey",
+   "types": [
+    "latino"
+   ],
+   "county": "Guilford",
+   "city": "Greensboro",
+   "address": "3927 West Gate City Boulevard, Greensboro, NC 27407",
+   "phone": "336-299-7021",
+   "url": null,
+   "osm": "https://www.openstreetmap.org/node/12879410941",
+   "verified": false,
+   "kind": "store",
+   "note": null,
+   "region": "triad"
+  },
+  {
+   "id": "node-13474629907",
+   "name": "Tienda ToDo Guerrerense",
+   "types": [
+    "latino"
+   ],
+   "county": "Wake",
+   "city": "Raleigh",
+   "address": "1514 South Saunders Street, Raleigh, NC 27603",
+   "phone": "919-835-0330",
+   "url": null,
+   "osm": "https://www.openstreetmap.org/node/13474629907",
+   "verified": false,
+   "kind": "store",
+   "note": null,
+   "region": "triangle"
+  },
+  {
+   "id": "node-5773801237",
+   "name": "Tienda el primo",
+   "types": [
+    "latino"
+   ],
+   "county": "Wake",
+   "city": "Cary",
+   "address": "105 Nottingham Drive, Cary, NC 27511",
+   "phone": null,
+   "url": null,
+   "osm": "https://www.openstreetmap.org/node/5773801237",
+   "verified": false,
+   "kind": "store",
+   "note": null,
+   "region": "triangle"
+  },
+  {
+   "id": "node-9682738465",
+   "name": "La Mexicanita II",
+   "types": [
+    "latino"
+   ],
+   "county": "Wake",
+   "city": "Zebulon",
+   "address": "225 North Arendell Avenue, Zebulon, NC 27597",
+   "phone": "919-269-2236",
+   "url": null,
+   "osm": "https://www.openstreetmap.org/node/9682738465",
+   "verified": false,
+   "kind": "store",
+   "note": null,
+   "region": "triangle"
+  },
+  {
+   "id": "node-7393098348",
+   "name": "Tienda Mexicana El Michoacano",
+   "types": [
+    "latino"
+   ],
+   "county": "Harnett",
+   "city": "Coats",
+   "address": "155 South McKinley Street, Coats, NC 27521",
+   "phone": "910-892-4962",
+   "url": null,
+   "osm": "https://www.openstreetmap.org/node/7393098348",
+   "verified": false,
+   "kind": "store",
+   "note": null,
+   "region": "triangle"
+  },
+  {
+   "id": "node-7228260011",
+   "name": "La Carniceria Meat Market",
+   "types": [
+    "latino"
+   ],
+   "county": "Johnston",
+   "city": "Clayton",
+   "address": "911 East Main Street, Clayton, NC 27520",
+   "phone": null,
+   "url": null,
+   "osm": "https://www.openstreetmap.org/node/7228260011",
+   "verified": false,
+   "kind": "store",
+   "note": null,
+   "region": "triangle"
+  },
+  {
+   "id": "node-14205418047",
+   "name": "El Super #2 Mexican Store",
+   "types": [
+    "latino"
+   ],
+   "county": "Franklin",
+   "city": "Louisburg",
+   "address": "324 South Bickett Boulevard, Louisburg, NC 27549",
+   "phone": null,
+   "url": null,
+   "osm": "https://www.openstreetmap.org/node/14205418047",
+   "verified": false,
+   "kind": "store",
+   "note": null,
+   "region": "triangle"
+  },
+  {
+   "id": "way-1246393930",
+   "name": "Tienda Lloma Bonita Grocers",
+   "types": [
+    "latino"
+   ],
+   "county": "Chatham",
+   "city": "Siler City",
+   "address": "214 Martin Luther King Junior Boulevard, Siler City, NC 27344",
+   "phone": null,
+   "url": null,
+   "osm": "https://www.openstreetmap.org/way/623196965",
+   "verified": false,
+   "kind": "store",
+   "note": null,
+   "region": "triangle"
+  },
+  {
+   "id": "node-13886985511",
+   "name": "Mi Tierra Tienda Latina y Carnicera",
+   "types": [
+    "latino"
+   ],
+   "county": "Mecklenburg",
+   "city": "Charlotte",
+   "address": "1501 West Boulevard, Charlotte, NC 28208",
+   "phone": null,
+   "url": null,
+   "osm": "https://www.openstreetmap.org/node/13886985511",
+   "verified": false,
+   "kind": "store",
+   "note": null,
+   "region": "charlotte"
+  },
+  {
+   "id": "way-1671108476",
+   "name": "Tienda Latina El Rincon",
+   "types": [
+    "latino"
+   ],
+   "county": "Mecklenburg",
+   "city": "Charlotte",
+   "address": "2125 Eastway Drive, Charlotte, NC 28205",
+   "phone": null,
+   "url": null,
+   "osm": "https://www.openstreetmap.org/way/835554238",
+   "verified": false,
+   "kind": "store",
+   "note": null,
+   "region": "charlotte"
+  },
+  {
+   "id": "way-1995456860",
+   "name": "Supermercado Lupitas",
+   "types": [
+    "latino"
+   ],
+   "county": "Cabarrus",
+   "city": "Concord",
+   "address": "26 Pine Street Northwest, Concord, NC 28025",
+   "phone": null,
+   "url": null,
+   "osm": "https://www.openstreetmap.org/way/997728430",
+   "verified": false,
+   "kind": "store",
+   "note": null,
+   "region": "charlotte"
+  },
+  {
+   "id": "node-4059112395",
+   "name": "Tienda La Despensa",
+   "types": [
+    "latino"
+   ],
+   "county": "Iredell",
+   "city": "Harmony",
+   "address": "119 Grose Street, Harmony, NC 28634",
+   "phone": "980-379-0082",
+   "url": null,
+   "osm": "https://www.openstreetmap.org/node/4059112395",
+   "verified": false,
+   "kind": "store",
+   "note": null,
+   "region": "charlotte"
+  },
+  {
+   "id": "node-7431822027",
+   "name": "Supermercado La Lupita",
+   "types": [
+    "latino"
+   ],
+   "county": "Surry",
+   "city": "Dobson",
+   "address": "121 South Crutchfield Street, Dobson, NC 27017",
+   "phone": "336-386-4292",
+   "url": null,
+   "osm": "https://www.openstreetmap.org/node/7431822027",
+   "verified": false,
+   "kind": "store",
+   "note": null,
+   "region": "triad"
+  },
+  {
+   "id": "node-9868196347",
+   "name": "El Mexicano",
+   "types": [
+    "latino"
+   ],
+   "county": "Surry",
+   "city": "Dobson",
+   "address": "7886 NC-268, Dobson, NC 27017",
+   "phone": "336-366-2371",
+   "url": null,
+   "osm": "https://www.openstreetmap.org/node/9868196347",
+   "verified": false,
+   "kind": "store",
+   "note": null,
+   "region": "triad"
+  },
+  {
+   "id": "way-1351403638",
+   "name": "Don Juan Tienda Mexicana",
+   "types": [
+    "latino"
+   ],
+   "county": "Yadkin",
+   "city": "Yadkinville",
+   "address": "136 Beroth Drive, Yadkinville, NC 27055",
+   "phone": "336-677-1120",
+   "url": null,
+   "osm": "https://www.openstreetmap.org/way/675701819",
+   "verified": false,
+   "kind": "store",
+   "note": null,
+   "region": "triad"
+  },
+  {
+   "id": "way-603924062",
+   "name": "Rincon Hispano",
+   "types": [
+    "latino"
+   ],
+   "county": "Burke",
+   "city": "Morganton",
+   "address": "319 South Sterling Street, Morganton, NC 28655",
+   "phone": "828-433-5477",
+   "url": null,
+   "osm": "https://www.openstreetmap.org/way/301962031",
+   "verified": false,
+   "kind": "store",
+   "note": null,
+   "region": "west"
+  },
+  {
+   "id": "node-13525545450",
+   "name": "Tienda Mexicana Rincon Latino/Taqueria Rincon Latino",
+   "types": [
+    "latino"
+   ],
+   "county": "Buncombe",
+   "city": "Asheville",
+   "address": "34 New Leicester Highway, Asheville, NC 28806",
+   "phone": "828-250-9272",
+   "url": null,
+   "osm": "https://www.openstreetmap.org/node/13525545450",
+   "verified": false,
+   "kind": "store",
+   "note": null,
+   "region": "west"
+  },
+  {
+   "id": "node-14264830975",
+   "name": "Nicole's Latin Store and Gifts",
+   "types": [
+    "latino"
+   ],
+   "county": "Watauga",
+   "city": "Boone",
+   "address": "199D Jefferson Road, Boone, NC 28607",
+   "phone": "828-616-9651",
+   "url": null,
+   "osm": "https://www.openstreetmap.org/node/14264830975",
+   "verified": false,
+   "kind": "store",
+   "note": null,
+   "region": "west"
+  },
+  {
+   "id": "way-1384972800",
+   "name": "Los Tres Reyes",
+   "types": [
+    "latino"
+   ],
+   "county": "Watauga",
+   "city": "Boone",
+   "address": "282 NC Highway 105 Extension, Boone, NC 28607",
+   "phone": "828-263-8933",
+   "url": null,
+   "osm": "https://www.openstreetmap.org/way/692486400",
+   "verified": false,
+   "kind": "store",
+   "note": null,
+   "region": "west"
+  },
+  {
+   "id": "node-11117610320",
+   "name": "Tienda Mexicana Mexican Store",
+   "types": [
+    "latino"
+   ],
+   "county": "Watauga",
+   "city": "Boone",
+   "address": "176 Boone Heights Drive, Boone, NC 28607",
+   "phone": null,
+   "url": null,
+   "osm": "https://www.openstreetmap.org/node/11117610320",
+   "verified": false,
+   "kind": "store",
+   "note": null,
+   "region": "west"
+  },
+  {
+   "id": "node-8312907321",
+   "name": "El Expresso Mexicano",
+   "types": [
+    "latino"
+   ],
+   "county": "Ashe",
+   "city": "Jefferson",
+   "address": "545 South Main Street, Jefferson, NC 28640",
+   "phone": "336-846-3266",
+   "url": null,
+   "osm": "https://www.openstreetmap.org/node/8312907321",
+   "verified": false,
+   "kind": "store",
+   "note": null,
+   "region": "west"
+  },
+  {
+   "id": "way-2599746480",
+   "name": "Tienda Carniceria Michoacan",
+   "types": [
+    "latino"
+   ],
+   "county": "McDowell",
+   "city": "Marion",
+   "address": "996 East Court Street, Marion, NC 28752",
+   "phone": null,
+   "url": null,
+   "osm": "https://www.openstreetmap.org/way/1299873240",
+   "verified": false,
+   "kind": "store",
+   "note": null,
+   "region": "west"
+  },
+  {
+   "id": "node-8511984369",
+   "name": "Supermercado El Rancho",
+   "types": [
+    "latino"
+   ],
+   "county": "Pitt",
+   "city": "Greenville",
+   "address": "2500 South Charles Boulevard, Greenville, NC",
+   "phone": null,
+   "url": null,
+   "osm": "https://www.openstreetmap.org/node/8511984369",
+   "verified": false,
+   "kind": "store",
+   "note": null,
+   "region": "east"
+  },
+  {
+   "id": "node-10753680466",
+   "name": "Tienda Michoacan",
+   "types": [
+    "latino"
+   ],
+   "county": "Wayne",
+   "city": "Dudley",
+   "address": "4470 US-117 Alt, Dudley, NC 28333",
+   "phone": "919-429-6046",
+   "url": null,
+   "osm": "https://www.openstreetmap.org/node/10753680466",
+   "verified": false,
+   "kind": "store",
+   "note": null,
+   "region": "east"
+  },
+  {
+   "id": "node-10753680471",
+   "name": "La Palmita Mexican Store",
+   "types": [
+    "latino"
+   ],
+   "county": "Wayne",
+   "city": "Dudley",
+   "address": "4357 US-117 Alt, Dudley, NC 28333",
+   "phone": "919-731-4050",
+   "url": null,
+   "osm": "https://www.openstreetmap.org/node/10753680471",
+   "verified": false,
+   "kind": "store",
+   "note": null,
+   "region": "east"
+  },
+  {
+   "id": "node-11303621829",
+   "name": "Carniceria El Jarocho",
+   "types": [
+    "latino"
+   ],
+   "county": "Sampson",
+   "city": "Newton Grove",
+   "address": "202B Clinton Street, Newton Grove, NC 28366",
+   "phone": "910-236-4066",
+   "url": null,
+   "osm": "https://www.openstreetmap.org/node/11303621829",
+   "verified": false,
+   "kind": "store",
+   "note": null,
+   "region": "east"
+  },
+  {
+   "id": "way-2441305094",
+   "name": "La Mexicana Tienda Hispana",
+   "types": [
+    "latino"
+   ],
+   "county": "Duplin",
+   "city": "Warsaw",
+   "address": "141 West College Street, Warsaw, NC 28398",
+   "phone": null,
+   "url": null,
+   "osm": "https://www.openstreetmap.org/way/1220652547",
+   "verified": false,
+   "kind": "store",
+   "note": null,
+   "region": "east"
+  },
+  {
+   "id": "way-2046222250",
+   "name": "Amy's Tienda Mexicana",
+   "types": [
+    "latino"
+   ],
+   "county": "Beaufort",
+   "city": "Belhaven",
+   "address": "418 Pamlico Street, Belhaven, NC 27810",
+   "phone": null,
+   "url": null,
+   "osm": "https://www.openstreetmap.org/way/1023111125",
+   "verified": false,
+   "kind": "store",
+   "note": null,
+   "region": "east"
+  },
+  {
+   "id": "node-8490367486",
+   "name": "Tienda La Hidalguense",
+   "types": [
+    "latino"
+   ],
+   "county": "New Hanover",
+   "city": "Castle Hayne",
+   "address": "6001 Castle Hayne Road, Castle Hayne, NC 28429",
+   "phone": "910-623-4272",
+   "url": null,
+   "osm": "https://www.openstreetmap.org/node/8490367486",
+   "verified": false,
+   "kind": "store",
+   "note": null,
+   "region": "east"
+  },
+  {
+   "id": "node-9402531929",
+   "name": "Tienda Y Fruteria Hernandez",
+   "types": [
+    "latino"
+   ],
+   "county": "Hoke",
+   "city": "Raeford",
+   "address": "313 Harris Avenue, Raeford, NC 28376",
+   "phone": null,
+   "url": null,
+   "osm": "https://www.openstreetmap.org/node/9402531929",
+   "verified": false,
+   "kind": "store",
+   "note": null,
+   "region": "southeast"
+  },
+  {
+   "id": "way-1542096422",
+   "name": "Tienda Espana La Hacienda",
+   "types": [
+    "latino"
+   ],
+   "county": "Bladen",
+   "city": "Tar Heel",
+   "address": "14511 NC-87, Tar Heel, NC 28392",
+   "phone": "910-862-5579",
+   "url": null,
+   "osm": "https://www.openstreetmap.org/way/771048211",
+   "verified": false,
+   "kind": "store",
+   "note": null,
+   "region": "southeast"
+  },
+  {
+   "id": "node-14155566943",
+   "name": "San Judas Tienda Mexicana",
+   "types": [
+    "latino"
+   ],
+   "county": "Moore",
+   "city": null,
+   "address": "210 West Morganton Road, NC",
+   "phone": null,
+   "url": null,
+   "osm": "https://www.openstreetmap.org/node/14155566943",
+   "verified": false,
+   "kind": "store",
+   "note": null,
+   "region": "southeast"
+  },
+  {
+   "id": "gleibermans",
+   "name": "Gleiberman's Kosher Grocery",
+   "types": [
+    "kosher"
+   ],
+   "county": "Mecklenburg",
+   "city": "Charlotte",
+   "address": "1816-G Galleria Boulevard, Charlotte, NC",
+   "phone": "704-563-8288",
+   "url": "https://gleibermans.com/",
+   "verified": true,
+   "kind": "store",
+   "note": {
+    "en": "Store says it is the only fully kosher grocery store for 200 miles. Address and phone from Chabad of Charlotte's kosher food page.",
+    "es": "La tienda dice ser el único supermercado totalmente kosher en 200 millas. Dirección y teléfono según la página de comida kosher de Chabad of Charlotte."
+   },
+   "source": "https://www.chabadnc.org/templates/articlecco_cdo/aid/5022613/jewish/Kosher-food-in-Charlotte.htm",
+   "region": "charlotte"
+  }
+ ]
+}

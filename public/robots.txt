@@ -1,0 +1,18 @@
+# NC Disaster Recovery Hub (https://disaster-resources.app). Public pages may be crawled.
+# Account, notes, sharing and admin screens live behind sign-in on hash routes (#notes, #admin …)
+# and are never crawlable; the API and Netlify internals are excluded below.
+User-agent: *
+Allow: /
+Disallow: /api/
+Disallow: /.netlify/
+Disallow: /admin
+Disallow: /account
+Disallow: /notes
+Disallow: /settings
+Disallow: /login
+Disallow: /signup
+Disallow: /share
+Disallow: /submit
+Disallow: /claim
+
+Sitemap: https://disaster-resources.app/sitemap.xml

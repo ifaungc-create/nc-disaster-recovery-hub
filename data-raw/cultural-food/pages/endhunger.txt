@@ -1,0 +1,9 @@
+
+Skip to Main Content
+				Food Pantries			
+Use the search box to find pantries by zip code, name of the pantry, day of the week (abbreviation), street name, type of service, and more. For example: Are you looking for pantries open on Wednesday?  Enter “Wed” and the list appears.  Looking for pantries that have a clothes closet?  Enter “Clothes.”
+* – Fresh food means produce or protein that a pantry may have, usually depending on donations. 
+If you know of any updates needed in this listing, please contact us via the 
+contact page
+!
+Error requesting data: cURL error 28: Operation timed out after 5001 milliseconds with 0 bytes received

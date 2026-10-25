@@ -1,0 +1,9 @@
+{
+ "_note": "Follow-ups to research_corrections_2026-10-22.json, same format. Applied by scripts/build_data.py after the research corrections.",
+ "corrections": [
+  {"cid": "L001", "file": "public/data/counties.json", "record": {"name": "Washington"}, "path": "em.url", "field": "url", "old": "https://www.washingtoncountyem.com/", "new": "https://washconc.org/emergency-management/", "sourceUrl": "https://washconc.org/emergency-management/", "method": "Research pass side finding (C063 note): the county's own EM page loads (WebFetch 200 on 2026-10-22) and lists 252-793-4114, matching the app phone.", "confidence": "high", "status": "resolved", "note": "Switch to the county's own EM page."},
+  {"cid": "L002", "file": "public/data/counties.json", "record": {"name": "Washington"}, "path": "em.check", "field": "check", "old": "blocked", "new": "ok", "method": "WebFetch 200 (research pass, 2026-10-22)", "confidence": "high", "status": "resolved", "note": ""},
+  {"cid": "L003", "file": "public/data/counties.json", "record": {"name": "Washington"}, "path": "fireMarshal.check", "field": "check", "old": null, "new": "to-verify", "method": "C063 is medium confidence and partially resolved (needs a phone call to confirm who handles fire reports).", "confidence": "high", "status": "resolved", "note": "Keep the Not verified badge on the Washington fire-report contact."},
+  {"cid": "L004", "file": "public/data/fire-departments.json", "record": {"id": "07816", "st": 1}, "path": "x", "field": "x", "old": null, "new": "Closing in 2026 after a failed state inspection; it keeps responding until Robeson County sets new fire districts. Call 911 for emergencies.", "sourceUrl": "https://www.wmbfnews.com/2026/08/08/robeson-county-fire-department-closes-after-failed-state-inspection/", "method": "C229 (WMBF, Aug 7 2026)", "confidence": "high", "status": "resolved", "note": "Raft Swamp stays Not verified (v=0) until the transition is confirmed."}
+ ]
+}

@@ -1,0 +1,1570 @@
+{
+  "generated": "2026-10-22",
+  "sourcesNote": "Phone numbers come only from each company's own website or an official regulator or government page (NCDOI company phone list, FloodSmart/FEMA, NCJUA/NCIUA). verified:false means the number could not be confirmed on such a page. ncShare2025 is the NCDOI 2025 homeowners multiple-peril group market share (%), which includes renters (HO-4).",
+  "count": 60,
+  "records": [
+    {
+      "name": "State Farm",
+      "ncdoiGroup": "State Farm",
+      "ncShare2025": 15.34,
+      "inExistingAppList": true,
+      "products": [
+        "homeowners",
+        "renters",
+        "condo"
+      ],
+      "claimsPhone": "1-800-732-5246",
+      "claimsPhoneType": "claims",
+      "open247": true,
+      "hours": null,
+      "onlineClaimUrl": "https://www.statefarm.com/claims",
+      "website": "https://www.statefarm.com",
+      "sourceUrl": "https://www.statefarm.com/claims/home-and-property",
+      "checked": "2026-10-22",
+      "confidence": "high",
+      "verified": true,
+      "otherNumbers": [
+        {
+          "label": "800-SF-CLAIM (vanity)",
+          "number": "1-800-SF-CLAIM",
+          "verified": true
+        },
+        {
+          "label": "General customer service (24/7)",
+          "number": "1-800-440-0998",
+          "verified": true
+        }
+      ],
+      "notes": "Listed as 800-SF-CLAIM for auto/home/property claims on statefarm.com/contact-us."
+    },
+    {
+      "name": "North Carolina Farm Bureau Insurance",
+      "ncdoiGroup": "NC Farm Bureau",
+      "ncShare2025": 13.56,
+      "inExistingAppList": true,
+      "products": [
+        "homeowners",
+        "renters",
+        "condo"
+      ],
+      "claimsPhone": "919-782-1705",
+      "claimsPhoneType": "general",
+      "open247": null,
+      "hours": "M–F 8:15 a.m.–5 p.m. ET",
+      "onlineClaimUrl": "https://www.ncfbins.com/claims",
+      "website": "https://www.ncfbins.com",
+      "sourceUrl": "https://www.ncfbins.com/claims",
+      "checked": "2026-10-22",
+      "confidence": "medium",
+      "verified": true,
+      "otherNumbers": [
+        {
+          "label": "Glass-only claims (24/7)",
+          "number": "1-800-555-3276",
+          "verified": true
+        },
+        {
+          "label": "NCDOI-listed company number",
+          "number": "1-888-303-2249",
+          "verified": true
+        }
+      ],
+      "notes": "No dedicated property claims phone published; report online or through your local NCFB agent."
+    },
+    {
+      "name": "USAA",
+      "ncdoiGroup": "USAA",
+      "ncShare2025": 10.85,
+      "inExistingAppList": true,
+      "products": [
+        "homeowners",
+        "renters",
+        "condo"
+      ],
+      "claimsPhone": "1-800-531-8722",
+      "claimsPhoneType": "general",
+      "open247": false,
+      "hours": "Phone: M–F 6 a.m.–10 p.m. CT, Sat 8 a.m.–8 p.m. CT; online/app 24/7",
+      "onlineClaimUrl": "https://www.usaa.com/support/insurance/claims/",
+      "website": "https://www.usaa.com",
+      "sourceUrl": "https://www.usaa.com/support/insurance/claims/",
+      "checked": "2026-10-22",
+      "confidence": "medium",
+      "verified": true,
+      "otherNumbers": [
+        {
+          "label": "Alternate / international",
+          "number": "210-531-8722",
+          "verified": true
+        }
+      ],
+      "notes": "Main member line (800-531-USAA) is the published call path for claims; no separate property claims number."
+    },
+    {
+      "name": "Allstate",
+      "ncdoiGroup": "Allstate",
+      "ncShare2025": 7.12,
+      "inExistingAppList": true,
+      "products": [
+        "homeowners",
+        "renters",
+        "condo"
+      ],
+      "claimsPhone": "1-800-255-7828",
+      "claimsPhoneType": "claims",
+      "open247": null,
+      "hours": null,
+      "onlineClaimUrl": "https://www.allstate.com/claims",
+      "website": "https://www.allstate.com",
+      "sourceUrl": "https://www.allstate.com/help-support/claims",
+      "checked": "2026-10-22",
+      "confidence": "high",
+      "verified": true,
+      "otherNumbers": [
+        {
+          "label": "Catastrophe/storm claims (1-800-54-STORM)",
+          "number": "1-800-547-8676",
+          "verified": true
+        }
+      ],
+      "notes": "1-800-ALLSTATE for auto and property claims. 1-800-54-STORM seen in an Allstate document on allstate.com."
+    },
+    {
+      "name": "Erie Insurance",
+      "ncdoiGroup": "Erie",
+      "ncShare2025": 7.0,
+      "inExistingAppList": true,
+      "products": [
+        "homeowners",
+        "renters",
+        "condo"
+      ],
+      "claimsPhone": "1-800-367-3743",
+      "claimsPhoneType": "claims",
+      "open247": true,
+      "hours": null,
+      "onlineClaimUrl": "https://www.erieinsurance.com/claims",
+      "website": "https://www.erieinsurance.com",
+      "sourceUrl": "https://www.erieinsurance.com/claims",
+      "checked": "2026-10-22",
+      "confidence": "high",
+      "verified": true,
+      "otherNumbers": [],
+      "notes": "Choose option 4 to report a new claim."
+    },
+    {
+      "name": "Auto-Owners Insurance",
+      "ncdoiGroup": "Auto-Owners",
+      "ncShare2025": 5.05,
+      "inExistingAppList": true,
+      "products": [
+        "homeowners",
+        "renters",
+        "condo"
+      ],
+      "claimsPhone": "1-888-252-4626",
+      "claimsPhoneType": "claims",
+      "open247": null,
+      "hours": "Use after hours or when your agent is unavailable",
+      "onlineClaimUrl": null,
+      "website": "https://www.auto-owners.com",
+      "sourceUrl": "https://www.auto-owners.com/claims/report-a-claim",
+      "checked": "2026-10-22",
+      "confidence": "high",
+      "verified": true,
+      "otherNumbers": [
+        {
+          "label": "Flood claims (if agent unavailable)",
+          "number": "1-800-233-1131",
+          "verified": true
+        }
+      ],
+      "notes": "Auto-Owners asks you to report claims to your independent agent first."
+    },
+    {
+      "name": "Nationwide (incl. Allied / AMCO)",
+      "ncdoiGroup": "Nationwide",
+      "ncShare2025": 4.71,
+      "inExistingAppList": true,
+      "products": [
+        "homeowners",
+        "renters",
+        "condo",
+        "flood"
+      ],
+      "claimsPhone": "1-800-421-3535",
+      "claimsPhoneType": "claims",
+      "open247": true,
+      "hours": null,
+      "onlineClaimUrl": "https://www.nationwide.com/personal/insurance/claims/property-claims/",
+      "website": "https://www.nationwide.com",
+      "sourceUrl": "https://www.nationwide.com/personal/contact/call-us/",
+      "checked": "2026-10-22",
+      "confidence": "high",
+      "verified": true,
+      "otherNumbers": [],
+      "notes": "Also the claims line for Allied/AMCO personal lines."
+    },
+    {
+      "name": "Travelers",
+      "ncdoiGroup": "Travelers",
+      "ncShare2025": 4.52,
+      "inExistingAppList": true,
+      "products": [
+        "homeowners",
+        "renters",
+        "condo"
+      ],
+      "claimsPhone": "1-800-252-4633",
+      "claimsPhoneType": "claims",
+      "open247": true,
+      "hours": "24 hours a day, 365 days a year (claim status M–F 8–5 local)",
+      "onlineClaimUrl": "https://www.travelers.com/claims",
+      "website": "https://www.travelers.com",
+      "sourceUrl": "https://www.travelers.com/contact-us",
+      "checked": "2026-10-22",
+      "confidence": "high",
+      "verified": true,
+      "otherNumbers": [],
+      "notes": null
+    },
+    {
+      "name": "American Family",
+      "ncdoiGroup": "American Family",
+      "ncShare2025": 3.34,
+      "inExistingAppList": true,
+      "products": [
+        "homeowners",
+        "renters",
+        "condo"
+      ],
+      "claimsPhone": "1-800-692-6326",
+      "claimsPhoneType": "claims",
+      "open247": true,
+      "hours": null,
+      "onlineClaimUrl": "https://www.amfam.com/claims",
+      "website": "https://www.amfam.com",
+      "sourceUrl": "https://www.amfam.com/claims",
+      "checked": "2026-10-22",
+      "confidence": "high",
+      "verified": true,
+      "otherNumbers": [],
+      "notes": "1-800-MYAMFAM, a 24-hour claims line."
+    },
+    {
+      "name": "Homesite (American Family)",
+      "ncdoiGroup": "American Family",
+      "ncShare2025": null,
+      "inExistingAppList": false,
+      "products": [
+        "homeowners",
+        "renters",
+        "condo"
+      ],
+      "claimsPhone": "1-866-621-4823",
+      "claimsPhoneType": "claims",
+      "open247": null,
+      "hours": null,
+      "onlineClaimUrl": null,
+      "website": "https://go.homesite.com",
+      "sourceUrl": "https://go.homesite.com/contact-us",
+      "checked": "2026-10-22",
+      "confidence": "high",
+      "verified": true,
+      "otherNumbers": [
+        {
+          "label": "Customer service",
+          "number": "1-800-466-3748",
+          "verified": true
+        }
+      ],
+      "notes": null
+    },
+    {
+      "name": "Liberty Mutual",
+      "ncdoiGroup": "Liberty Mutual",
+      "ncShare2025": 3.31,
+      "inExistingAppList": true,
+      "products": [
+        "homeowners",
+        "renters",
+        "condo"
+      ],
+      "claimsPhone": "1-800-225-2467",
+      "claimsPhoneType": "claims",
+      "open247": null,
+      "hours": null,
+      "onlineClaimUrl": "https://www.libertymutual.com/claims-center",
+      "website": "https://www.libertymutual.com",
+      "sourceUrl": "https://www.libertymutual.com/claims-center",
+      "checked": "2026-10-22",
+      "confidence": "high",
+      "verified": true,
+      "otherNumbers": [],
+      "notes": "800-2CLAIMS for personal insurance claims."
+    },
+    {
+      "name": "Safeco (Liberty Mutual)",
+      "ncdoiGroup": "Liberty Mutual",
+      "ncShare2025": null,
+      "inExistingAppList": false,
+      "products": [
+        "homeowners",
+        "renters",
+        "condo"
+      ],
+      "claimsPhone": "1-800-225-2467",
+      "claimsPhoneType": "claims",
+      "open247": null,
+      "hours": null,
+      "onlineClaimUrl": "https://www.libertymutual.com/claims-center",
+      "website": "https://www.safeco.com",
+      "sourceUrl": "https://www.safeco.com/claims",
+      "checked": "2026-10-22",
+      "confidence": "medium",
+      "verified": true,
+      "otherNumbers": [],
+      "notes": "safeco.com/claims now redirects to the Liberty Mutual claims center (800-2CLAIMS). An older Safeco line, 800-332-3226, appears only on a Nevada DOI list and is not used here."
+    },
+    {
+      "name": "Farmers Insurance",
+      "ncdoiGroup": "Farmers",
+      "ncShare2025": 2.33,
+      "inExistingAppList": true,
+      "products": [
+        "homeowners",
+        "renters",
+        "condo"
+      ],
+      "claimsPhone": "1-800-435-7764",
+      "claimsPhoneType": "claims",
+      "open247": null,
+      "hours": null,
+      "onlineClaimUrl": "https://www.farmers.com/claims/",
+      "website": "https://www.farmers.com",
+      "sourceUrl": "https://www.farmers.com/claims/",
+      "checked": "2026-10-22",
+      "confidence": "high",
+      "verified": true,
+      "otherNumbers": [],
+      "notes": null
+    },
+    {
+      "name": "Foremost Insurance",
+      "ncdoiGroup": "Farmers",
+      "ncShare2025": null,
+      "inExistingAppList": false,
+      "products": [
+        "homeowners",
+        "mobile home",
+        "renters"
+      ],
+      "claimsPhone": "1-800-527-3907",
+      "claimsPhoneType": "claims",
+      "open247": true,
+      "hours": null,
+      "onlineClaimUrl": "https://www.foremost.com/claims/",
+      "website": "https://www.foremost.com",
+      "sourceUrl": "https://www.foremost.com/claims/",
+      "checked": "2026-10-22",
+      "confidence": "high",
+      "verified": true,
+      "otherNumbers": [],
+      "notes": null
+    },
+    {
+      "name": "Universal Property & Casualty",
+      "ncdoiGroup": "Universal Insurance Holdings",
+      "ncShare2025": 1.84,
+      "inExistingAppList": true,
+      "products": [
+        "homeowners",
+        "condo"
+      ],
+      "claimsPhone": "1-800-470-0599",
+      "claimsPhoneType": "claims",
+      "open247": null,
+      "hours": null,
+      "onlineClaimUrl": null,
+      "website": "https://universalproperty.com",
+      "sourceUrl": "https://universalproperty.com/contact/",
+      "checked": "2026-10-22",
+      "confidence": "high",
+      "verified": true,
+      "otherNumbers": [
+        {
+          "label": "Customer service (M–F 8:30–6 ET)",
+          "number": "1-800-425-9113",
+          "verified": true
+        }
+      ],
+      "notes": null
+    },
+    {
+      "name": "Frontline Insurance (First Protective)",
+      "ncdoiGroup": "Frontline",
+      "ncShare2025": 1.82,
+      "inExistingAppList": true,
+      "products": [
+        "homeowners"
+      ],
+      "claimsPhone": "1-877-744-5224",
+      "claimsPhoneType": "general",
+      "open247": null,
+      "hours": null,
+      "onlineClaimUrl": "https://claims.frontlineinsurance.com/",
+      "website": "https://www.frontlineinsurance.com",
+      "sourceUrl": "https://www.frontlineinsurance.com/contact-us/",
+      "checked": "2026-10-22",
+      "confidence": "medium",
+      "verified": true,
+      "otherNumbers": [
+        {
+          "label": "Claims, non-hurricane (UNVERIFIED: search only)",
+          "number": "1-800-675-0145",
+          "verified": false
+        },
+        {
+          "label": "Hurricane claims (UNVERIFIED: search only)",
+          "number": "1-866-673-0623",
+          "verified": false
+        }
+      ],
+      "notes": "877-744-5224 is the 'Call Frontline' number in the site header and the NCDOI listing for First Protective. The claims page blocks automated fetches, so the dedicated claims lines could not be confirmed."
+    },
+    {
+      "name": "Cincinnati Insurance",
+      "ncdoiGroup": "Cincinnati",
+      "ncShare2025": 1.38,
+      "inExistingAppList": true,
+      "products": [
+        "homeowners",
+        "renters",
+        "condo"
+      ],
+      "claimsPhone": "1-877-242-2544",
+      "claimsPhoneType": "claims",
+      "open247": true,
+      "hours": null,
+      "onlineClaimUrl": null,
+      "website": "https://www.cinfin.com",
+      "sourceUrl": "https://www.cinfin.com/cincinnati-insurance-claims",
+      "checked": "2026-10-22",
+      "confidence": "high",
+      "verified": true,
+      "otherNumbers": [
+        {
+          "label": "General",
+          "number": "1-888-242-8811",
+          "verified": true
+        }
+      ],
+      "notes": null
+    },
+    {
+      "name": "Amica",
+      "ncdoiGroup": "Amica",
+      "ncShare2025": 1.31,
+      "inExistingAppList": true,
+      "products": [
+        "homeowners",
+        "renters",
+        "condo"
+      ],
+      "claimsPhone": "1-800-242-6422",
+      "claimsPhoneType": "claims",
+      "open247": null,
+      "hours": null,
+      "onlineClaimUrl": "https://www.amica.com/claim-center/report-a-claim",
+      "website": "https://www.amica.com",
+      "sourceUrl": "https://www.amica.com/claim-center/report-a-claim",
+      "checked": "2026-10-22",
+      "confidence": "high",
+      "verified": true,
+      "otherNumbers": [],
+      "notes": "Auto, home, umbrella, and boat claims."
+    },
+    {
+      "name": "Chubb",
+      "ncdoiGroup": "Chubb",
+      "ncShare2025": 1.14,
+      "inExistingAppList": true,
+      "products": [
+        "homeowners",
+        "renters",
+        "condo"
+      ],
+      "claimsPhone": "1-800-252-4670",
+      "claimsPhoneType": "claims",
+      "open247": null,
+      "hours": null,
+      "onlineClaimUrl": "https://www.chubb.com/us-en/claims.html",
+      "website": "https://www.chubb.com/us-en/",
+      "sourceUrl": "https://www.chubb.com/us-en/claims.html",
+      "checked": "2026-10-22",
+      "confidence": "high",
+      "verified": true,
+      "otherNumbers": [],
+      "notes": "1-800-CLAIMS-0."
+    },
+    {
+      "name": "Assurant (renters & homeowners)",
+      "ncdoiGroup": "Assurant",
+      "ncShare2025": 1.05,
+      "inExistingAppList": true,
+      "products": [
+        "renters",
+        "homeowners",
+        "condo",
+        "mobile home",
+        "flood"
+      ],
+      "claimsPhone": "1-800-358-0600",
+      "claimsPhoneType": "claims",
+      "open247": null,
+      "hours": null,
+      "onlineClaimUrl": "https://www.assurant.com/claims-and-support/renters-insurance",
+      "website": "https://www.assurant.com",
+      "sourceUrl": "https://www.assurant.com/disaster-claims-support",
+      "checked": "2026-10-22",
+      "confidence": "high",
+      "verified": true,
+      "otherNumbers": [
+        {
+          "label": "NFIP/private flood claims (opt. 3 claims, opt. 2 new claim)",
+          "number": "1-800-423-4403",
+          "verified": true
+        },
+        {
+          "label": "Renters customer support (M–F 8–8 ET)",
+          "number": "1-888-260-7736",
+          "verified": true
+        }
+      ],
+      "notes": null
+    },
+    {
+      "name": "American Modern (Munich Re)",
+      "ncdoiGroup": "Munich Re",
+      "ncShare2025": 1.02,
+      "inExistingAppList": true,
+      "products": [
+        "homeowners",
+        "mobile home",
+        "dwelling"
+      ],
+      "claimsPhone": "1-800-543-2644",
+      "claimsPhoneType": "general",
+      "open247": null,
+      "hours": null,
+      "onlineClaimUrl": null,
+      "website": "https://www.amig.com",
+      "sourceUrl": "https://www.ncdoi.gov/insurance-company-phone-numbers/open",
+      "checked": "2026-10-22",
+      "confidence": "medium",
+      "verified": true,
+      "otherNumbers": [
+        {
+          "label": "Claims line listed by AAA (partner page; not confirmed on amig.com)",
+          "number": "1-800-375-2075",
+          "verified": false
+        },
+        {
+          "label": "Policyholder customer service (amig.com, M–F 8–8 ET)",
+          "number": "1-855-469-2644",
+          "verified": true
+        }
+      ],
+      "notes": "NCDOI lists 800-543-2644, and progressive.com gives it as 'option 1' for American Modern claims. amig.com's claims page could not be fetched."
+    },
+    {
+      "name": "Penn National Insurance",
+      "ncdoiGroup": "Penn National",
+      "ncShare2025": 0.93,
+      "inExistingAppList": false,
+      "products": [
+        "homeowners",
+        "renters",
+        "condo"
+      ],
+      "claimsPhone": "1-800-766-2245",
+      "claimsPhoneType": "claims",
+      "open247": null,
+      "hours": null,
+      "onlineClaimUrl": "https://www.pennnationalinsurance.com/claims/report-a-claim/",
+      "website": "https://www.pennnationalinsurance.com",
+      "sourceUrl": "https://www.pennnationalinsurance.com/claims/report-a-claim/",
+      "checked": "2026-10-22",
+      "confidence": "high",
+      "verified": true,
+      "otherNumbers": [],
+      "notes": "Call, rather than report online, for urgent losses or displacement from your home."
+    },
+    {
+      "name": "PURE Insurance",
+      "ncdoiGroup": "Tokio Marine",
+      "ncShare2025": 0.92,
+      "inExistingAppList": false,
+      "products": [
+        "homeowners",
+        "high-value home"
+      ],
+      "claimsPhone": "1-888-813-7873",
+      "claimsPhoneType": "claims",
+      "open247": true,
+      "hours": null,
+      "onlineClaimUrl": null,
+      "website": "https://www.pureinsurance.com",
+      "sourceUrl": "https://www.pureinsurance.com/service/claims",
+      "checked": "2026-10-22",
+      "confidence": "high",
+      "verified": true,
+      "otherNumbers": [],
+      "notes": null
+    },
+    {
+      "name": "NC Grange Mutual",
+      "ncdoiGroup": "NC Grange Mutual",
+      "ncShare2025": 0.87,
+      "inExistingAppList": false,
+      "products": [
+        "homeowners",
+        "dwelling"
+      ],
+      "claimsPhone": "1-800-394-1236",
+      "claimsPhoneType": "general",
+      "open247": null,
+      "hours": null,
+      "onlineClaimUrl": null,
+      "website": "https://ncgm.com",
+      "sourceUrl": "https://ncgm.com/claims/",
+      "checked": "2026-10-22",
+      "confidence": "medium",
+      "verified": true,
+      "otherNumbers": [],
+      "notes": "NC domestic carrier. Report claims through your agent; the company's main number is shown."
+    },
+    {
+      "name": "Progressive Home / ASI",
+      "ncdoiGroup": "Progressive",
+      "ncShare2025": 0.86,
+      "inExistingAppList": false,
+      "products": [
+        "homeowners",
+        "renters",
+        "condo",
+        "flood"
+      ],
+      "claimsPhone": "1-866-274-5677",
+      "claimsPhoneType": "claims",
+      "open247": null,
+      "hours": null,
+      "onlineClaimUrl": "https://www.americanstrategic.com/claims-center/report-a-claim",
+      "website": "https://www.progressive.com/homeowners/",
+      "sourceUrl": "https://www.progressive.com/claims/property-process/",
+      "checked": "2026-10-22",
+      "confidence": "high",
+      "verified": true,
+      "otherNumbers": [
+        {
+          "label": "Progressive (connects you to your home insurer)",
+          "number": "1-800-776-4737",
+          "verified": true
+        }
+      ],
+      "notes": "Progressive's property-claims page lists ASI/Progressive at 1-866-274-5677. Progressive also places home policies with other carriers, so check the company named on your declarations page."
+    },
+    {
+      "name": "Orion180",
+      "ncdoiGroup": "Orion180",
+      "ncShare2025": 0.83,
+      "inExistingAppList": false,
+      "products": [
+        "homeowners",
+        "flood"
+      ],
+      "claimsPhone": "1-866-590-3550",
+      "claimsPhoneType": "claims",
+      "open247": null,
+      "hours": "8 a.m.–8 p.m. ET",
+      "onlineClaimUrl": "https://orion180.com/claims",
+      "website": "https://orion180.com",
+      "sourceUrl": "https://orion180.com/claims",
+      "checked": "2026-10-22",
+      "confidence": "high",
+      "verified": true,
+      "otherNumbers": [
+        {
+          "label": "After-hours / emergency claims",
+          "number": "1-833-550-1914",
+          "verified": true
+        }
+      ],
+      "notes": null
+    },
+    {
+      "name": "One Alliance North America (formerly Universal North America)",
+      "ncdoiGroup": "5b Alliance",
+      "ncShare2025": 0.72,
+      "inExistingAppList": false,
+      "products": [
+        "homeowners"
+      ],
+      "claimsPhone": "1-866-999-0898",
+      "claimsPhoneType": "claims",
+      "open247": null,
+      "hours": null,
+      "onlineClaimUrl": null,
+      "website": "https://www.onealliancena.com",
+      "sourceUrl": "https://www.onealliancena.com/Claims",
+      "checked": "2026-10-22",
+      "confidence": "high",
+      "verified": true,
+      "otherNumbers": [
+        {
+          "label": "Existing claims",
+          "number": "1-888-877-0770",
+          "verified": true
+        }
+      ],
+      "notes": null
+    },
+    {
+      "name": "AAA Insurance – The Members Insurance Company",
+      "ncdoiGroup": "Auto Club Group (MI)",
+      "ncShare2025": 0.71,
+      "inExistingAppList": false,
+      "products": [
+        "homeowners",
+        "renters",
+        "condo"
+      ],
+      "claimsPhone": "1-800-228-9224",
+      "claimsPhoneType": "claims",
+      "open247": false,
+      "hours": "8 a.m.–8 p.m. ET, 7 days",
+      "onlineClaimUrl": null,
+      "website": "https://www.acg.aaa.com/insurance",
+      "sourceUrl": "https://www.acg.aaa.com/insurance/claims-and-payments.html",
+      "checked": "2026-10-22",
+      "confidence": "high",
+      "verified": true,
+      "otherNumbers": [
+        {
+          "label": "NCDOI-listed company number",
+          "number": "1-800-974-1222",
+          "verified": true
+        }
+      ],
+      "notes": null
+    },
+    {
+      "name": "Lititz Mutual",
+      "ncdoiGroup": "Lititz Mutual",
+      "ncShare2025": 0.61,
+      "inExistingAppList": false,
+      "products": [
+        "homeowners"
+      ],
+      "claimsPhone": "1-855-725-5642",
+      "claimsPhoneType": "claims",
+      "open247": true,
+      "hours": null,
+      "onlineClaimUrl": null,
+      "website": "https://www.lititzmutual.com",
+      "sourceUrl": "https://www.lititzmutual.com/report-a-claim/",
+      "checked": "2026-10-22",
+      "confidence": "high",
+      "verified": true,
+      "otherNumbers": [
+        {
+          "label": "Claim status / general",
+          "number": "1-800-626-4751",
+          "verified": true
+        }
+      ],
+      "notes": null
+    },
+    {
+      "name": "Markel",
+      "ncdoiGroup": "Markel",
+      "ncShare2025": 0.59,
+      "inExistingAppList": false,
+      "products": [
+        "homeowners",
+        "dwelling"
+      ],
+      "claimsPhone": "1-800-362-7535",
+      "claimsPhoneType": "claims",
+      "open247": null,
+      "hours": null,
+      "onlineClaimUrl": "https://www.markel.com/claims/report-a-claim",
+      "website": "https://www.markel.com",
+      "sourceUrl": "https://www.markel.com/claims/report-a-claim",
+      "checked": "2026-10-22",
+      "confidence": "medium",
+      "verified": true,
+      "otherNumbers": [],
+      "notes": "Markel's general (US) claims reporting line; it is not specific to homeowners."
+    },
+    {
+      "name": "SURE (SureChoice Underwriters Reciprocal Exchange, via SageSure)",
+      "ncdoiGroup": "SureChoice",
+      "ncShare2025": 0.5,
+      "inExistingAppList": false,
+      "products": [
+        "homeowners"
+      ],
+      "claimsPhone": "1-866-751-2036",
+      "claimsPhoneType": "claims",
+      "open247": null,
+      "hours": null,
+      "onlineClaimUrl": "https://www.mysagesure.com",
+      "website": "https://www.sureins.com",
+      "sourceUrl": "https://www.sureins.com/contact/",
+      "checked": "2026-10-22",
+      "confidence": "high",
+      "verified": true,
+      "otherNumbers": [
+        {
+          "label": "SageSure claims (general)",
+          "number": "1-866-311-7243",
+          "verified": true
+        }
+      ],
+      "notes": "Online claim reporting is available 24/7 at MySageSure.com."
+    },
+    {
+      "name": "Central Insurance (Central Mutual)",
+      "ncdoiGroup": "Central",
+      "ncShare2025": 0.44,
+      "inExistingAppList": false,
+      "products": [
+        "homeowners",
+        "renters",
+        "condo"
+      ],
+      "claimsPhone": "1-888-263-2924",
+      "claimsPhoneType": "claims",
+      "open247": null,
+      "hours": null,
+      "onlineClaimUrl": "https://www.central-insurance.com/docs/claim.htm",
+      "website": "https://www.central-insurance.com",
+      "sourceUrl": "https://www.central-insurance.com/docs/claim.htm",
+      "checked": "2026-10-22",
+      "confidence": "high",
+      "verified": true,
+      "otherNumbers": [],
+      "notes": null
+    },
+    {
+      "name": "Homeowners of America (Porch)",
+      "ncdoiGroup": "Porch",
+      "ncShare2025": 0.43,
+      "inExistingAppList": false,
+      "products": [
+        "homeowners"
+      ],
+      "claimsPhone": "1-866-407-9896",
+      "claimsPhoneType": "claims",
+      "open247": true,
+      "hours": null,
+      "onlineClaimUrl": null,
+      "website": "https://www.hoaic.com",
+      "sourceUrl": "https://www.hoaic.com/claims-commitment/",
+      "checked": "2026-10-22",
+      "confidence": "high",
+      "verified": true,
+      "otherNumbers": [],
+      "notes": "The page says claims can be reported anytime."
+    },
+    {
+      "name": "QBE",
+      "ncdoiGroup": "QBE",
+      "ncShare2025": 0.41,
+      "inExistingAppList": false,
+      "products": [
+        "homeowners",
+        "renters",
+        "condo"
+      ],
+      "claimsPhone": "1-844-723-2524",
+      "claimsPhoneType": "claims",
+      "open247": true,
+      "hours": null,
+      "onlineClaimUrl": "https://www.qbe.com/us/policyholders/claims/individuals-families-report-a-new-claim",
+      "website": "https://www.qbe.com/us",
+      "sourceUrl": "https://www.qbe.com/us/policyholders/claims/individuals-families-report-a-new-claim",
+      "checked": "2026-10-22",
+      "confidence": "high",
+      "verified": true,
+      "otherNumbers": [],
+      "notes": "844-QBE-CLAIMS."
+    },
+    {
+      "name": "Horace Mann",
+      "ncdoiGroup": "Horace Mann",
+      "ncShare2025": 0.41,
+      "inExistingAppList": false,
+      "products": [
+        "homeowners",
+        "renters",
+        "condo"
+      ],
+      "claimsPhone": "1-800-999-1030",
+      "claimsPhoneType": "general",
+      "open247": null,
+      "hours": null,
+      "onlineClaimUrl": "https://www.horacemann.com/claims",
+      "website": "https://www.horacemann.com",
+      "sourceUrl": "https://www.horacemann.com/claims",
+      "checked": "2026-10-22",
+      "confidence": "medium",
+      "verified": true,
+      "otherNumbers": [],
+      "notes": "Contact center number. No separate property claims line is published."
+    },
+    {
+      "name": "Utica National",
+      "ncdoiGroup": "Utica",
+      "ncShare2025": 0.37,
+      "inExistingAppList": false,
+      "products": [
+        "homeowners",
+        "renters",
+        "condo"
+      ],
+      "claimsPhone": "1-800-216-1420",
+      "claimsPhoneType": "claims",
+      "open247": null,
+      "hours": null,
+      "onlineClaimUrl": null,
+      "website": "https://www.uticanational.com",
+      "sourceUrl": "https://www.uticanational.com/claims/contact-us",
+      "checked": "2026-10-22",
+      "confidence": "high",
+      "verified": true,
+      "otherNumbers": [],
+      "notes": null
+    },
+    {
+      "name": "Occidental Fire & Casualty (IAT, via SageSure)",
+      "ncdoiGroup": "IAT",
+      "ncShare2025": 0.36,
+      "inExistingAppList": false,
+      "products": [
+        "homeowners"
+      ],
+      "claimsPhone": "1-866-311-7243",
+      "claimsPhoneType": "claims",
+      "open247": null,
+      "hours": null,
+      "onlineClaimUrl": "https://sagesure.com/claims",
+      "website": "https://sagesure.com",
+      "sourceUrl": "https://sagesure.com/faq/",
+      "checked": "2026-10-22",
+      "confidence": "medium",
+      "verified": true,
+      "otherNumbers": [],
+      "notes": "SageSure handles claims for Occidental/IAT home policies sold through it. If your policy was not issued through SageSure, check the number on your policy."
+    },
+    {
+      "name": "The Hartford (AARP Program)",
+      "ncdoiGroup": "Hartford",
+      "ncShare2025": 0.34,
+      "inExistingAppList": false,
+      "products": [
+        "homeowners",
+        "renters",
+        "condo"
+      ],
+      "claimsPhone": "1-877-805-9918",
+      "claimsPhoneType": "claims",
+      "open247": true,
+      "hours": null,
+      "onlineClaimUrl": "https://www.thehartford.com/homeowners-insurance/claims",
+      "website": "https://www.thehartford.com",
+      "sourceUrl": "https://www.thehartford.com/homeowners-insurance/claims",
+      "checked": "2026-10-22",
+      "confidence": "high",
+      "verified": true,
+      "otherNumbers": [
+        {
+          "label": "Non-AARP customers",
+          "number": "1-800-243-5860",
+          "verified": true
+        },
+        {
+          "label": "Flood damage",
+          "number": "1-800-787-5677",
+          "verified": true
+        }
+      ],
+      "notes": null
+    },
+    {
+      "name": "SafePort Insurance (via SageSure)",
+      "ncdoiGroup": "GeoVera/Safeport",
+      "ncShare2025": 0.26,
+      "inExistingAppList": false,
+      "products": [
+        "homeowners"
+      ],
+      "claimsPhone": "1-866-311-7243",
+      "claimsPhoneType": "claims",
+      "open247": null,
+      "hours": null,
+      "onlineClaimUrl": "https://sagesure.com/claims",
+      "website": "https://sagesure.com",
+      "sourceUrl": "https://sagesure.com/faq/",
+      "checked": "2026-10-22",
+      "confidence": "medium",
+      "verified": true,
+      "otherNumbers": [],
+      "notes": null
+    },
+    {
+      "name": "GeoVera",
+      "ncdoiGroup": "GeoVera/Safeport",
+      "ncShare2025": null,
+      "inExistingAppList": false,
+      "products": [
+        "homeowners",
+        "wind-only"
+      ],
+      "claimsPhone": "1-800-735-8086",
+      "claimsPhoneType": "claims",
+      "open247": null,
+      "hours": null,
+      "onlineClaimUrl": "https://www.geovera.com/claims/",
+      "website": "https://www.geovera.com",
+      "sourceUrl": "https://www.geovera.com/contact-claims/",
+      "checked": "2026-10-22",
+      "confidence": "medium",
+      "verified": true,
+      "otherNumbers": [],
+      "notes": "GeoVera asks for new claims online (24/7, myGeoSource). 800-735-8086 is its claims team line."
+    },
+    {
+      "name": "Halifax Mutual",
+      "ncdoiGroup": "Halifax Mutual",
+      "ncShare2025": 0.24,
+      "inExistingAppList": false,
+      "products": [
+        "homeowners",
+        "dwelling"
+      ],
+      "claimsPhone": "1-800-682-9696",
+      "claimsPhoneType": "general",
+      "open247": null,
+      "hours": null,
+      "onlineClaimUrl": "https://halifaxmutualins.com/",
+      "website": "https://halifaxmutualins.com",
+      "sourceUrl": "https://www.ncdoi.gov/insurance-company-phone-numbers/open",
+      "checked": "2026-10-22",
+      "confidence": "medium",
+      "verified": true,
+      "otherNumbers": [],
+      "notes": "NC domestic carrier. The website lists no phone number but has 24/7 online claim reporting; the number comes from the NCDOI company phone list."
+    },
+    {
+      "name": "Stillwater Insurance",
+      "ncdoiGroup": "Stillwater",
+      "ncShare2025": 0.24,
+      "inExistingAppList": false,
+      "products": [
+        "homeowners",
+        "renters",
+        "condo"
+      ],
+      "claimsPhone": "1-800-220-1351",
+      "claimsPhoneType": "claims",
+      "open247": null,
+      "hours": null,
+      "onlineClaimUrl": "https://stillwaterinsurance.com/claims",
+      "website": "https://stillwaterinsurance.com",
+      "sourceUrl": "https://stillwaterinsurance.com/claims",
+      "checked": "2026-10-22",
+      "confidence": "high",
+      "verified": true,
+      "otherNumbers": [],
+      "notes": "Follow the voice prompts. After-hours reports go to an answering service."
+    },
+    {
+      "name": "Heritage Property & Casualty",
+      "ncdoiGroup": "Heritage",
+      "ncShare2025": 0.22,
+      "inExistingAppList": false,
+      "products": [
+        "homeowners"
+      ],
+      "claimsPhone": "1-855-415-7120",
+      "claimsPhoneType": "claims",
+      "open247": null,
+      "hours": null,
+      "onlineClaimUrl": "https://www.heritagepci.com/claims-center/",
+      "website": "https://www.heritagepci.com",
+      "sourceUrl": "https://www.heritagepci.com/claims-center/",
+      "checked": "2026-10-22",
+      "confidence": "high",
+      "verified": true,
+      "otherNumbers": [
+        {
+          "label": "Claims representatives (existing claims)",
+          "number": "1-855-536-2744",
+          "verified": true
+        }
+      ],
+      "notes": null
+    },
+    {
+      "name": "Hippo (Spinnaker Insurance)",
+      "ncdoiGroup": "Spinnaker",
+      "ncShare2025": 0.17,
+      "inExistingAppList": false,
+      "products": [
+        "homeowners",
+        "renters",
+        "condo"
+      ],
+      "claimsPhone": "1-855-999-9746",
+      "claimsPhoneType": "claims",
+      "open247": true,
+      "hours": null,
+      "onlineClaimUrl": "https://www.hippo.com/claim",
+      "website": "https://www.hippo.com",
+      "sourceUrl": "https://www.hippo.com/contact-us",
+      "checked": "2026-10-22",
+      "confidence": "high",
+      "verified": true,
+      "otherNumbers": [
+        {
+          "label": "Support",
+          "number": "1-800-585-0705",
+          "verified": true
+        }
+      ],
+      "notes": null
+    },
+    {
+      "name": "First Mutual Insurance Company (NC)",
+      "ncdoiGroup": "First Mutual",
+      "ncShare2025": 0.16,
+      "inExistingAppList": false,
+      "products": [
+        "homeowners",
+        "dwelling"
+      ],
+      "claimsPhone": "919-934-6111",
+      "claimsPhoneType": "general",
+      "open247": null,
+      "hours": null,
+      "onlineClaimUrl": "https://www.fmicnc.com/file-a-claim/",
+      "website": "https://www.fmicnc.com",
+      "sourceUrl": "https://www.fmicnc.com/file-a-claim/",
+      "checked": "2026-10-22",
+      "confidence": "medium",
+      "verified": true,
+      "otherNumbers": [
+        {
+          "label": "NCDOI-listed company number",
+          "number": "1-800-638-4553",
+          "verified": true
+        }
+      ],
+      "notes": "NC domestic carrier (Smithfield). A toll-free claims line (855-FMIC-855) turned up in search but could not be confirmed on fmicnc.com."
+    },
+    {
+      "name": "Northwest Farmers Mutual (NC)",
+      "ncdoiGroup": "Northwest Farmers Mutual",
+      "ncShare2025": 0.15,
+      "inExistingAppList": false,
+      "products": [
+        "homeowners",
+        "renters",
+        "dwelling",
+        "mobile home"
+      ],
+      "claimsPhone": "336-759-2176",
+      "claimsPhoneType": "general",
+      "open247": null,
+      "hours": null,
+      "onlineClaimUrl": "https://northwestfarmers.com/file-a-claim/",
+      "website": "https://northwestfarmers.com",
+      "sourceUrl": "https://northwestfarmers.com/file-a-claim/",
+      "checked": "2026-10-22",
+      "confidence": "medium",
+      "verified": true,
+      "otherNumbers": [],
+      "notes": null
+    },
+    {
+      "name": "TypTap",
+      "ncdoiGroup": "TypTap",
+      "ncShare2025": 0.145,
+      "inExistingAppList": false,
+      "products": [
+        "homeowners",
+        "flood"
+      ],
+      "claimsPhone": "1-844-289-7968",
+      "claimsPhoneType": "claims",
+      "open247": true,
+      "hours": null,
+      "onlineClaimUrl": "https://www.typtap.com/claims/",
+      "website": "https://www.typtap.com",
+      "sourceUrl": "https://www.typtap.com/claims/",
+      "checked": "2026-10-22",
+      "confidence": "high",
+      "verified": true,
+      "otherNumbers": [
+        {
+          "label": "Existing claims",
+          "number": "1-888-475-0213",
+          "verified": true
+        }
+      ],
+      "notes": null
+    },
+    {
+      "name": "Allied Trust Insurance",
+      "ncdoiGroup": "Allied Trust",
+      "ncShare2025": 0.13,
+      "inExistingAppList": false,
+      "products": [
+        "homeowners"
+      ],
+      "claimsPhone": "1-844-200-2842",
+      "claimsPhoneType": "claims",
+      "open247": true,
+      "hours": null,
+      "onlineClaimUrl": "https://www.alliedtrustins.com/claims-process",
+      "website": "https://www.alliedtrustins.com",
+      "sourceUrl": "https://www.alliedtrustins.com/claims-process",
+      "checked": "2026-10-22",
+      "confidence": "high",
+      "verified": true,
+      "otherNumbers": [],
+      "notes": "844-200-ATIC; choose option 1 for claims."
+    },
+    {
+      "name": "Alamance Farmers' Mutual (NC)",
+      "ncdoiGroup": "Alamance Farmers Mutual",
+      "ncShare2025": 0.12,
+      "inExistingAppList": false,
+      "products": [
+        "homeowners",
+        "renters"
+      ],
+      "claimsPhone": "336-226-7872",
+      "claimsPhoneType": "general",
+      "open247": null,
+      "hours": null,
+      "onlineClaimUrl": "https://alamancefarmers.com/",
+      "website": "https://alamancefarmers.com",
+      "sourceUrl": "https://alamancefarmers.com/",
+      "checked": "2026-10-22",
+      "confidence": "medium",
+      "verified": true,
+      "otherNumbers": [
+        {
+          "label": "NCDOI-listed company number",
+          "number": "1-800-841-0466",
+          "verified": true
+        }
+      ],
+      "notes": null
+    },
+    {
+      "name": "Carolina Farmers Mutual (NC)",
+      "ncdoiGroup": "Carolina Farmers Mutual",
+      "ncShare2025": 0.09,
+      "inExistingAppList": false,
+      "products": [
+        "homeowners",
+        "dwelling"
+      ],
+      "claimsPhone": "1-888-889-5093",
+      "claimsPhoneType": "general",
+      "open247": false,
+      "hours": "Mon–Thu 8–4, Fri 8–12",
+      "onlineClaimUrl": "https://cfmic.net/file-a-claim/",
+      "website": "https://cfmic.net",
+      "sourceUrl": "https://cfmic.net/claims/",
+      "checked": "2026-10-22",
+      "confidence": "medium",
+      "verified": true,
+      "otherNumbers": [
+        {
+          "label": "Local",
+          "number": "336-625-6323",
+          "verified": true
+        }
+      ],
+      "notes": null
+    },
+    {
+      "name": "Century Mutual (NC)",
+      "ncdoiGroup": "Century Mutual",
+      "ncShare2025": 0.09,
+      "inExistingAppList": false,
+      "products": [
+        "homeowners",
+        "dwelling"
+      ],
+      "claimsPhone": "336-855-0442",
+      "claimsPhoneType": "general",
+      "open247": false,
+      "hours": "M–F 8:30–4:30",
+      "onlineClaimUrl": null,
+      "website": "https://www.centurymutual.com",
+      "sourceUrl": "https://www.centurymutual.com/contact-us",
+      "checked": "2026-10-22",
+      "confidence": "medium",
+      "verified": true,
+      "otherNumbers": [],
+      "notes": "The contact page lists this number for questions, including reporting a claim; you can also go through your agent."
+    },
+    {
+      "name": "Safe Harbor Insurance (Harbor Claims)",
+      "ncdoiGroup": "Safe Harbor",
+      "ncShare2025": 0.08,
+      "inExistingAppList": false,
+      "products": [
+        "homeowners"
+      ],
+      "claimsPhone": "1-866-482-5246",
+      "claimsPhoneType": "claims",
+      "open247": null,
+      "hours": null,
+      "onlineClaimUrl": null,
+      "website": "https://www.safeharborflorida.com",
+      "sourceUrl": "https://www.safeharborflorida.com/contact.html",
+      "checked": "2026-10-22",
+      "confidence": "high",
+      "verified": true,
+      "otherNumbers": [
+        {
+          "label": "Cabrillo Coastal (policy/payments)",
+          "number": "1-866-896-7233",
+          "verified": true
+        }
+      ],
+      "notes": null
+    },
+    {
+      "name": "Tower Hill (Prime)",
+      "ncdoiGroup": "Tower Hill",
+      "ncShare2025": 0.037,
+      "inExistingAppList": false,
+      "products": [
+        "homeowners"
+      ],
+      "claimsPhone": "1-800-342-3407",
+      "claimsPhoneType": "claims",
+      "open247": null,
+      "hours": null,
+      "onlineClaimUrl": "https://www.thig.com/report",
+      "website": "https://www.thig.com",
+      "sourceUrl": "https://www.thig.com/claims/",
+      "checked": "2026-10-22",
+      "confidence": "high",
+      "verified": true,
+      "otherNumbers": [],
+      "notes": null
+    },
+    {
+      "name": "Lemonade",
+      "ncdoiGroup": "Lemonade",
+      "ncShare2025": 0.031,
+      "inExistingAppList": false,
+      "products": [
+        "renters",
+        "homeowners",
+        "condo"
+      ],
+      "claimsPhone": "1-844-733-8666",
+      "claimsPhoneType": "general",
+      "open247": null,
+      "hours": null,
+      "onlineClaimUrl": "https://www.lemonade.com/claims",
+      "website": "https://www.lemonade.com",
+      "sourceUrl": "https://www.lemonade.com/claims",
+      "checked": "2026-10-22",
+      "confidence": "medium",
+      "verified": true,
+      "otherNumbers": [],
+      "notes": "Claims are filed in the Lemonade app. The phone number is general (it is in the site footer and on the NCDOI company list)."
+    },
+    {
+      "name": "Kemper",
+      "ncdoiGroup": "Kemper",
+      "ncShare2025": 0.0,
+      "inExistingAppList": false,
+      "products": [
+        "homeowners",
+        "renters",
+        "condo"
+      ],
+      "claimsPhone": "1-800-353-6737",
+      "claimsPhoneType": "claims",
+      "open247": false,
+      "hours": "M–F 8 a.m.–7 p.m. CT",
+      "onlineClaimUrl": "https://www.kemper.com/claims/report-a-claim",
+      "website": "https://www.kemper.com",
+      "sourceUrl": "https://www.kemper.com/claims/report-a-claim",
+      "checked": "2026-10-22",
+      "confidence": "medium",
+      "verified": true,
+      "otherNumbers": [],
+      "notes": "Kemper reported no NC homeowners premium in the 2025 NCDOI data, so it likely writes little or no NC home business now. Included because it was on the requested list."
+    },
+    {
+      "name": "NC Insurance Underwriting Association (Coastal/Beach Plan) & NC Joint Underwriting Association (FAIR Plan)",
+      "ncdoiGroup": "Residual market",
+      "ncShare2025": null,
+      "inExistingAppList": false,
+      "products": [
+        "homeowners",
+        "dwelling",
+        "wind/hail"
+      ],
+      "claimsPhone": "1-800-662-7048",
+      "claimsPhoneType": "claims",
+      "open247": null,
+      "hours": null,
+      "onlineClaimUrl": "https://consumer-portal.ncjua-nciua.org/",
+      "website": "https://www.ncjua-nciua.org",
+      "sourceUrl": "https://www.ncjua-nciua.org/html/storm.htm?thistype=all",
+      "checked": "2026-10-22",
+      "confidence": "high",
+      "verified": true,
+      "otherNumbers": [
+        {
+          "label": "Raleigh/Cary office",
+          "number": "919-821-1299",
+          "verified": true
+        },
+        {
+          "label": "Claims fax",
+          "number": "919-745-3899",
+          "verified": true
+        }
+      ],
+      "notes": "Report through your agent, the Consumer Service Portal, or 800-662-7048 (also listed in the NCJUA/NCIUA Policyholder Claim Procedures PDF). AAA lists 800-974-1222 for NCJUA/NCIUA; that is not used here because the Associations' own site gives 800-662-7048."
+    },
+    {
+      "name": "National Flood Insurance Program (NFIP Direct / FEMA)",
+      "ncdoiGroup": "Federal",
+      "ncShare2025": null,
+      "inExistingAppList": false,
+      "products": [
+        "flood"
+      ],
+      "claimsPhone": "1-800-638-6620",
+      "claimsPhoneType": "claims",
+      "open247": null,
+      "hours": null,
+      "onlineClaimUrl": "https://www.floodsmart.gov/recover/start-a-claim",
+      "website": "https://www.floodsmart.gov",
+      "sourceUrl": "https://www.floodsmart.gov/contact",
+      "checked": "2026-10-22",
+      "confidence": "high",
+      "verified": true,
+      "otherNumbers": [
+        {
+          "label": "NFIP help / find your flood insurer (FMIX)",
+          "number": "1-877-336-2627",
+          "verified": true
+        },
+        {
+          "label": "NFIP Call Center (older FEMA pages; not on current FloodSmart contact page)",
+          "number": "1-800-427-4661",
+          "verified": false
+        },
+        {
+          "label": "FEMA disaster assistance",
+          "number": "1-800-621-3362",
+          "verified": true
+        }
+      ],
+      "notes": "Most NFIP policies are serviced by a Write Your Own insurer; call that company first. 800-638-6620 is for NFIP Direct policies only."
+    },
+    {
+      "name": "Wright Flood",
+      "ncdoiGroup": "Flood",
+      "ncShare2025": null,
+      "inExistingAppList": false,
+      "products": [
+        "flood"
+      ],
+      "claimsPhone": "1-800-725-9472",
+      "claimsPhoneType": "claims",
+      "open247": null,
+      "hours": null,
+      "onlineClaimUrl": "https://www.wrightflood.com/claims",
+      "website": "https://www.wrightflood.com",
+      "sourceUrl": "https://www.wrightflood.com/claims",
+      "checked": "2026-10-22",
+      "confidence": "high",
+      "verified": true,
+      "otherNumbers": [
+        {
+          "label": "Text 'claim' to open a claim",
+          "number": "727-777-7066",
+          "verified": true
+        }
+      ],
+      "notes": null
+    },
+    {
+      "name": "Neptune Flood",
+      "ncdoiGroup": "Flood",
+      "ncShare2025": null,
+      "inExistingAppList": false,
+      "products": [
+        "flood"
+      ],
+      "claimsPhone": "727-202-4815",
+      "claimsPhoneType": "general",
+      "open247": null,
+      "hours": null,
+      "onlineClaimUrl": "https://neptuneflood.com/report-a-claim/",
+      "website": "https://neptuneflood.com",
+      "sourceUrl": "https://neptuneflood.zendesk.com/hc/en-us/articles/1500001844581-What-is-the-best-contact-information-for-Neptune",
+      "checked": "2026-10-22",
+      "confidence": "medium",
+      "verified": true,
+      "otherNumbers": [],
+      "notes": "Neptune's help center gives this as its main contact number. A 24/7 claims line was mentioned in search results but could not be confirmed, because neptuneflood.com blocks automated fetches."
+    },
+    {
+      "name": "NC Insurance Guaranty Association (claims against insolvent insurers)",
+      "ncdoiGroup": "Guaranty fund",
+      "ncShare2025": null,
+      "inExistingAppList": false,
+      "products": [
+        "homeowners",
+        "all P&C"
+      ],
+      "claimsPhone": "1-800-456-5086",
+      "claimsPhoneType": "general",
+      "open247": null,
+      "hours": null,
+      "onlineClaimUrl": null,
+      "website": "https://www.ncrb.org/nciga/",
+      "sourceUrl": "https://www.ncrb.org/nciga/Contact-Us",
+      "checked": "2026-10-22",
+      "confidence": "high",
+      "verified": true,
+      "otherNumbers": [
+        {
+          "label": "Main",
+          "number": "919-783-9813",
+          "verified": true
+        }
+      ],
+      "notes": "For policyholders whose insurer became insolvent, such as Southern Fidelity (liquidated in 2022)."
+    }
+  ]
+}

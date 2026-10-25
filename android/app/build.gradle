@@ -1,0 +1,49 @@
+// Trusted Web Activity (TWA) for https://disaster-resources.app — the app shows the same website,
+// full screen, in the user's browser engine (Chrome). Web Push notifications are delegated to this app.
+plugins { id 'com.android.application' }
+
+// Signing: values come from android/keystore.properties (NOT in git) or environment variables.
+def props = new Properties()
+def propsFile = rootProject.file('keystore.properties')
+if (propsFile.exists()) propsFile.withInputStream { props.load(it) }
+def sv = { String k, String e -> props.getProperty(k) ?: System.getenv(e) }
+
+android {
+    namespace 'app.disasterresources.nchub'
+    compileSdk 36
+    defaultConfig {
+        applicationId 'app.disasterresources.nchub'
+        minSdk 24
+        targetSdk 36
+        versionCode 1
+        versionName '1.0.0'
+        resValue 'string', 'hostName', 'disaster-resources.app'
+        resValue 'string', 'launchUrl', 'https://disaster-resources.app/?source=android'
+        resValue 'string', 'providerAuthority', 'app.disasterresources.nchub.fileprovider'
+        resValue 'string', 'fallbackType', 'customtabs'
+        resValue 'string', 'webManifestUrl', 'https://disaster-resources.app/manifest.webmanifest'
+    }
+    signingConfigs {
+        release {
+            if (sv('storeFile', 'NCDRH_KEYSTORE')) {
+                storeFile file(sv('storeFile', 'NCDRH_KEYSTORE'))
+                storePassword sv('storePassword', 'NCDRH_KEYSTORE_PASSWORD')
+                keyAlias sv('keyAlias', 'NCDRH_KEY_ALIAS')
+                keyPassword sv('keyPassword', 'NCDRH_KEY_PASSWORD')
+            }
+        }
+    }
+    buildTypes {
+        release {
+            minifyEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt')
+            signingConfig signingConfigs.release
+        }
+    }
+    compileOptions { sourceCompatibility JavaVersion.VERSION_17; targetCompatibility JavaVersion.VERSION_17 }
+    lint { checkReleaseBuilds false }
+}
+
+dependencies {
+    implementation 'com.google.androidbrowserhelper:androidbrowserhelper:2.7.4'
+}

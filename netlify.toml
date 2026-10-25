@@ -1,0 +1,67 @@
+# Netlify site: disaster-resources-lltd (https://disaster-resources.app). See README "Deploy".
+[build]
+  command = "npm run build"
+  publish = "dist"
+  functions = "netlify/functions"
+
+[build.environment]
+  # Server-backed accounts (Netlify Blobs) are the default when deployed. Secrets are NOT set here:
+  # add APP_SESSION_SECRET and DATA_ENCRYPTION_KEY in the Netlify UI (see README).
+  VITE_DATA_ADAPTER = "remote"
+  NODE_VERSION = "22"
+
+[functions]
+  node_bundler = "esbuild"
+
+[[headers]]
+  for = "/sw.js"
+  [headers.values]
+    Cache-Control = "no-cache"
+    Service-Worker-Allowed = "/"
+
+[[headers]]
+  for = "/manifest.webmanifest"
+  [headers.values]
+    Content-Type = "application/manifest+json"
+
+[[headers]]
+  for = "/sitemap.xml"
+  [headers.values]
+    Content-Type = "application/xml; charset=utf-8"
+
+# Android app links / Trusted Web Activity verification (must be application/json).
+[[headers]]
+  for = "/.well-known/assetlinks.json"
+  [headers.values]
+    Content-Type = "application/json"
+    Access-Control-Allow-Origin = "*"
+    Cache-Control = "public, max-age=3600"
+
+[[headers]]
+  for = "/robots.txt"
+  [headers.values]
+    Content-Type = "text/plain; charset=utf-8"
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    X-Frame-Options = "DENY"
+    Permissions-Policy = "geolocation=(self), camera=(), microphone=(), interest-cohort=()"
+    # Everything is self-hosted: no third-party scripts, fonts, CDNs or analytics.
+    Content-Security-Policy = "default-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline'; script-src 'self'; connect-src 'self'; frame-ancestors 'none'; base-uri 'self'; form-action 'self'"
+
+# www -> apex (canonical: https://disaster-resources.app)
+[[redirects]]
+  from = "https://www.disaster-resources.app/*"
+  to = "https://disaster-resources.app/:splat"
+  status = 301
+  force = true
+
+# SPA fallback. Not forced, so real files win: /sitemap.xml, /robots.txt, /data/*.json and the
+# per-section pages (/hotels.html served at /hotels, /county/wake.html at /county/wake).
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200

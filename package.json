@@ -1,0 +1,30 @@
+{
+  "name": "nc-disaster-hub",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview --port 4174 --strictPort",
+    "data": "python3 scripts/build_data.py && node scripts/make-sitemap.mjs",
+    "test:unit": "node tests/functions.test.mjs && node tests/push.test.mjs && node tests/i18n.test.mjs",
+    "test:e2e": "node tests/e2e.mjs",
+    "test": "npm run test:unit && npm run test:e2e && npm run test:e2e:local && npm run test:a11y",
+    "test:a11y": "node tests/a11y.mjs",
+    "icons": "node scripts/make-icons.mjs",
+    "linkcheck": "python3 scripts/linkcheck.py data-raw/resource_urls.json",
+    "test:e2e:local": "E2E_ADAPTER=local SHOTS_DIR=/tmp/ncdrh-local-shots/ node tests/e2e.mjs",
+    "sitemap": "node scripts/make-sitemap.mjs"
+  },
+  "devDependencies": {
+    "axe-core": "^4.14.0",
+    "playwright-core": "^1.48.0",
+    "vite": "^5.4.0"
+  },
+  "dependencies": {
+    "@netlify/blobs": "^11.1.6",
+    "qrcode-generator": "^1.4.4",
+    "web-push": "^3.6.7"
+  }
+}

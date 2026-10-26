@@ -98,6 +98,18 @@ export const community = {
     throw err('Please try again.', 409);
   },
 };
+// Administrator registry (sealed with the admin key): one entry per confirmed administrator, so admin
+// status lives in the data (invited admins) and the Administrators tab can list them. ADMIN_EMAILS
+// accounts get an entry ("bootstrap") the first time they act as a confirmed admin.
+// "admin-meta" holds a version counter used to serialise revocations (see api.js adminRevokeAdmin).
+export const admins = {
+  async get(uid) { return (await readSealed('admin/' + uid, adminKey())).value; },
+  put: (uid, rec) => mutate('admin/' + uid, adminKey(), () => ({}), (x) => ({ ...rec, ...x, uid })),
+  async list() { const out = []; for await (const p of store().list({ prefix: 'admin/', paginate: true })) for (const b of p.blobs) { const v = (await readSealed(b.key, adminKey())).value; if (v) out.push(v); } return out; },
+  async remove(uid) { await store().delete('admin/' + uid); },
+  async meta() { return readSealed('admin-meta', adminKey()); },
+  async writeMeta(value, etag) { return writeSealed('admin-meta', adminKey(), value, etag); },
+};
 export const audit = {
   async log(entry) { const at = new Date().toISOString(); await store().setJSON(`audit/${at}-${randomBytes(3).toString('hex')}`, { at, ...entry }); },
   async recent(limit = 100) { const keys = []; for await (const p of store().list({ prefix: 'audit/', paginate: true })) for (const b of p.blobs) keys.push(b.key); keys.sort().reverse(); const out = []; for (const k of keys.slice(0, limit)) out.push(await store().get(k, { type: 'json' })); return out; },

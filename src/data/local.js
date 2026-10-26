@@ -79,5 +79,6 @@ export const local = {
   adminDecideSubmission: serverOnly, adminUnpublish: serverOnly, adminAudit: serverOnly,
   pushKey: serverOnly, pushSubscribe: serverOnly, pushStatus: serverOnly, pushUnsubscribe: serverOnly, adminPushCount: serverOnly, adminPushSend: serverOnly, adminPushLog: serverOnly, adminPushTest: serverOnly,
   adminEditPublished: serverOnly, adminFindUser: serverOnly, adminDeleteUser: serverOnly, adminIssueReset: serverOnly, adminIssueClaim: serverOnly,
+  adminInvite: serverOnly, adminListAdmins: serverOnly, adminRevokeAdmin: serverOnly, adminNewTempPassword: serverOnly, changePassword: serverOnly,
   resetPassword: serverOnly, requestAdminCode: serverOnly, adminClaimStart: serverOnly, adminClaimFinish: serverOnly,
 };

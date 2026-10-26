@@ -4,7 +4,7 @@ import { api, ADAPTER } from './data/index.js';
 import { ROLES, RESPONDER_STATUS } from './data/shared.js';
 import { auth } from './auth.js';
 import { CRISIS } from './content/resources.js';
-import { $, esc, download, today, contactLine } from './ui.js';
+import { $, esc, download, today, contactLine, fmtDate } from './ui.js';
 import { getLoc, clearLoc } from './geo.js';
 import { t, getLang, setLang, langChosen, applyLang } from './i18n/index.js';
 import { foodScreens } from './screens/food.js';
@@ -23,6 +23,8 @@ import { ctx } from './ctx.js';
 import { routeFromPath } from './paths.js';
 import { onTranslateProxy } from './proxy.js';
 const PRIVATE = ['notes', 'share', 'submit', 'admin'];
+// While a temporary password is in use, only these screens open (the server blocks everything else too).
+const MUST_CHANGE_OK = ['set-password', 'privacy', 'about', 'accessibility'];
 const go = (r) => { if (location.hash === '#' + r) render(); else location.hash = r; };
 ctx.go = go;
 
@@ -113,7 +115,7 @@ screens.login = () => ({ html: `
   ${ADAPTER === 'local' ? `<p class="small">${t('Prototype: accounts are stored only on this device.')}</p>` : ''}`,
   bind() {
     $('#f').onsubmit = async (e) => { e.preventDefault(); const d = new FormData(e.target);
-      try { ctx.me = await auth.logIn(d.get('email'), d.get('password'), d.get('keep') === 'on'); afterAuth(); } catch (x) { $('#err').textContent = t(x.message); } };
+      try { ctx.me = await auth.logIn(d.get('email'), d.get('password'), d.get('keep') === 'on'); if (ctx.me.mustChangePassword) ctx.tempPw = d.get('password'); afterAuth(); } catch (x) { $('#err').textContent = t(x.message); } };
   } });
 
 screens.signup = () => ({ html: `
@@ -167,10 +169,46 @@ screens.reset = () => ({ html: `
       if (!String(d.get('code') || '').trim()) { $('#rerr').textContent = t('Enter the one-time code.'); $('#rc').focus(); return; }
       try { await api.resetPassword(String(d.get('email')).trim(), d.get('code'), d.get('password')); ctx.flash = t('Your password was changed. Sign in with your new password.'); go('login'); } catch (x) { $('#rerr').textContent = t(x.message); } };
     $('#af').onsubmit = async (e) => { e.preventDefault(); $('#amsg').textContent = '';
-      try { await api.requestAdminCode($('#ae').value.trim()); $('#amsg').textContent = t('Done. If this is an administrator account, a recovery code is now in the server log (Netlify: Logs, Functions, api). Enter it above with a new password.'); } catch (x) { $('#amsg').textContent = t(x.message); } };
+      try { await api.requestAdminCode($('#ae').value.trim()); $('#amsg').textContent = t('Done. If this is an administrator account, a recovery code is now in the server log: Netlify → disaster-resources-lltd → Logs → Functions → api, on the line that starts with "ADMIN RECOVERY CODE". Enter it above with a new password.'); } catch (x) { $('#amsg').textContent = t(x.message); } };
   } });
 
-function afterAuth() { const p = sessionStorage.getItem('ncdrh.after'); sessionStorage.removeItem('ncdrh.after'); go(p || 'home'); }
+function afterAuth() { if (ctx.me?.mustChangePassword) return go('set-password'); const p = sessionStorage.getItem('ncdrh.after'); sessionStorage.removeItem('ncdrh.after'); go(p || 'home'); }
+
+// Forced password change after signing in with a temporary password (new administrators). The server
+// refuses every other action until this is done, then ends all other sessions.
+screens['set-password'] = () => {
+  const me = ctx.me;
+  return { html: `
+  <h2>${t('Set a new password')}</h2>
+  <div class="card warn" id="mustchange"><p>${t('You signed in with a temporary password. Choose your own password now. Nothing else in the app works until you do.')}</p>
+    ${me.tempPwExpiresAt ? `<p class="small">${esc(t('The temporary password expires {date}.', { date: fmtDate(me.tempPwExpiresAt) }))}</p>` : ''}</div>
+  <form id="cpf" class="card" novalidate>
+    <p class="small">${t('Account:')} <b>${esc(me.email)}</b></p>
+    <label for="cpc">${t('Temporary password')}</label><input id="cpc" type="password" autocomplete="current-password" required value="${esc(ctx.tempPw || '')}">
+    <label for="cpn">${t('New password')} <span class="small">${t('(8 or more characters, not the temporary one)')}</span></label><input id="cpn" type="password" autocomplete="new-password" minlength="8" maxlength="256" required>
+    <label for="cpn2">${t('Type the new password again')}</label><input id="cpn2" type="password" autocomplete="new-password" minlength="8" maxlength="256" required>
+    ${me.privacyPending ? `<label class="opt"><input type="checkbox" id="cpterms"><span>${t('I read the <a href="#privacy" target="_blank">privacy notice</a> and the <a href="#about" target="_blank" id="signupdisc">disclaimer</a>. My notes stay private unless I choose to share them.')}</span></label>` : ''}
+    <p class="err" role="alert" id="cperr"></p>
+    <button class="btn" type="submit">${t('Save my new password')}</button>
+  </form>
+  <button class="btn secondary" type="button" id="cplogout">${t('Sign out')}</button>`,
+  bind() {
+    $('#cplogout').onclick = () => { auth.logOut(); ctx.me = null; delete ctx.tempPw; ctx.flash = t('You are signed out.'); go('home'); };
+    $('#cpf').onsubmit = async (e) => { e.preventDefault(); const errEl = $('#cperr'); errEl.textContent = '';
+      const cur = $('#cpc').value, pw = $('#cpn').value;
+      const bad = (msg, el) => { errEl.textContent = msg; el.focus(); };
+      if (!cur) return bad(t('Enter the temporary password.'), $('#cpc'));
+      if (pw.length < 8) return bad(t('Password must be at least 8 characters.'), $('#cpn'));
+      if (pw.length > 256) return bad(t('Password is too long (256 characters max).'), $('#cpn'));
+      if (pw === cur) return bad(t('Your new password must be different from the temporary password.'), $('#cpn'));
+      if (pw !== $('#cpn2').value) return bad(t('The two new passwords do not match.'), $('#cpn2'));
+      if ($('#cpterms') && !$('#cpterms').checked) return bad(t('Please read and accept the privacy notice.'), $('#cpterms'));
+      try { ctx.me = await api.changePassword(cur, pw, $('#cpterms') ? $('#cpterms').checked : false); delete ctx.tempPw;
+        ctx.flash = t('Your new password is saved. Any other devices signed in to this account were signed out.');
+        if (ctx.me.isAdmin && !sessionStorage.getItem('ncdrh.after')) sessionStorage.setItem('ncdrh.after', 'admin'); afterAuth(); }
+      catch (x) { if (x.code === 401) { auth.logOut(); ctx.me = null; delete ctx.tempPw; ctx.flash = t(x.message); return go('login'); } errEl.textContent = t(x.message); } };
+  } };
+};
 
 screens.settings = () => {
   const me = ctx.me, loc = getLoc();
@@ -181,6 +219,7 @@ screens.settings = () => {
     ${me ? `<div class="card"><h3>${t('Your account')}</h3><dl class="kv"><dt>${t('Name')}</dt><dd>${esc(me.name)}</dd><dt>${t('Email')}</dt><dd>${esc(me.email)}</dd><dt>${t('Account type')}</dt><dd>${esc(t(ROLES[me.role]))}${me.isAdmin ? ' · ' + t('Administrator') : ''}</dd>${me.role === 'responder' && ADAPTER === 'remote' ? `<dt>${t('Responder status')}</dt><dd>${esc(t(RESPONDER_STATUS[me.responderStatus] || ''))}</dd>` : ''}${me.org ? `<dt>${t('Organization')}</dt><dd>${esc(me.org)}</dd>` : ''}</dl>
       ${me.isAdmin ? `<a class="btn" href="#admin">${t('Admin area')}</a>` : ''}<button class="btn secondary" id="logout">${t('Sign out')}</button></div>
       ${me.adminPending ? `<div class="card warn" id="claimcard"><h3>${t('Confirm admin access')}</h3><p>${t('This email is on the administrator list, but admin access stays off until you prove the account is yours with a one-time code. Get the code from the site\'s server log (only the people who run the site can read it) or from another administrator.')}</p>
+        <p class="small" id="claimwhere">${t('Where to find the code: sign in to Netlify, open the site <b>disaster-resources-lltd</b>, then <b>Logs</b> → <b>Functions</b> → <b>api</b>. Look for the line that starts with <b>ADMIN CLAIM CODE for</b> followed by the first letter of your email. The code is the part after the colon, like XXXXX-XXXXX.')}</p>
         <button class="btn secondary" type="button" id="claimstart">${t('Write a code to the server log')}</button><p class="small" id="claimmsg" role="status" aria-live="polite"></p>
         <form id="claimf" novalidate><label for="claimcode">${t('One-time code')}</label><input id="claimcode" autocomplete="one-time-code" autocapitalize="characters" spellcheck="false"><p class="err" role="alert" id="claimerr"></p><button class="btn" type="submit">${t('Confirm admin access')}</button></form></div>` : ''}
       <div class="card"><h3>${t('Download my data')}</h3><p>${t('Save a copy of everything in your account (case numbers, notes, referrals) as a file.')}</p><button class="btn secondary" id="export">${t('Download my data (JSON)')}</button></div>
@@ -199,7 +238,7 @@ screens.settings = () => {
     if (!me) return;
     $('#logout').onclick = () => { auth.logOut(); ctx.me = null; ctx.flash = t('You are signed out.'); go('home'); };
     $('#claimstart') && ($('#claimstart').onclick = async () => { $('#claimmsg').textContent = '';
-      try { await api.adminClaimStart(); $('#claimmsg').textContent = t('A code was written to the server log (Netlify: Logs, Functions, api). It works once and expires in 30 minutes.'); } catch (x) { $('#claimmsg').textContent = t(x.message); } });
+      try { await api.adminClaimStart(); $('#claimmsg').textContent = t('A code was written to the server log (Netlify → disaster-resources-lltd → Logs → Functions → api, line "ADMIN CLAIM CODE"). It works once and expires in 30 minutes.'); } catch (x) { $('#claimmsg').textContent = t(x.message); } });
     $('#claimf') && ($('#claimf').onsubmit = async (e) => { e.preventDefault(); $('#claimerr').textContent = '';
       try { ctx.me = await api.adminClaimFinish($('#claimcode').value); ctx.flash = t('Admin access is confirmed for this account.'); render(); } catch (x) { $('#claimerr').textContent = t(x.message); } });
     $('#export').onclick = async () => download(`my-recovery-data-${today()}.json`, JSON.stringify(await api.exportData(me.id), null, 2));
@@ -228,6 +267,8 @@ async function render() {
   const route = decodeURIComponent(location.hash.slice(1)) || routeFromPath(location.pathname) || 'home';
   const [name, ...rest] = route.split('/');
   if (PRIVATE.includes(name) && !ctx.me) { sessionStorage.setItem('ncdrh.after', route); ctx.flash = t('Please sign in or create a free account to use your private notes.'); return go('login'); }
+  if (ctx.me?.mustChangePassword && !MUST_CHANGE_OK.includes(name)) return go('set-password');
+  if (name === 'set-password' && !ctx.me?.mustChangePassword) return go(ctx.me ? 'home' : 'login');
   if ((name === 'login' || name === 'signup') && ctx.me) return go('home');
   // A waiting responder may have been approved since sign-in: re-check on the screens that depend on it.
   if (ADAPTER === 'remote' && ctx.me?.role === 'responder' && ctx.me.responderStatus !== 'approved' && ['home', 'share', 'submit'].includes(name)) { try { ctx.me = (await api.getUser(ctx.me.id)) || ctx.me; } catch {} }

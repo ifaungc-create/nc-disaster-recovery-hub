@@ -3,11 +3,14 @@
 // derived from DATA_ENCRYPTION_KEY. Sessions: HMAC-SHA256 bearer tokens (APP_SESSION_SECRET), 12 h. No cookies.
 // Fails closed if secrets are missing. Logs no personal data: only the action name and an error class.
 // Admin rights need BOTH: the email is in ADMIN_EMAILS AND the account has confirmed it with a one-time code
-// (lib/codes.js). Password reset uses one-time codes too; no email service is used.
+// (lib/codes.js), OR it was made an administrator by another administrator (Administrators tab: the invite
+// itself confirms; status is stored on the account and in the admin registry). Invited admins get a
+// temporary password (hash only, 72 h) and must set their own before any other action works.
+// Password reset uses one-time codes too; no email service is used.
 import { createHmac, randomInt, randomUUID, timingSafeEqual } from 'node:crypto';
-import { users, data, cards, responders, submissions, community, audit } from './lib/store.js';
+import { users, data, cards, responders, submissions, community, audit, admins } from './lib/store.js';
 import * as codes from './lib/codes.js';
-import { hashPassword, verifyPassword, emailIndex } from './lib/crypto.js';
+import { hashPassword, verifyPassword, emailIndex, tempPassword } from './lib/crypto.js';
 import { sessionSecret, ConfigError, isAdminEmail } from './lib/env.js';
 import { limit } from './lib/ratelimit.js';
 import * as push from './lib/push.js';
@@ -24,11 +27,16 @@ const pub = (u) => u && { id: u.id, email: u.email, name: u.name, role: u.role, 
 // Profile sent to the app: adds admin flag (from ADMIN_EMAILS) and the responder approval status.
 // An account is an admin only if its email is in ADMIN_EMAILS and it proved control with a one-time code
 // for that same email. Registering an ADMIN_EMAILS address alone gives no admin rights.
-export const adminConfirmed = (u) => !!u && isAdminEmail(u.email) && u.adminVerifiedEmail === u.email;
+export const adminConfirmed = (u) => !!u && (u.adminGranted === true || (isAdminEmail(u.email) && u.adminVerifiedEmail === u.email));
+export const TEMP_PW_HOURS = 72;
+const tempExpired = (u) => !!u?.mustChangePassword && !(Date.parse(u.tempPwExpiresAt || '') > Date.now());
+// While a temporary password is in use, only these actions work (the token also carries mcp: 1).
+const MCP_OK = new Set(['getUser', 'changePassword']);
+const EMAIL_RE = /^[^@\s]+@[^@\s]+\.[^@\s]+$/;
 async function profile(u) {
   if (!u) return null; const isAdmin = adminConfirmed(u);
   const r = u.role === 'responder' ? await responders.get(u.id) : null;
-  return { ...pub(u), isAdmin, adminPending: !isAdmin && isAdminEmail(u.email), responderStatus: u.role === 'responder' ? (isAdmin ? 'approved' : r?.status || 'pending') : undefined, responderReason: r?.status === 'denied' || r?.status === 'revoked' ? r.reason || '' : undefined };
+  return { ...pub(u), isAdmin, adminPending: !isAdmin && isAdminEmail(u.email), ...(u.mustChangePassword ? { mustChangePassword: true, tempPwExpiresAt: u.tempPwExpiresAt, privacyPending: !u.privacyAcceptedAt } : {}), responderStatus: u.role === 'responder' ? (isAdmin ? 'approved' : r?.status || 'pending') : undefined, responderReason: r?.status === 'denied' || r?.status === 'revoked' ? r.reason || '' : undefined };
 }
 const MAX_PENDING_SUBMISSIONS = 50;
 const reasonOf = (v) => (typeof v === 'string' ? v.trim().slice(0, 300) : '');
@@ -36,14 +44,29 @@ const now = () => new Date().toISOString();
 const live = (c) => c && !c.revoked && c.expiresAt > now();
 const strip = ({ ownerId, ...c }) => c;
 const normEmail = (e) => String(e || '').trim().toLowerCase().slice(0, 200);
-const tokenFor = (u) => sign({ uid: u.id, role: u.role, sv: u.sv || 0 });
-const opLog = (purpose, uid, c) => console.log(`[admin-code] ${purpose} code for account ${uid.slice(0, 8)}: ${c.code} (single use, expires ${c.expiresAt})`); // operator channel: Netlify function log only; no email
+const tokenFor = (u) => sign({ uid: u.id, role: u.role, sv: u.sv || 0, ...(u.mustChangePassword ? { mcp: 1 } : {}) });
+// "d***@c4i…": enough for the owner to recognise their own line, not enough to identify anyone else.
+export const maskEmail = (e) => { const [l = '', d = ''] = String(e || '').split('@'); return `${l.slice(0, 1)}***@${d.slice(0, 3)}…`; };
+// Operator channel: Netlify → disaster-resources-lltd → Logs → Functions → api. One labelled line per code; no email is sent.
+const opLog = (label, u, c) => console.log(`[admin-code] ${label} for ${maskEmail(u.email)}: ${c.code} (single use, expires ${c.expiresAt})`);
+// Confirmed administrators (registry entries whose account is still a confirmed admin). Stale entries are dropped.
+async function activeAdmins() {
+  const out = [];
+  for (const r of await admins.list()) { const u = await users.get(r.uid); if (adminConfirmed(u)) out.push({ r, u }); else await admins.remove(r.uid); }
+  return out;
+}
+const ensureRegistered = async (u, by = 'ADMIN_EMAILS', source = 'bootstrap') => { if (adminConfirmed(u) && !(await admins.get(u.id))) await admins.put(u.id, { addedAt: u.adminVerifiedAt || u.adminGrantedAt || new Date().toISOString(), addedBy: by, source }); };
+// New temporary password fields for an account (the caller merges them in and bumps the session version).
+async function tempGrant() {
+  const temp = tempPassword(); const expiresAt = new Date(Date.now() + TEMP_PW_HOURS * 36e5).toISOString();
+  return { temp, expiresAt, fields: { pw: await hashPassword(temp), mustChangePassword: true, tempPwExpiresAt: expiresAt } };
+}
 // Removes every record for one account (used by self-service and admin deletion). Published community
 // records stay; they carry no submitter identity. Push subscriptions are per device and not linked to accounts.
 async function deleteUserData(u) {
   const d = await data.get(u.id);
   for (const code of d.myCards || []) await cards.remove(code);
-  await submissions.removeAllFor(u.id); await responders.remove(u.id); await codes.remove(u.id);
+  await submissions.removeAllFor(u.id); await responders.remove(u.id); await codes.remove(u.id); await admins.remove(u.id);
   await data.remove(u.id); await users.remove(u.id, emailIndex(u.email));
 }
 
@@ -59,7 +82,13 @@ export default async (req, context) => {
     const a = Array.isArray(body?.args) ? body.args.slice(0, 6) : [];
     const session = verify((req.headers.get('authorization') || '').replace(/^Bearer /, ''));
     let me = null;
-    const need = async () => { if (!session) throw err('Please sign in again.', 401); me = await users.get(session.uid); if (!me || (me.sv || 0) !== (session.sv || 0)) throw err('Please sign in again.', 401); return me.id; };
+    const mustChange = () => err('You must set a new password before you continue.', 403);
+    if (session?.mcp && !MCP_OK.has(action)) throw mustChange(); // temporary-password token: nothing else works, public actions included
+    const need = async () => {
+      if (!session) throw err('Please sign in again.', 401); me = await users.get(session.uid); if (!me || (me.sv || 0) !== (session.sv || 0)) throw err('Please sign in again.', 401);
+      if (me.mustChangePassword) { if (tempExpired(me)) throw err('This temporary password has expired. Ask an administrator for a new one.', 401); if (!MCP_OK.has(action)) throw mustChange(); }
+      return me.id;
+    };
     const needResponder = async () => {
       const id = await need(); if (adminConfirmed(me)) return id;
       if (me.role !== 'responder') throw err('This is for disaster responder accounts.', 403);
@@ -67,7 +96,7 @@ export default async (req, context) => {
       if (r?.status !== 'approved') throw err(r?.status === 'pending' || !r ? 'Your responder account is waiting for admin approval.' : 'Your responder access is not active. Contact the administrator.', 403);
       return id;
     };
-    const needAdmin = async () => { const id = await need(); if (!adminConfirmed(me)) throw err('Administrators only.', 403); return id; };
+    const needAdmin = async () => { const id = await need(); if (!adminConfirmed(me)) throw err('Administrators only.', 403); await ensureRegistered(me); return id; };
     const findUser = async (email) => { const e = normEmail(email); const uid = e ? await users.uidForEmail(emailIndex(e)) : null; return uid ? users.get(uid) : null; };
     const kind = (k) => { if (!KINDS.includes(k)) throw err('Unknown record type.'); return k; };
     let result;
@@ -89,11 +118,27 @@ export default async (req, context) => {
         const email = String(a[0] || '').trim().toLowerCase().slice(0, 200); const pw = String(a[1] ?? '').slice(0, 256);
         const uid = email ? await users.uidForEmail(emailIndex(email)) : null; const u = uid ? await users.get(uid) : null;
         if (!(await verifyPassword(pw, u?.pw)) || !u) throw err('Email or password is incorrect.', 401);
+        if (tempExpired(u)) throw err('This temporary password has expired. Ask an administrator for a new one.', 401);
         result = { ...(await profile(u)), token: tokenFor(u) }; break;
       }
       case 'getUser': { const id = await need(); if (a[0] !== id) throw err('Forbidden', 403); result = await profile(me); break; }
       case 'deleteAccount': {
-        await need(); await deleteUserData(me); result = { ok: true }; break;
+        await need();
+        if (adminConfirmed(me) && (await activeAdmins()).filter((x) => x.u.id !== me.id).length === 0) throw err('You are the only administrator. Add another administrator before you delete your account.', 409);
+        await deleteUserData(me); result = { ok: true }; break;
+      }
+      // Any signed-in account; required (and the only thing allowed) while a temporary password is in use.
+      case 'changePassword': {
+        await need(); await limit('password', req, context);
+        const cur = String(a[0] ?? '').slice(0, 256), pw = String(a[1] ?? '');
+        if (pw.length < 8) throw err('Password must be at least 8 characters.'); if (pw.length > 256) throw err('Password is too long (256 characters max).');
+        if (!(await verifyPassword(cur, me.pw))) throw err(me.mustChangePassword ? 'The temporary password is not correct.' : 'Your current password is not correct.', 400);
+        if (pw === cur) throw err(me.mustChangePassword ? 'Your new password must be different from the temporary password.' : 'Your new password must be different from your current password.');
+        if (!me.privacyAcceptedAt && a[2] !== true) throw err('Please read and accept the privacy notice.');
+        const forced = !!me.mustChangePassword; const pwHash = await hashPassword(pw);
+        const next = await users.mutate(me.id, (x) => { const { mustChangePassword, tempPwExpiresAt, ...rest } = x; return { ...rest, pw: pwHash, sv: (x.sv || 0) + 1, passwordChangedAt: now(), ...(x.privacyAcceptedAt ? {} : { privacyAcceptedAt: now() }) }; });
+        if (forced) await audit.log({ admin: next.email, action: adminConfirmed(next) ? 'admin.password_set' : 'account.password_set', target: 'user:' + next.id });
+        result = { ...(await profile(next)), token: tokenFor(next) }; break; // every other session ends (session version bumped)
       }
       // ---------- password reset and admin confirmation (one-time codes, no email service)
       case 'resetPassword': {
@@ -102,25 +147,26 @@ export default async (req, context) => {
         const u = await findUser(a[0]); const used = u ? await codes.consume(u.id, ['reset', 'recovery'], a[1]) : null;
         if (!used) throw err('That code is not valid or has expired. Ask an administrator for a new one.', 400);
         const pwHash = await hashPassword(pw);
-        const next = await users.mutate(u.id, (x) => ({ ...x, pw: pwHash, sv: (x.sv || 0) + 1, passwordChangedAt: now(),
-          ...(used.purpose === 'recovery' && isAdminEmail(x.email) ? { adminVerifiedEmail: x.email, adminVerifiedAt: now() } : {}) }));
+        const next = await users.mutate(u.id, (x) => { const { mustChangePassword, tempPwExpiresAt, ...rest } = x; return { ...rest, pw: pwHash, sv: (x.sv || 0) + 1, passwordChangedAt: now(),
+          ...(used.purpose === 'recovery' && isAdminEmail(x.email) ? { adminVerifiedEmail: x.email, adminVerifiedAt: now() } : {}) }; });
+        await ensureRegistered(next);
         await audit.log({ admin: used.by || 'operator code', action: used.purpose === 'recovery' ? 'admin.recovery' : 'account.password_reset', target: 'user:' + u.id });
         result = { ok: true, isAdmin: adminConfirmed(next) }; break; // old sessions stop working (session version bumped)
       }
       case 'requestAdminCode': { // public; same answer whether or not the email is an admin address or has an account
         await limit('reset', req, context); const e = normEmail(a[0]);
-        if (isAdminEmail(e)) { const u = await findUser(e); if (u) opLog('Admin recovery', u.id, await codes.issue(u.id, 'recovery', '')); else console.log('[admin-code] recovery requested for an admin address that has no account yet'); }
+        if (isAdminEmail(e)) { const u = await findUser(e); if (u) opLog('ADMIN RECOVERY CODE', u, await codes.issue(u.id, 'recovery', '')); else console.log('[admin-code] recovery requested for an admin address that has no account yet'); }
         result = { ok: true }; break;
       }
       case 'adminClaimStart': {
         await need(); if (!isAdminEmail(me.email) || adminConfirmed(me)) throw err('This account cannot claim admin access.', 403);
-        await limit('reset', req, context); const c = await codes.issue(me.id, 'claim', ''); opLog('Admin claim', me.id, c); result = { ok: true, expiresAt: c.expiresAt }; break;
+        await limit('reset', req, context); const c = await codes.issue(me.id, 'claim', ''); opLog('ADMIN CLAIM CODE', me, c); result = { ok: true, expiresAt: c.expiresAt }; break;
       }
       case 'adminClaimFinish': {
         await need(); if (!isAdminEmail(me.email) || adminConfirmed(me)) throw err('This account cannot claim admin access.', 403);
         await limit('reset', req, context); const used = await codes.consume(me.id, ['claim'], a[0]);
         if (!used) throw err('That code is not valid or has expired. Ask an administrator for a new one.', 400);
-        me = await users.mutate(me.id, (x) => ({ ...x, adminVerifiedEmail: x.email, adminVerifiedAt: now() }));
+        me = await users.mutate(me.id, (x) => ({ ...x, adminVerifiedEmail: x.email, adminVerifiedAt: now() })); await ensureRegistered(me);
         await audit.log({ admin: me.email, action: 'admin.claim', target: 'user:' + me.id, ...(used.by ? { reason: 'code from ' + used.by } : {}) });
         result = await profile(me); break;
       }
@@ -271,6 +317,7 @@ export default async (req, context) => {
         await needAdmin(); const target = String(a[0] || ''); if (a[2] !== true) throw err('Please confirm before deleting.');
         if (target === me.id) throw err('To delete your own account, use Settings.', 400);
         const u = await users.get(target); if (!u) throw err('Not found', 404);
+        if (adminConfirmed(u)) throw err('This account is an administrator. Remove its administrator rights first (Administrators tab).', 409);
         if (normEmail(a[1]) !== u.email) throw err('The email you typed does not match this account.');
         await deleteUserData(u);
         await audit.log({ admin: me.email, action: 'user.delete', target: 'user:' + target, ...(reasonOf(a[3]) ? { reason: reasonOf(a[3]) } : {}) }); // no name or email of the deleted person
@@ -287,6 +334,62 @@ export default async (req, context) => {
         if (!isAdminEmail(u.email) || adminConfirmed(u)) throw err('This account cannot claim admin access.', 403);
         const c = await codes.issue(u.id, 'claim', me.email); await audit.log({ admin: me.email, action: 'admin.claim_code', target: 'user:' + u.id });
         result = c; break;
+      }
+      // ---------- administrators (admin): add by invite, list, revoke, new temporary password
+      case 'adminInvite': {
+        await needAdmin(); await limit('invite', req, context);
+        const email = normEmail(a[0]?.email); if (!EMAIL_RE.test(email)) throw err('Enter a valid email address.');
+        const name = String(a[0]?.name ?? '').trim().slice(0, 120); if (!name) throw err("Enter the new administrator's name.");
+        const g = await tempGrant(); const grant = { ...g.fields, adminGranted: true, adminGrantedBy: me.email, adminGrantedAt: now() };
+        let u = await findUser(email); let created = false;
+        if (u) {
+          if (adminConfirmed(u)) throw err('This person is already an administrator.', 409);
+          u = await users.mutate(u.id, (x) => ({ ...x, ...grant, sv: (x.sv || 0) + 1 })); // their old password and sessions stop working
+        } else {
+          const id = randomUUID(); const idx = emailIndex(email);
+          if (!(await users.claimEmail(idx, id))) throw err('Someone else changed this at the same time. Please try again.', 409);
+          try { await users.create({ id, email, name, role: 'affected', org: '', createdAt: now(), ...grant }); } catch (e) { await users.remove(id, idx); throw e; }
+          u = await users.get(id); created = true;
+        }
+        await admins.put(u.id, { addedAt: now(), addedBy: me.email, source: 'invite' });
+        await audit.log({ admin: me.email, action: created ? 'admin.invite' : 'admin.invite_existing', target: 'user:' + u.id }); // never the password
+        result = { id: u.id, name: u.name, email: u.email, created, tempPassword: g.temp, expiresAt: g.expiresAt }; break; // shown once; only a hash is stored
+      }
+      case 'adminListAdmins': {
+        await needAdmin();
+        result = (await activeAdmins()).map(({ r, u }) => ({ id: u.id, name: u.name, email: u.email, source: r.source, addedAt: r.addedAt, addedBy: r.addedBy, isSelf: u.id === me.id,
+          bootstrap: isAdminEmail(u.email), waitingFirstSignIn: !!u.mustChangePassword, tempExpired: tempExpired(u), tempPwExpiresAt: u.mustChangePassword ? u.tempPwExpiresAt : undefined }))
+          .sort((x, y) => String(x.addedAt).localeCompare(String(y.addedAt)));
+        break;
+      }
+      case 'adminRevokeAdmin': {
+        await needAdmin(); const target = String(a[0] || '');
+        if (target === me.id) throw err('You cannot remove your own administrator rights.', 400);
+        // Serialise revocations: claim the admin-meta version first, so two admins revoking each other at once cannot leave zero.
+        let ok = false;
+        for (let i = 0; i < 5 && !ok; i++) {
+          const { value, etag } = await admins.meta(); const recent = (value?.revoked || []).filter((x) => Date.parse(x.at) > Date.now() - 6e5);
+          // a revocation is "in flight" until the account shows adminRevokedAt at or after it
+          const pending = (u) => recent.some((x) => x.uid === u.id && !(String(u.adminRevokedAt || '') >= x.at));
+          if (pending(me)) throw err('Administrators only.', 403);
+          const u = await users.get(target); if (!adminConfirmed(u) || pending(u)) throw err('This account is not an administrator.', 404);
+          const others = (await activeAdmins()).filter((x) => x.u.id !== target && !pending(x.u));
+          if (!others.length) throw err('You cannot remove the last administrator.', 409);
+          ok = await admins.writeMeta({ v: (value?.v || 0) + 1, revoked: [...recent, { uid: target, at: now() }] }, etag);
+        }
+        if (!ok) throw err('Someone else changed this at the same time. Please try again.', 409);
+        const u = await users.mutate(target, (x) => { const { adminGranted, adminGrantedBy, adminGrantedAt, adminVerifiedEmail, adminVerifiedAt, ...rest } = x; return { ...rest, sv: (x.sv || 0) + 1, adminRevokedAt: now() }; });
+        await admins.remove(target);
+        await audit.log({ admin: me.email, action: 'admin.revoke', target: 'user:' + target, ...(reasonOf(a[1]) ? { reason: reasonOf(a[1]) } : {}) });
+        result = { ok: true, bootstrap: isAdminEmail(u.email) }; break;
+      }
+      case 'adminNewTempPassword': { // "resend": the old temporary password is never stored, so a new one replaces it
+        await needAdmin(); await limit('invite', req, context); const target = String(a[0] || '');
+        if (target === me.id) throw err('To change your own password, sign out and use "Forgot your password?".', 400);
+        const u0 = await users.get(target); if (!adminConfirmed(u0)) throw err('This account is not an administrator.', 404);
+        const g = await tempGrant(); const u = await users.mutate(target, (x) => ({ ...x, ...g.fields, sv: (x.sv || 0) + 1 }));
+        await audit.log({ admin: me.email, action: 'admin.temp_password', target: 'user:' + target });
+        result = { id: u.id, name: u.name, email: u.email, created: false, tempPassword: g.temp, expiresAt: g.expiresAt }; break;
       }
       default: throw err('Unknown action');
     }

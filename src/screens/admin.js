@@ -6,6 +6,7 @@ import { NC_COUNTIES, SUB_KINDS, SUB_CATEGORIES, RESPONDER_STATUS } from '../dat
 import { $, $$, esc, fmtDate } from '../ui.js';
 import { clearCommunityCache } from '../community.js';
 import { t, tk, getLang, locale } from '../i18n/index.js';
+import { APP_NAME } from '../config.js';
 import { currentSub } from '../push.js';
 
 const opts = (map, cur) => Object.entries(map).map(([v, l]) => `<option value="${esc(v)}" ${v === cur ? 'selected' : ''}>${esc(t(l))}</option>`).join('');
@@ -53,7 +54,7 @@ async function submit() {
   } };
 }
 
-const TABS = [['responders', tk('Responders')], ['submissions', tk('Submissions')], ['published', tk('Published')], ['alerts', tk('Alerts')], ['accounts', tk('Accounts')], ['audit', tk('Log')]];
+const TABS = [['responders', tk('Responders')], ['submissions', tk('Submissions')], ['published', tk('Published')], ['alerts', tk('Alerts')], ['accounts', tk('Accounts')], ['admins', tk('Administrators')], ['audit', tk('Log')]];
 const tabs = (cur) => `<nav class="tabs" style="grid-template-columns:repeat(auto-fit,minmax(96px,1fr))" aria-label="${esc(t('Admin sections'))}">${TABS.map(([id, l]) => `<a href="#admin/${id}" ${id === cur ? 'aria-current="page"' : ''}>${esc(t(l))}</a>`).join('')}</nav>`;
 // Names of logged admin actions (the log stores the code; this shows it in words).
 const ACTION = {
@@ -63,6 +64,9 @@ const ACTION = {
   'user.find': tk('Looked up an account'), 'user.delete': tk('Deleted an account'), 'user.reset_code': tk('Gave a password reset code'),
   'admin.claim_code': tk('Gave an admin confirmation code'), 'admin.claim': tk('Confirmed admin access'), 'admin.recovery': tk('Admin recovery code used (new password, admin confirmed)'),
   'account.password_reset': tk('Password reset with a code'),
+  'admin.invite': tk('Added an administrator (new account)'), 'admin.invite_existing': tk('Made an existing account an administrator'),
+  'admin.temp_password': tk('Made a new temporary password for an administrator'), 'admin.revoke': tk('Removed administrator rights'),
+  'admin.password_set': tk('New administrator set their own password'), 'account.password_set': tk('Temporary password replaced by the account owner'),
 };
 
 async function admin(parts) {
@@ -124,6 +128,7 @@ async function admin(parts) {
 
   if (tab === 'alerts') return pushAdmin(head);
   if (tab === 'accounts') return accountsAdmin(head);
+  if (tab === 'admins') return adminsAdmin(head);
 
   const log = await api.adminAudit();
   const fieldsOf = (e) => (e.fields?.length ? `<p class="small">${esc(t('Changed: {fields}', { fields: e.fields.map((k) => t(FIELD_LABEL[k] || k)).join(', ') }))}</p>` : '');
@@ -211,7 +216,7 @@ async function accountsAdmin(head) {
     return `<div class="card" id="ua_card"><h3>${esc(u.name)}</h3>
       <p class="small">${esc(u.email)} · ${esc(t(ROLE[u.role] || u.role))}${u.org ? ' · ' + esc(u.org) : ''} · ${esc(t('created {date}', { date: fmtDate(u.createdAt) }))}</p>
       ${u.responderStatus ? `<p class="small">${t('Responder status:')} ${esc(t(RESPONDER_STATUS[u.responderStatus] || u.responderStatus))}</p>` : ''}
-      ${u.adminEmail ? `<p class="small">${u.adminConfirmed ? t('Administrator (confirmed).') : t('This email is on the administrator list but admin access is not confirmed yet.')}</p>` : ''}
+      ${u.adminConfirmed ? `<p class="small">${t('Administrator (confirmed).')}</p>` : u.adminEmail ? `<p class="small">${t('This email is on the administrator list but admin access is not confirmed yet.')}</p>` : ''}
       <p class="small">${esc(t('Saved in this account: {cases} case numbers, {notes} notes, {referrals} referrals, {cards} share cards, {subs} submitted records.', { cases: c.cases, notes: c.notes, referrals: c.referrals, cards: c.shareCards, subs: c.submissions }))}</p>
       ${u.isSelf ? `<p class="note">${t('This is your own account. To delete it, use Settings.')}</p>` : `
       <div id="ua_codebox" role="status" aria-live="polite"></div>
@@ -244,5 +249,101 @@ async function accountsAdmin(head) {
         if (!confirm(t('Delete this account and all its data permanently? This cannot be undone.'))) return;
         try { await api.adminDeleteUser(u.id, $('#ua_confirm').value, true, $('#ua_reason').value); ctx.flash = esc(t('The account and all its data were deleted.')); ctx.render(); } catch (x) { errEl.textContent = t(x.message); } };
     };
+  } };
+}
+
+// ---------- Administrators: add by invite (temporary password shown once), email the invite from the
+// admin's own mail app (mailto:, nothing is sent by the app), list, remove rights, new temporary password.
+const SITE = 'https://disaster-resources.app';
+const dateIn = (iso, lang) => new Date(iso).toLocaleString(lang === 'es' ? 'es-US' : 'en-US', { year: 'numeric', month: 'long', day: 'numeric', hour: 'numeric', minute: '2-digit', timeZone: 'America/New_York', timeZoneName: 'short' });
+// The invite email is always in English AND Spanish (the recipient's language is not known).
+export function inviteMailto(r, inviter, includePw) {
+  const en = [
+    `Hello ${r.name},`, '',
+    `${inviter} made you an administrator of the ${APP_NAME}.`, '',
+    'How to sign in the first time:',
+    `1. Open ${SITE} and choose "Sign in".`,
+    `2. Email: ${r.email}`,
+    includePw ? `3. Temporary password: ${r.tempPassword}` : '3. Temporary password: I will give it to you by phone. It is not in this email on purpose.',
+    '4. The app then asks you to set your own password (8 or more characters, not the temporary one). Nothing else works until you do.', '',
+    `The temporary password works until ${dateIn(r.expiresAt, 'en')} (72 hours) or until you set your own password. If it expires, ask me for a new one.`,
+    includePw ? 'Please delete this email after you set your new password.' : '',
+    'Never share your password. Nobody from the app will ask you for it.',
+  ];
+  const es = [
+    `Hola, ${r.name}:`, '',
+    `${inviter} le dio acceso de administrador(a) en ${APP_NAME}.`, '',
+    'Cómo iniciar sesión la primera vez:',
+    `1. Abra ${SITE} y elija "Iniciar sesión".`,
+    `2. Correo electrónico: ${r.email}`,
+    includePw ? `3. Contraseña temporal: ${r.tempPassword}` : '3. Contraseña temporal: se la daré por teléfono. No va en este correo a propósito.',
+    '4. Luego la aplicación le pide crear su propia contraseña (8 caracteres o más, distinta de la temporal). Nada más funciona hasta que lo haga.', '',
+    `La contraseña temporal funciona hasta el ${dateIn(r.expiresAt, 'es')} (72 horas) o hasta que cree su propia contraseña. Si vence, pídame una nueva.`,
+    includePw ? 'Por favor, borre este correo después de crear su nueva contraseña.' : '',
+    'Nunca comparta su contraseña. Nadie de la aplicación se la pedirá.',
+  ];
+  const body = [...en.filter((l, i) => l !== '' || en[i - 1] !== ''), '', '— Español —', '', ...es].join('\n').replace(/\n{3,}/g, '\n\n');
+  const subject = `${APP_NAME}: your administrator access / su acceso de administrador`;
+  const to = encodeURIComponent(r.email).replace(/%40/g, '@');
+  return `mailto:${to}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+}
+
+async function adminsAdmin(head) {
+  const list = await api.adminListAdmins();
+  const me = ctx.me;
+  const tempPanel = (r) => `<div class="card okc" id="ad_new" tabindex="-1"><h3>${esc(t('Temporary password for {name}', { name: r.name }))}</h3>
+    <p class="small">${esc(r.email)} · ${r.created ? t('New account') : t('Existing account: their old password no longer works and they were signed out.')}</p>
+    <label for="ad_pw">${t('Temporary password')}</label><input id="ad_pw" class="temppw" readonly value="${esc(r.tempPassword)}" spellcheck="false" autocomplete="off">
+    <button class="btn secondary" type="button" id="ad_copy">${t('Copy password')}</button><p class="small" id="ad_copymsg" role="status" aria-live="polite"></p>
+    <p class="note"><b>${t('Shown only now.')}</b> ${esc(t('Only a scrambled copy is stored, so nobody can see this password again. If it is lost, make a new one from the list below. It expires {when} (72 hours). The first time they sign in, they must set their own password.', { when: when(r.expiresAt) }))}</p>
+    <h4>${t('Tell them how to sign in')}</h4>
+    <label class="opt"><input type="checkbox" id="ad_incl"><span>${t('Put the temporary password in the email')}</span></label>
+    <p class="small" id="ad_tradeoff">${t('Email is not private: anyone who can read this message, now or later, could sign in before they do. Safer: leave this off and read the password to them by phone. If you include it, check the address and ask them to sign in soon. It stops working after 72 hours or once they set their own password.')}</p>
+    <a class="btn" id="ad_mail" href="${esc(inviteMailto(r, me.name || me.email, false))}">${t('Email the invite')}</a>
+    <p class="small">${t('Opens your own email app with a message in English and Spanish. This app does not send anything: check the message, then send it yourself.')}</p></div>`;
+  const badge = (a) => [a.isSelf ? `<span class="badge chip">${t('You')}</span>` : '', a.bootstrap ? `<span class="badge">${t('Owner (ADMIN_EMAILS)')}</span>` : '',
+    a.waitingFirstSignIn ? (a.tempExpired ? `<span class="badge s-not_started">${t('Temporary password expired')}</span>` : `<span class="badge s-waiting">${t('Waiting for first sign-in')}</span>`) : `<span class="badge ok">${t('Active')}</span>`].join(' ');
+  const row = (a) => `<li data-adm="${esc(a.id)}"><b>${esc(a.name)}</b> ${badge(a)}<br><span class="small">${esc(a.email)} · ${esc(a.source === 'bootstrap' ? t('confirmed with a server-log code {date}', { date: fmtDate(a.addedAt) }) : t('added {date} by {who}', { date: fmtDate(a.addedAt), who: a.addedBy || '' }))}</span>
+    ${a.waitingFirstSignIn && !a.tempExpired && a.tempPwExpiresAt ? `<p class="small">${esc(t('Temporary password expires {when}.', { when: when(a.tempPwExpiresAt) }))}</p>` : ''}
+    ${a.isSelf ? '' : `<button class="btn secondary" type="button" data-newpw>${a.waitingFirstSignIn ? t('Make a new temporary password (resend)') : t('Make a new temporary password')}</button>
+      <label for="ar_${esc(a.id)}">${t('Reason for removing (optional, saved in the Log)')}</label><input id="ar_${esc(a.id)}" maxlength="300"><p class="err" role="alert"></p>
+      <button class="btn danger" type="button" data-revoke>${t('Remove administrator rights')}</button>
+      ${a.bootstrap ? `<p class="small">${t('This email is in the ADMIN_EMAILS server setting, so this person can confirm admin access again with a code from the server log. To remove them for good, also take the email out of ADMIN_EMAILS in Netlify.')}</p>` : ''}`}</li>`;
+  return { html: `${head}<h3>${t('Add an administrator')}</h3>
+    <p class="small">${t('Type their name and email. The app makes the account (or upgrades the existing account with that email) and shows a temporary password once. You then tell them the password; nothing is emailed by the app. Adding them confirms their admin access right away. The temporary password works for 72 hours, and they must set their own password the first time they sign in.')}</p>
+    <form class="card" id="ad" novalidate><label for="ad_name">${t('Name')}</label><input id="ad_name" maxlength="120" autocomplete="off" required>
+      <label for="ad_email">${t('Email')}</label><input id="ad_email" type="email" autocomplete="off" spellcheck="false" required>
+      <p class="small">${t('If this email already has an account, its current password stops working and the person is signed out everywhere. Their notes and records stay.')}</p>
+      <p class="err" role="alert" id="ad_err"></p><button class="btn" type="submit">${t('Add administrator')}</button></form>
+    <div id="ad_out"></div>
+    <h3>${esc(t('Administrators ({n})', { n: list.length }))}</h3>
+    <p class="small">${t('You cannot remove your own rights or the last administrator. Removing rights signs the person out; their account and notes stay. Every change is saved in the Log, never the password.')}</p>
+    <ul class="list" id="adlist">${list.map(row).join('')}</ul>`,
+  bind() {
+    const show = (r) => {
+      $('#ad_out').innerHTML = tempPanel(r); $('#ad_new').focus();
+      const mail = () => { $('#ad_mail').href = inviteMailto(r, me.name || me.email, $('#ad_incl').checked); };
+      $('#ad_incl').onchange = mail;
+      $('#ad_copy').onclick = async () => { const el = $('#ad_pw');
+        try { await navigator.clipboard.writeText(el.value); $('#ad_copymsg').textContent = t('Copied.'); }
+        catch { el.focus(); el.select(); $('#ad_copymsg').textContent = t('Selected. Copy it with your device\'s copy command.'); } };
+    };
+    $('#ad').onsubmit = async (e) => { e.preventDefault(); const errEl = $('#ad_err'); errEl.textContent = '';
+      const name = $('#ad_name').value.trim(), email = $('#ad_email').value.trim();
+      if (!name) { errEl.textContent = t("Enter the new administrator's name."); $('#ad_name').focus(); return; }
+      if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) { errEl.textContent = t('Enter a valid email address.'); $('#ad_email').focus(); return; }
+      if (!confirm(t('Make {email} an administrator? They will be able to approve responders, publish records, send alerts and manage accounts.', { email }))) return;
+      try { const r = await api.adminInvite(name, email); $('#ad').reset(); await refreshList(); show(r); } catch (x) { errEl.textContent = t(x.message); } };
+    const refreshList = async () => { try { const l = await api.adminListAdmins(); $('#adlist').innerHTML = l.map(row).join(''); bindRows(); } catch {} };
+    const bindRows = () => $$('#adlist [data-adm]').forEach((li) => {
+      const errEl = li.querySelector('.err');
+      li.querySelector('[data-newpw]') && (li.querySelector('[data-newpw]').onclick = async () => {
+        if (!confirm(t('Make a new temporary password? The old one stops working and this person is signed out until they set their own password.'))) return;
+        try { const r = await api.adminNewTempPassword(li.dataset.adm); await refreshList(); show(r); } catch (x) { errEl.textContent = t(x.message); } });
+      li.querySelector('[data-revoke]') && (li.querySelector('[data-revoke]').onclick = async () => {
+        if (!confirm(t('Remove administrator rights from this person? Their account stays.'))) return;
+        try { await api.adminRevokeAdmin(li.dataset.adm, li.querySelector('input').value); ctx.flash = esc(t('Administrator rights removed.')); ctx.render(); } catch (x) { errEl.textContent = t(x.message); } });
+    });
+    bindRows();
   } };
 }

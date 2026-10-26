@@ -96,12 +96,13 @@ Blob keys: `user/<uid>` (sealed), `email/<hmac>` → uid, `data/<uid>` (sealed),
 
 - **Affected people** get instant access. **Responders** register as *pending*. Until an admin approves them they can use the app like anyone else, but share cards and record submissions are blocked by the server (403) and the UI shows a "waiting for admin approval" notice.
 - **Approved responders** can submit records at `#submit`: an organization, service, shelter, phone number or link, with a category, a county or Statewide, a description, phone/link and a required https **source URL**. Submissions are visible only to the submitter and admins until approved. A responder can have at most 50 pending.
-- **Admins** are accounts whose normalized email is listed in `ADMIN_EMAILS` **and** that proved the email with a one-time code (see *Admin access*). Both are checked on every request, so removing an email takes effect immediately. The admin area at `#admin` has six tabs:
+- **Admins** are either (a) accounts whose normalized email is listed in `ADMIN_EMAILS` **and** that proved the email with a one-time code (the owner bootstrap, see *Admin access*), or (b) accounts an admin added in **Admin → Administrators** (stored in the data; see *Adding administrators*). This is checked on every request. The admin area at `#admin` has seven tabs:
   - **Responders:** pending requests (approve, or deny with an optional reason), approved responders (revoke), and denied/revoked responders (approve after all). Deny and revoke also turn off all of that responder's share codes.
   - **Submissions:** each pending record is an editable form. Approve (with or without edits), or reject with an optional reason the responder sees.
   - **Published:** edit a published record in place (with an optional reason; the changed fields go in the Log) or unpublish it.
   - **Alerts:** see *Sending an alert* below.
   - **Accounts:** find an account by email; give a password reset code (or, for another admin address, a claim code); delete the account permanently after typing its email again.
+  - **Administrators:** add an admin by name and email (temporary password shown once), email the invite from your own mail app, list admins, remove admin rights, make a new temporary password.
   - **Log:** the last 100 admin actions.
 - Approved records are merged into the matching resource section (by category) and the matching county page (by county). There is also an "Added by verified responders" list. Each record is labeled **"Added by a verified responder, approved <date>"** and cached on the device for offline use. Rejected and pending records are never returned by the public API.
 - The **audit log** stores the admin email, the action, a target id (`user:<uid>` / `submission:<id>`), the time and the optional reason. It never stores client data or record contents.
@@ -112,7 +113,7 @@ Blob keys: `user/<uid>` (sealed), `email/<hmac>` → uid, `data/<uid>` (sealed),
 
 There is no email service, so proof of an email works through the server's own log, which only people with access to the Netlify site can read.
 
-- **Claim admin:** register (or sign in) with the admin email. **Settings → Confirm admin access → Write a code to the server log.** Open Netlify → the site → **Logs → Functions → api** and find the line `[admin-code] Admin claim code for account …: XXXXX-XXXXX`. Type the code in Settings. Until then the account is an ordinary account and the admin area says so.
+- **Claim admin:** register (or sign in) with the admin email. **Settings → Confirm admin access → Write a code to the server log.** Open Netlify → **disaster-resources-lltd** → **Logs → Functions → api** and find the line `[admin-code] ADMIN CLAIM CODE for d***@c4i…: XXXXX-XXXXX (single use, expires …)` (the email is masked; recovery codes are on lines that say `ADMIN RECOVERY CODE`). The claim card in Settings shows this path. Type the code in Settings. Until then the account is an ordinary account and the admin area says so.
 - **Admin recovery** (forgot the password, or someone else registered the admin email first): on the sign-in page, **Forgot your password? → Administrators: get a recovery code**. The code appears in the function log; enter it with a new password on the same page. This also confirms admin access, and if the address belongs to an account that never confirmed it, that account's password is replaced and its sessions are ended.
 - **Everyone else:** an admin opens **Admin → Accounts**, finds the account, checks who they are by phone or in person, and taps **Give a password reset code**. The person enters email, code and a new password at **Sign in → Forgot your password?**. Every session for that account is signed out.
 - A confirmed admin can also give a claim code for another address in `ADMIN_EMAILS` from **Admin → Accounts**.
@@ -200,11 +201,24 @@ The canonical URL is `SITE_URL` in `src/config.js` (`https://disaster-resources.
 
 The fire filter used to drop every FDID ending in 50-99, which hid most departments in Burke, Carteret, Craven, Moore, Pitt, Rowan and Surry. Now it keeps FDIDs ending 00-49, any FDID in the OSFM fire-department map layer, and fire-named entries that are not EMS-only units or fire marshal offices. `data-raw/parse_osfm.py` also no longer glues the chief's first-name fragment onto names, joins wrapped names whose second line ends in a ZIP code, and drops county contact rows whose "FDID" is a ZIP code.
 
+### Adding administrators
+
+`ADMIN_EMAILS` is only the bootstrap for the owner. Everyone else is added in the app; nothing is emailed by the server and no email provider is used.
+
+1. A confirmed admin opens **Admin → Administrators**, types the person's **name and email** and taps **Add administrator**. If no account has that email, one is made (role "affected", admin rights on). If an account exists, it is upgraded: its old password stops working and all its sessions end; notes stay.
+2. The app shows a strong **temporary password** once (`XXXX-XXXX-XXXX-XXXX-XXXX`, about 100 bits) with a **Copy password** button. Only a scrypt hash is stored; nobody can see it again. It expires after **72 hours**.
+3. **Email the invite** opens the admin's own mail app (a `mailto:` link) with the address and a subject filled in, and a body in English and Spanish that explains how to sign in at https://disaster-resources.app and that the password must be changed. The temporary password is put in the email **only** if **Put the temporary password in the email** is ticked; otherwise the email says it will come by phone. The screen explains the tradeoff (email is not private; phone is safer).
+4. Adding the person confirms their admin access (`adminGranted`, stored encrypted in the data, plus an `admin/<uid>` registry entry). They do not need a log code.
+5. On first sign-in the account has `mustChangePassword`: the app goes straight to **Set a new password**, and the server refuses every other action (403) until it is done. The new password must be 8–256 characters and differ from the temporary one; invited accounts also accept the privacy notice there. Saving it ends every other session. An expired temporary password cannot sign in; an admin makes a new one.
+6. The list shows each admin (You, Owner/ADMIN_EMAILS, Waiting for first sign-in, Temporary password expired). For others: **Make a new temporary password** (also the way to "resend", since the old one is never stored) and **Remove administrator rights** (optional reason). You cannot remove yourself or the last administrator (two admins removing each other at once is serialised so one always stays). An admin's account cannot be deleted from Accounts until its rights are removed, and the last admin cannot delete their own account. Removing an `ADMIN_EMAILS` person only lasts until they claim again with a log code; take the email out of `ADMIN_EMAILS` to remove them for good.
+7. Every action (`admin.invite`, `admin.invite_existing`, `admin.temp_password`, `admin.revoke`, `admin.password_set`) is in the Log, never the password. Rate limits: 30 invites/new passwords per hour per IP, 10 password changes per 15 minutes.
+
 ## Coverage
 
 - **Counties: 100 of 100 complete.** Complete means EM, DSS, health and Register of Deeds each have a phone, and all five links are ok or blocked. 87 counties have every link strictly 2xx/3xx.
 - **Fire:** 2,093 listings, 1,213 FDIDs (1,212 current), 100/100 counties.
 - **Schools:** 115 LEAs + 2 state schools; all 117 links ok.
+- **Tests (2026-10-26):** plus 40 administrator tests (`tests/admins.test.mjs`: invite, forced change, expiry, revoke, last-admin protection, non-admins blocked, log line format) and e2e steps for the Administrators tab, the mailto invite and the forced password change (screenshots 36–38).
 - **Tests (2026-10-25):**
   - Unit: 124 function tests, 19 push tests and 8 i18n checks passed. They run against the Netlify Blobs local server and cover accounts, isolation, concurrent writes, size limits, encryption at rest, share cards, rate limits, cleanup, export/delete, fail-closed config, responder approval, submissions, admin edit/approve/reject/unpublish/edit-published, the audit log, revoke, admin claim and recovery codes, password reset codes (wrong, expired, reused, replaced, raced, cross-account), admin account deletion, alert targeting (statewide, several counties), test sends and the hotel function.
   - e2e (Blobs): 86 passed. Includes: admin email gets no rights until claimed with a log code → responder approval → submissions → edit after publishing → password reset with an admin code → admin deletes an account → admin screens in Spanish → alerts to two counties, statewide warning without Spanish, test send to own device only.
@@ -282,7 +296,7 @@ The app does **not** give out numbers. What it would take:
 1. **Backend: decided.** Netlify Blobs, separate from C4I and Salesforce. Still open: retention and backups (periodic export?), and the breach-notice plan.
 2. **App name: decided.** "NC Disaster Recovery Hub", a project of C4I Veteran Services Corp.
 3. **Domain: decided.** https://disaster-resources.app. Print QR codes only after it resolves with HTTPS.
-4. **Responder verification: decided (manual admin approval).** Open: should more admins be added to `ADMIN_EMAILS`? Should approval also check agency email domains?
+4. **Responder verification: decided (manual admin approval).** More admins are now added in Admin → Administrators (not `ADMIN_EMAILS`). Should approval also check agency email domains?
 5. **Email verification and password reset by email:** needs an email provider (not chosen). Until then, admin-issued one-time codes and log codes for admins (see *Admin access*).
 6. **Encryption key custody:** who holds the offline backup of `DATA_ENCRYPTION_KEY`?
 7. **Data maintenance:** county, fire and school data are a snapshot from 2026-10-22. Someone needs to own refreshing it, for example quarterly with `npm run data` plus a link check. Responder submissions can now fill gaps between refreshes.

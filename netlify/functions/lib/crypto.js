@@ -49,3 +49,7 @@ export function open(env, key, aad) {
   const d = createDecipheriv('aes-256-gcm', key, Buffer.from(env.iv, 'base64')); d.setAAD(Buffer.from(aad)); d.setAuthTag(Buffer.from(env.tag, 'base64'));
   return JSON.parse(Buffer.concat([d.update(Buffer.from(env.ct, 'base64')), d.final()]).toString('utf8'));
 }
+// Temporary password for a new administrator: 20 characters from a 32-symbol alphabet with no look-alikes
+// (100 bits), in groups of 4 so it can be read out by phone. Only its scrypt hash is stored.
+const TEMP_ALPHA = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+export const tempPassword = () => { const b = randomBytes(20); return [...b].map((x) => TEMP_ALPHA[x % 32]).join('').match(/.{4}/g).join('-'); };

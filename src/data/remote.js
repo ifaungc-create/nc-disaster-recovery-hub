@@ -47,6 +47,13 @@ export const remote = {
   adminDeleteUser: (uid, confirmEmail, confirmed, reason) => rpc('adminDeleteUser', uid, confirmEmail, confirmed, reason || ''),
   adminIssueReset: (uid) => rpc('adminIssueReset', uid),
   adminIssueClaim: (uid) => rpc('adminIssueClaim', uid),
+  // Administrators: add by invite (temporary password shown once), list, revoke, new temporary password
+  adminInvite: (name, email) => rpc('adminInvite', { name, email }),
+  adminListAdmins: () => rpc('adminListAdmins'),
+  adminRevokeAdmin: (uid, reason) => rpc('adminRevokeAdmin', uid, reason || ''),
+  adminNewTempPassword: (uid) => rpc('adminNewTempPassword', uid),
+  // Own password (required right after signing in with a temporary password). Returns a new session token.
+  changePassword: async (current, next, privacy) => withToken(await rpc('changePassword', current, next, privacy === true)),
   // Password reset and admin confirmation with one-time codes (no email service)
   resetPassword: (email, code, pw) => rpc('resetPassword', email, code, pw),
   requestAdminCode: (email) => rpc('requestAdminCode', email),

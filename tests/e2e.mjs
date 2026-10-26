@@ -157,9 +157,9 @@ try {
     await go('admin'); assert.match(await page.textContent('main'), /Confirm admin access in Settings/); assert.equal(await page.locator('nav.tabs').count(), 0); step('an ADMIN_EMAILS account gets no admin rights until the email is proven');
     await go('settings'); await page.waitForSelector('#claimcard'); await shotAt('30-settings-confirm-admin', '#claimcard');
     const before = lastCode(); await page.click('#claimstart'); await page.waitForFunction(() => document.querySelector('#claimmsg').textContent.length > 0); const claim = await waitCode(before);
-    assert.doesNotMatch(serverOut, /\[admin-code\][^\n]*@/); await page.fill('#claimcode', 'AAAAA-AAAAA'); await page.click('#claimf button[type=submit]'); await page.waitForFunction(() => document.querySelector('#claimerr').textContent.length > 0);
+    assert.doesNotMatch(serverOut, /\[admin-code\][^\n]*dn22@/); assert.match(serverOut, /\[admin-code\] ADMIN CLAIM CODE for d\*\*\*@c4i…: [A-Z2-9]{5}-[A-Z2-9]{5} \(single use/); await page.fill('#claimcode', 'AAAAA-AAAAA'); await page.click('#claimf button[type=submit]'); await page.waitForFunction(() => document.querySelector('#claimerr').textContent.length > 0);
     await page.fill('#claimcode', claim); await page.click('#claimf button[type=submit]'); await page.waitForSelector('text=Admin access is confirmed'); assert.equal(await page.locator('#claimcard').count(), 0);
-    step('admin confirms access in Settings with a one-time code from the server log (wrong code refused; no email in the log)');
+    step('admin confirms access in Settings with a one-time code from the server log (wrong code refused; labelled line, masked email only)');
     await go('home'); await page.click('#adminlink'); await page.waitForSelector('h3:has-text("Waiting for approval (1)")');
     const req = page.locator('[data-resp]', { hasText: 'Sam Rivera' }); assert.match(await req.textContent(), /sam@relief\.example[\s\S]*requested/);
     assert.doesNotMatch(await page.textContent('main'), /jordan|4827|Legal Aid of NC/i); await shot('15-admin-responders');
@@ -244,6 +244,33 @@ try {
     await go('admin/audit'); await page.waitForSelector('text=Eliminó una cuenta'); await page.evaluate(() => localStorage.setItem('ncdrh.lang', 'en')); await page.reload(); await page.waitForSelector('main h2');
     assert.notEqual((await (await fetch(BASE + '/.netlify/functions/api', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ action: 'verifyLogin', args: ['qa-e2e@example.org', 'brand-new-pass-7'] }) })).status), 200);
     step('admin finds the account by email, deletes it after typing the email (wrong email refused); Log has no name or email; admin screens in Spanish');
+    // ---- Administrators tab: add an admin (temp password shown once), mailto invite, forced password change, revoke
+    const NEWADM = 'qa-admin2@example.org';
+    await go('admin/admins'); await page.waitForSelector('#ad'); await page.click('#ad button[type=submit]'); await page.waitForFunction(() => document.querySelector('#ad_err').textContent.length > 0);
+    await page.fill('#ad_name', 'Robin Helper'); await page.fill('#ad_email', NEWADM); await page.click('#ad button[type=submit]'); await page.waitForSelector('#ad_pw', { timeout: 8000 }).catch(async (e) => { console.log('DEBUG ad_err:', await page.textContent('#ad_err'), errors); throw e; });
+    const temp = await page.inputValue('#ad_pw'); assert.match(temp, /^([A-Z2-9]{4}-){4}[A-Z2-9]{4}$/);
+    let href = await page.getAttribute('#ad_mail', 'href'); assert.ok(href.startsWith(`mailto:${NEWADM}?subject=`)); const body0 = decodeURIComponent(href.split('&body=')[1]);
+    assert.ok(!body0.includes(temp)); assert.match(body0, /https:\/\/disaster-resources\.app[\s\S]*by phone[\s\S]*— Español —[\s\S]*por teléfono/); assert.match(body0, /set your own password[\s\S]*cree su propia contraseña/);
+    await page.check('#ad_incl'); href = await page.getAttribute('#ad_mail', 'href'); assert.ok(decodeURIComponent(href).includes('Temporary password: ' + temp)); assert.ok(decodeURIComponent(href).includes('Contraseña temporal: ' + temp));
+    assert.match(await page.textContent('#adlist'), /Robin Helper[\s\S]*Waiting for first sign-in/); assert.doesNotMatch(serverOut, new RegExp(temp));
+    await shotAt('36-admin-administrators', '#ad_new'); step('Administrators tab: add by name + email, temporary password shown once, "Email the invite" mailto (password only when ticked, EN + ES body)');
+    await go('admin/audit'); const alog = await page.textContent('#audit'); assert.match(alog, /admin\.invite/); assert.ok(!alog.includes(temp));
+    await page.evaluate(() => localStorage.setItem('ncdrh.lang', 'es')); await go('admin/admins'); await page.reload(); await page.waitForSelector('text=Agregar un administrador'); await page.waitForSelector('text=Esperando el primer inicio de sesión');
+    await shot('37-admin-administrators-es'); await page.evaluate(() => localStorage.setItem('ncdrh.lang', 'en')); await page.reload(); await page.waitForSelector('main h2'); step('Administrators tab in Spanish; the add is in the Log without the password');
+    await logout(); await go('login'); await page.fill('#le', NEWADM); await page.fill('#lp', temp); await page.click('button[type=submit]'); await page.waitForSelector('h2:has-text("Set a new password")');
+    assert.equal(await page.inputValue('#cpc'), temp); await go('notes'); await page.waitForSelector('h2:has-text("Set a new password")'); await go('admin'); await page.waitForSelector('h2:has-text("Set a new password")');
+    await page.fill('#cpn', temp); await page.fill('#cpn2', temp); await page.click('#cpf button[type=submit]'); await page.waitForFunction(() => /different/.test(document.querySelector('#cperr').textContent));
+    await page.fill('#cpn', 'robin-own-pass-1'); await page.fill('#cpn2', 'robin-own-pass-2'); await page.click('#cpf button[type=submit]'); await page.waitForFunction(() => /do not match/.test(document.querySelector('#cperr').textContent));
+    await page.fill('#cpn2', 'robin-own-pass-1'); await page.evaluate(() => window.scrollTo(0, 0)); await shot('38-forced-password-change');
+    await page.click('#cpf button[type=submit]'); await page.waitForFunction(() => /privacy/.test(document.querySelector('#cperr').textContent));
+    await page.check('#cpterms'); await page.click('#cpf button[type=submit]'); await page.waitForSelector('text=Your new password is saved'); await page.waitForSelector('nav.tabs');
+    step('new admin signs in with the temporary password, is held on "Set a new password" (other screens redirect), must pick a different password and accept privacy, then lands in Admin');
+    const r1 = await (await fetch(BASE + '/.netlify/functions/api', { method: 'POST', headers: { 'content-type': 'application/json', 'x-test-client-ip': '10.9.9.2' }, body: JSON.stringify({ action: 'verifyLogin', args: [NEWADM, temp] }) })).status; assert.notEqual(r1, 200);
+    await go('admin/admins'); await page.waitForSelector('#adlist'); assert.match(await page.textContent('#adlist'), /Robin Helper[\s\S]*You/); await logout();
+    await login(ADMIN); await go('admin/admins'); const li = page.locator('#adlist li', { hasText: 'Robin Helper' }); assert.match(await li.textContent(), /Active/);
+    await li.locator('input').fill('QA cleanup'); await li.locator('[data-revoke]').click(); await page.waitForSelector('text=Administrator rights removed.');
+    assert.doesNotMatch(await page.textContent('#adlist'), /Robin Helper/); assert.equal(await page.locator('#adlist li', { hasText: ADMIN }).locator('[data-revoke]').count(), 0);
+    step('old temporary password no longer works; owner removes the new admin (no remove button on yourself)');
     await page.setExtraHTTPHeaders({});
   }
   await logout();

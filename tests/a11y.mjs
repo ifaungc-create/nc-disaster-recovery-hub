@@ -75,7 +75,7 @@ try {
     else { await go(p, 'login'); await p.fill('#le', ADMIN); await p.fill('#lp', 'correct-horse-9'); await p.click('button[type=submit]'); await p.waitForTimeout(1200); }
     await go(p, 'admin'); await p.waitForSelector('nav.tabs'); await go(p, 'alerts'); await p.waitForSelector('#pf');
     for (const h of signedIn) await (go(p, h).then(() => axe(p, `${lang} #${h} (signed in)`)));
-    const tabs = ['responders', 'submissions', 'published', 'alerts', 'accounts', 'audit'];
+    const tabs = ['responders', 'submissions', 'published', 'alerts', 'accounts', 'admins', 'audit'];
     for (const tb of tabs) { await go(p, 'admin/' + tb); await p.waitForTimeout(400); await axe(p, `${lang} #admin/${tb}`); }
     await go(p, 'admin/alerts'); await p.click('#pa button[type=submit]'); await p.waitForTimeout(300); await axe(p, `${lang} #admin/alerts (empty submit)`);
     await p.fill('#pa_title', 'Test'); await p.fill('#pa_body', 'Body'); await p.fill('#pa_titleEs', 'Prueba'); await p.fill('#pa_bodyEs', 'Texto'); await p.click('#pa button[type=submit]'); await p.waitForSelector('#pa_send', { state: 'visible' }); await axe(p, `${lang} #admin/alerts (confirm step)`);
@@ -86,6 +86,13 @@ try {
     await go(p, 'admin/accounts'); await p.fill('#ua_email', 'qa-a11y@example.org'); await p.click('#ua button[type=submit]'); await p.waitForSelector('#ua_del'); await axe(p, `${lang} #admin/accounts (account found, delete form)`);
     await p.click('#ua_del button[type=submit]'); await p.waitForFunction(() => document.querySelector('#ua_derr').textContent.length > 0); await axe(p, `${lang} #admin/accounts (delete without confirmation)`);
     await p.click('#ua_reset'); await p.waitForSelector('#ua_code'); await axe(p, `${lang} #admin/accounts (reset code shown)`);
+    // administrators: add form error, temporary password panel, then the forced password change for that admin (separate context)
+    await go(p, 'admin/admins'); await p.click('#ad button[type=submit]'); await p.waitForTimeout(200); await axe(p, `${lang} #admin/admins (empty add)`);
+    await p.fill('#ad_name', 'QA Admin ' + lang); await p.fill('#ad_email', `qa-a11y-admin-${lang}@example.org`); await p.click('#ad button[type=submit]'); await p.waitForSelector('#ad_pw'); await axe(p, `${lang} #admin/admins (temporary password shown)`);
+    { const temp = await p.inputValue('#ad_pw'); const c2 = await newCtx(lang); const p2 = await c2.newPage(); await go(p2, 'login'); await p2.fill('#le', `qa-a11y-admin-${lang}@example.org`); await p2.fill('#lp', temp); await p2.click('button[type=submit]'); await p2.waitForSelector('#cpf');
+      await axe(p2, `${lang} #set-password`); await p2.click('#cpf button[type=submit]'); await p2.waitForTimeout(200); await axe(p2, `${lang} #set-password (error)`);
+      await p2.setViewportSize({ width: 320, height: 640 }); const w = await p2.evaluate(() => document.documentElement.scrollWidth - innerWidth); if (w > 1) problems.push(`${lang} #set-password @320px: sideways scroll ${w}px`); await c2.close(); }
+    await p.setViewportSize({ width: 320, height: 640 }); { const w = await p.evaluate(() => document.documentElement.scrollWidth - innerWidth); if (w > 1) problems.push(`${lang} #admin/admins (temp password) @320px: sideways scroll ${w}px`); } await p.setViewportSize({ width: 390, height: 844 });
     // form errors are announced: submit an empty case form
     await go(p, 'notes/cases/new'); await p.click('main button[type=submit]'); await p.waitForTimeout(300); await axe(p, `${lang} #notes/cases/new (after empty submit)`);
     assert.ok(await p.evaluate(() => [...document.querySelectorAll('main [role=alert], main [aria-live]')].some((e) => e.textContent.trim())), 'form error is in a live region');

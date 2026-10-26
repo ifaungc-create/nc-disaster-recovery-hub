@@ -30,3 +30,11 @@
 - Reproduced exactly on the Google Translate proxy (disaster--resources-app.translate.goog): the API call is cross-origin there and blocked by CORS (by design), browser says "Failed to fetch" ("No se pudo obtener").
 - Fix (commit dd56705, deploy 6addaf477e0177920c59dd13): EN/ES message instead of raw "Failed to fetch" (proxy-specific and network-specific); banner + "Open the app to sign in" link on sign-in/sign-up/reset inside the proxy; SW ncdrh-v9, registered with updateViaCache 'none' + update(), still never touches /.netlify/ or POSTs.
 - Tests: unit (functions/push/i18n), e2e remote 86, e2e local 63 green. QA accounts created live were all deleted.
+
+## Add administrators in the app — Mon Oct 26 2026
+- Admin → Administrators tab: add by name + email (new account or upgrade), strong temp password (hash only, shown once, copy button), mustChangePassword + 72 h expiry; invite confirms admin; ADMIN_EMAILS stays the bootstrap. List, revoke (not self, not last admin; admin-meta ETag), new temp password ("resend"). All logged, never the password.
+- "Email the invite": mailto with bilingual EN/ES body; password only if the checkbox is ticked (tradeoff explained). App sends no email.
+- Forced "Set a new password" screen; server blocks all other actions (mcp token flag); new password 8–256 and not the temp one; other sessions end.
+- Owner claim screen shows the path Netlify → disaster-resources-lltd → Logs → Functions → api; log lines "ADMIN CLAIM CODE for d***@c4i…: CODE" / "ADMIN RECOVERY CODE …".
+- Tests: functions 124, admins 40, push 19, i18n 8, e2e remote 90, e2e local 63, a11y 12 (0 axe findings, incl. new screens).
+- Admin Guide: new "Adding administrators" chapter; public manual one line.

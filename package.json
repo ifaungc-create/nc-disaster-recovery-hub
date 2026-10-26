@@ -10,7 +10,7 @@
     "build": "vite build",
     "preview": "vite preview --port 4174 --strictPort",
     "data": "python3 scripts/build_data.py && node scripts/make-sitemap.mjs",
-    "test:unit": "node tests/functions.test.mjs && node tests/push.test.mjs && node tests/i18n.test.mjs",
+    "test:unit": "node tests/functions.test.mjs && node tests/admins.test.mjs && node tests/push.test.mjs && node tests/i18n.test.mjs",
     "test:e2e": "node tests/e2e.mjs",
     "test": "npm run test:unit && npm run test:e2e && npm run test:e2e:local && npm run test:a11y",
     "test:a11y": "node tests/a11y.mjs",

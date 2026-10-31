@@ -10,7 +10,7 @@ import { t, isEs } from '../i18n/index.js';
 
 const chk = (o) => (o?.check === 'to-verify' ? ' ' + verifyBadge(t('This link did not load when checked on {date}', { date: DATA_DATE })) : '');
 const locBtn = (label = t('Use my location')) => `<button class="btn secondary" id="locme">${label}</button><p class="err" role="alert" id="locerr"></p>`;
-const bindLoc = (after) => { const b = $('#locme'); if (b) b.onclick = async () => { b.disabled = true; b.textContent = t('Finding your county…'); try { const l = await locateMe(); after(l); } catch (e) { $('#locerr').textContent = t(e.message); b.disabled = false; b.textContent = t('Use my location'); } }; };
+const bindLoc = (after, busy = t('Finding your county…')) => { const b = $('#locme'); if (b) b.onclick = async () => { const label = b.textContent; b.disabled = true; b.textContent = busy; $('#locerr').textContent = ''; try { const l = await locateMe(); after(l); if (b.isConnected && b.textContent === busy) b.textContent = label; } catch (e) { $('#locerr').textContent = t(e.message); if (b.isConnected) b.textContent = label; } finally { if (b.isConnected) b.disabled = false; } }; };
 
 async function counties() {
   const list = await loadData('counties'); const loc = getLoc();
@@ -102,7 +102,7 @@ async function fire(parts) {
   return { html, bind() {
     $('#ff').onsubmit = (e) => { e.preventDefault(); const d = new FormData(e.target); state.q = d.get('q') || ''; state.county = d.get('county') || ''; state.shown = 40; if (!/^\d{5}$/.test(state.q.trim()) && state.origin?.zip) state.origin = null; run(); };
     $('#more').onclick = () => { state.shown += 40; run(); };
-    bindLoc((l) => { state.q = $('#fq').value; state.county = $('#fc').value; state.origin = { la: l.la, lo: l.lo, label: t('your location') }; $('#locme').textContent = t('Sorted by distance'); run(); });
+    bindLoc((l) => { state.q = $('#fq').value; state.county = $('#fc').value; state.origin = { la: l.la, lo: l.lo, label: t('your location') }; $('#locme').textContent = t('Sorted by distance'); run(); }, t('Finding your location…'));
     run();
   } };
 }
@@ -155,7 +155,7 @@ async function hotels() {
         $('#hlivesum').textContent = fresh.length ? t('The live map added {n} more.', { n: fresh.length }) : t('The live map has nothing new for this area.');
       } catch (e) { $('#hlivesum').textContent = t(e.message); } finally { b.disabled = false; }
     };
-    $('#hloc').onclick = async () => { try { const p = await geolocate(); show(p, t('your location'), true); } catch (e) { $('#herr').textContent = t(e.message); } };
+    $('#hloc').onclick = async () => { const b = $('#hloc'), label = b.textContent; b.disabled = true; b.textContent = t('Finding your location…'); $('#herr').textContent = ''; try { const p = await geolocate(); show(p, t('your location'), true); } catch (e) { $('#herr').textContent = t(e.message); } finally { if (b.isConnected) { b.disabled = false; b.textContent = label; } } };
     $('#hf').onsubmit = async (e) => { e.preventDefault(); const q = new FormData(e.target).get('q'); const p = await lookupPlace(q);
       if (!p || p.la == null) { $('#herr').textContent = t('We could not find that ZIP code or town in North Carolina. Check the spelling and try again.'); return; } show(p, p.label); };
   } };

@@ -1,0 +1,71 @@
+# NC Disaster Recovery Hub: iOS builds on Codemagic.
+# 1) ios-compile-check needs no Apple account. It proves the project builds for the iOS simulator.
+# 2) ios-testflight signs the app and uploads it to TestFlight. It needs the approved Apple Developer
+#    account, an App Store Connect API key saved in Codemagic under Team settings > Integrations
+#    (name it C4I_ASC), the app record in App Store Connect, and APP_STORE_APPLE_ID set below.
+workflows:
+  ios-compile-check:
+    name: iOS compile check (no signing)
+    instance_type: mac_mini_m2
+    max_build_duration: 40
+    environment:
+      node: 22
+      xcode: latest
+    scripts:
+      - name: Install and build the web app
+        script: |
+          npm ci
+          npm run build
+      - name: Sync Capacitor iOS project
+        script: npx cap sync ios
+      - name: Build for the iOS simulator without signing
+        script: |
+          xcodebuild -project ios/App/App.xcodeproj -scheme App \
+            -configuration Debug -sdk iphonesimulator \
+            -destination 'generic/platform=iOS Simulator' \
+            CODE_SIGNING_ALLOWED=NO build
+
+  ios-testflight:
+    name: iOS TestFlight
+    instance_type: mac_mini_m2
+    max_build_duration: 60
+    integrations:
+      app_store_connect: C4I_ASC
+    environment:
+      node: 22
+      xcode: latest
+      ios_signing:
+        # Stored in Codemagic > Personal account settings > Code signing identities.
+        certificates:
+          - C4I_Distribution
+        provisioning_profiles:
+          - NCDRH_AppStore
+          - NCDRH_Widget_AppStore
+      vars:
+        APP_STORE_APPLE_ID: "6829245951"
+    scripts:
+      - name: Install and build the web app
+        script: |
+          npm ci
+          npm run build
+      - name: Sync Capacitor iOS project
+        script: npx cap sync ios
+      - name: Use the App Store profiles for the app and the widget
+        script: xcode-project use-profiles
+      - name: Set the build number from TestFlight
+        script: |
+          cd ios/App
+          LATEST=$(app-store-connect get-latest-app-store-build-number "$APP_STORE_APPLE_ID" || echo 0)
+          agvtool new-version -all $((LATEST + 1))
+      - name: Build the signed ipa
+        script: |
+          xcode-project build-ipa \
+            --project "ios/App/App.xcodeproj" \
+            --scheme "App"
+    artifacts:
+      - build/ios/ipa/*.ipa
+      - /tmp/xcodebuild_logs/*.log
+    publishing:
+      app_store_connect:
+        auth: integration
+        submit_to_testflight: true

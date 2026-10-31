@@ -8,6 +8,7 @@ import { responderNotice } from './admin.js';
 import { ctx } from '../ctx.js';
 import { $, $$, esc, tel, ext, fmtDate, today, b64urlEncode, b64urlDecode } from '../ui.js';
 import { t, tk } from '../i18n/index.js';
+import { can, remindOn, cancelReminders, addToCalendar, shareText, listDocs, addDoc, docDataUrl, shareDoc, removeDoc } from '../native.js';
 
 const KIND = {
   cases: { tab: tk('Case numbers'), add: tk('Add a case number'), edit: tk('Edit case number'), del: tk('Delete this case number? This cannot be undone.'), deleted: tk('Deleted the case number.'), saved: tk('Saved the case number.'),
@@ -30,7 +31,7 @@ const KIND = {
       { n: 'details', l: tk('Notes'), t: 'textarea' }],
   },
 };
-const tabs = (cur) => `<div class="tabs" role="navigation" aria-label="${t('My Notes sections')}">${Object.entries(KIND).map(([k, v]) => `<a href="#notes/${k}" ${k === cur ? 'aria-current="page"' : ''}>${t(v.tab)}</a>`).join('')}</div>`;
+const tabs = (cur) => `<div class="tabs" role="navigation" aria-label="${t('My Notes sections')}">${Object.entries(KIND).map(([k, v]) => `<a href="#notes/${k}" ${k === cur ? 'aria-current="page"' : ''}>${t(v.tab)}</a>`).join('')}${can.photos() ? `<a href="#notes/photos" ${cur === 'photos' ? 'aria-current="page"' : ''}>${t('Photos')}</a>` : ''}</div>`;
 const field = (f, v = '') => {
   const id = 'f_' + f.n, lab = `<label for="${id}">${esc(t(f.l))}${f.req ? '' : ` <span class="small">${t('(optional)')}</span>`}</label>${f.hint ? `<p class="small" id="${id}_h" style="margin:0 0 4px">${esc(t(f.hint))}</p>` : ''}`;
   const aria = f.hint ? ` aria-describedby="${id}_h"` : '';
@@ -40,16 +41,24 @@ const field = (f, v = '') => {
 };
 const dueBadge = (d) => (!d ? '' : d < today() ? `<span class="badge verify">${t('Past due {date}', { date: esc(fmtDate(d)) })}</span>` : d === today() ? `<span class="badge verify">${t('Due today')}</span>` : `<span class="badge">${t('Follow up {date}', { date: esc(fmtDate(d)) })}</span>`);
 
+// iPhone app only: phone reminder, calendar and share buttons for an item with a follow-up date.
+const nativeRow = (kind, r, date) => {
+  const b = [];
+  if (date && date >= today() && can.remind()) b.push(`<button class="btn secondary" type="button" data-remind="${r.id}">${t('Remind me')}</button>`);
+  if (date && can.calendar()) b.push(`<button class="btn secondary" type="button" data-cal="${r.id}">${t('Add to calendar')}</button>`);
+  if (can.share()) b.push(`<button class="btn secondary" type="button" data-sharei="${r.id}">${t('Share')}</button>`);
+  return b.length ? `<div class="actions" data-kind="${kind}">${b.join('')}</div><p class="small" role="status" id="nmsg_${r.id}"></p>` : '';
+};
 function itemHtml(kind, r) {
   const actions = `<div class="actions"><a class="btn secondary" href="#notes/${kind}/edit/${r.id}">${t('Edit')}</a><button class="btn secondary" data-del="${r.id}">${t('Delete')}</button></div>`;
   if (kind === 'cases') return `<li data-id="${r.id}"><h3>${esc(t(r.agency))}${r.agencyOther ? ': ' + esc(r.agencyOther) : ''}</h3>
     <p class="code" style="text-align:left;font-size:24px;letter-spacing:1px">${esc(r.number)}</p>
     ${r.contactName ? `<p>${t('Contact:')} ${esc(r.contactName)}</p>` : ''}${tel(t('Call {name}', { name: r.contactName || t(r.agency) }), r.phone)}${r.email ? `<p><a href="mailto:${esc(r.email)}">${esc(r.email)}</a></p>` : ''}
-    <p class="small">${r.opened ? t('Opened {date}', { date: esc(fmtDate(r.opened)) }) + ' ' : ''}</p>${dueBadge(r.nextDate)}${r.details ? `<p style="white-space:pre-wrap">${esc(r.details)}</p>` : ''}${actions}</li>`;
+    <p class="small">${r.opened ? t('Opened {date}', { date: esc(fmtDate(r.opened)) }) + ' ' : ''}</p>${dueBadge(r.nextDate)}${r.details ? `<p style="white-space:pre-wrap">${esc(r.details)}</p>` : ''}${nativeRow(kind, r, r.nextDate)}${actions}</li>`;
   if (kind === 'notes') return `<li data-id="${r.id}"><h3>${esc(r.title || t('Note'))}</h3><p class="small">${esc(fmtDate(r.updatedAt))}${r.fromCard ? ' · ' + t('from a responder share card') : ''}</p><p style="white-space:pre-wrap">${esc(r.body)}</p>${actions}</li>`;
   return `<li data-id="${r.id}"><h3>${esc(r.to)}</h3>${r.what ? `<p>${t('For:')} ${esc(r.what)}</p>` : ''}${r.by ? `<p class="small">${t('Referred by {name}', { name: esc(r.by) })}</p>` : ''}
     <label for="st_${r.id}" style="margin-top:6px">${t('Status')}</label><select id="st_${r.id}" data-status="${r.id}">${Object.entries(REF_STATUS).map(([k, l]) => `<option value="${k}" ${k === r.status ? 'selected' : ''}>${t(l)}</option>`).join('')}</select>
-    <p style="margin-top:8px"><span class="badge s-${esc(r.status)}">${esc(t(REF_STATUS[r.status]))}</span> ${r.status === 'done' ? '' : dueBadge(r.followUp)}</p>${tel(t('Call {name}', { name: r.to }), r.phone)}${r.details ? `<p style="white-space:pre-wrap">${esc(r.details)}</p>` : ''}${actions}</li>`;
+    <p style="margin-top:8px"><span class="badge s-${esc(r.status)}">${esc(t(REF_STATUS[r.status]))}</span> ${r.status === 'done' ? '' : dueBadge(r.followUp)}</p>${tel(t('Call {name}', { name: r.to }), r.phone)}${r.details ? `<p style="white-space:pre-wrap">${esc(r.details)}</p>` : ''}${r.status === 'done' ? '' : nativeRow(kind, r, r.followUp)}${actions}</li>`;
 }
 
 async function listScreen(kind) {
@@ -62,8 +71,23 @@ async function listScreen(kind) {
     ${rows.length ? `<ul class="list" id="items">${rows.map((r) => itemHtml(kind, r)).join('')}</ul>` : `<div class="card"><p>${t(k.empty)}</p></div>`}
     ${kind === 'notes' ? `<a class="btn secondary" href="#claim">${t("Save a responder's share code")}</a>` : ''}`,
   bind() {
-    $$('[data-del]').forEach((b) => (b.onclick = async () => { if (!confirm(t(k.del))) return; await api.remove(ctx.me.id, kind, b.dataset.del); ctx.flash = t(k.deleted); ctx.render(); }));
-    $$('[data-status]').forEach((s) => (s.onchange = async () => { await api.update(ctx.me.id, kind, s.dataset.status, { status: s.value }); ctx.flash = t('Status updated.'); ctx.render(); }));
+    const byId = (id) => rows.find((x) => x.id === id);
+    const say = (id, m) => { const el = $('#nmsg_' + id); if (el) el.textContent = m; };
+    const label = (r) => kind === 'cases' ? `${t(r.agency)}${r.agencyOther ? ': ' + r.agencyOther : ''} ${t('case')} ${r.number}` : t('Referral: {name}', { name: r.to });
+    const when = (r) => (kind === 'cases' ? r.nextDate : r.followUp);
+    $$('[data-remind]').forEach((b) => (b.onclick = async () => { const r = byId(b.dataset.remind); if (!r) return;
+      try { const n = await remindOn(kind + ':' + r.id, when(r), { eve: t('Follow up tomorrow'), day: t('Follow up today') }, label(r), 'notes/' + kind);
+        const date = fmtDate(when(r));
+        say(r.id, n === 2 ? t('Reminder set: the evening before and the morning of {date}.', { date }) : n === 1 ? t('Reminder set for the morning of {date}.', { date }) : t('This date has passed, so no reminder was set.')); }
+      catch (x) { say(r.id, t(x.message || 'Something went wrong. Please try again.')); } }));
+    $$('[data-cal]').forEach((b) => (b.onclick = async () => { const r = byId(b.dataset.cal); if (!r) return;
+      try { await addToCalendar(t('Follow up: {what}', { what: label(r) }), when(r), [r.phone ? t('Phone: {phone}', { phone: r.phone }) : '', r.details || ''].filter(Boolean).join('\n')); }
+      catch (x) { if (!/cancel/i.test(String(x?.message))) say(r.id, t(x.message || 'Something went wrong. Please try again.')); } }));
+    $$('[data-sharei]').forEach((b) => (b.onclick = async () => { const r = byId(b.dataset.sharei); if (!r) return;
+      const lines = [label(r), r.contactName ? t('Contact:') + ' ' + r.contactName : '', r.phone ? t('Phone: {phone}', { phone: r.phone }) : '', when(r) ? t('Follow up {date}', { date: fmtDate(when(r)) }) : '', r.details || ''].filter(Boolean);
+      try { await shareText(label(r), lines.join('\n')); } catch {} }));
+    $$('[data-del]').forEach((b) => (b.onclick = async () => { if (!confirm(t(k.del))) return; await cancelReminders(kind + ':' + b.dataset.del); await api.remove(ctx.me.id, kind, b.dataset.del); ctx.flash = t(k.deleted); ctx.render(); }));
+    $$('[data-status]').forEach((s) => (s.onchange = async () => { if (s.value === 'done') await cancelReminders(kind + ':' + s.dataset.status); await api.update(ctx.me.id, kind, s.dataset.status, { status: s.value }); ctx.flash = t('Status updated.'); ctx.render(); }));
   } };
 }
 async function formScreen(kind, id) {
@@ -144,8 +168,37 @@ async function claimScreen(parts, route) {
   } };
 }
 
+// iPhone app only: photos of damage and documents, kept on this phone (never uploaded).
+async function photosScreen() {
+  if (!can.photos()) return { html: `<h2>${t('My Notes')}</h2>${tabs('photos')}<div class="card"><p>${t('Photos are available in the iPhone app.')}</p></div>` };
+  const docs = await listDocs();
+  return { html: `<h2>${t('My Notes')}</h2><p class="small">${t('Photos stay on this phone only. They are not uploaded or shared unless you share them.')}</p>${tabs('photos')}
+    <div class="card"><h3>${t('Add a photo')}</h3>
+      <label for="ph_label">${t('What is it?')} <span class="small">${t('(optional)')}</span></label><input id="ph_label" maxlength="80" placeholder="${t('e.g. Kitchen ceiling, insurance letter')}">
+      <fieldset><legend>${t('Type')}</legend><label class="opt"><input type="radio" name="ph_kind" value="damage" checked> ${t('Damage')}</label><label class="opt"><input type="radio" name="ph_kind" value="document"> ${t('Document')}</label></fieldset>
+      <div class="actions"><button class="btn" type="button" id="ph_cam">${t('Take a photo')}</button><button class="btn secondary" type="button" id="ph_lib">${t('Choose from Photos')}</button></div>
+      <p class="err" id="ph_err" role="alert"></p>
+      <p class="small">${t('Tip: photograph damage before you clean up or repair, and keep receipts. Insurers and FEMA may ask for them.')}</p></div>
+    ${docs.length ? `<ul class="list docs" id="docs">${docs.map((d) => `<li data-id="${esc(d.id)}">${d.thumb ? `<img src="${esc(d.thumb)}" alt="${esc(d.label || t(d.kind === 'document' ? 'Document' : 'Damage'))}" style="max-width:120px;border-radius:8px;float:right;margin-left:10px">` : ''}<h3>${esc(d.label || t(d.kind === 'document' ? 'Document' : 'Damage'))}</h3><p class="small">${t(d.kind === 'document' ? 'Document' : 'Damage')} · ${esc(fmtDate(d.date.slice(0, 10)))}</p>
+      <div class="actions" style="clear:both"><button class="btn secondary" type="button" data-view="${esc(d.id)}">${t('View')}</button>${can.share() ? `<button class="btn secondary" type="button" data-sharedoc="${esc(d.id)}">${t('Share')}</button>` : ''}<button class="btn secondary" type="button" data-deldoc="${esc(d.id)}">${t('Delete')}</button></div></li>`).join('')}</ul>` : `<div class="card"><p>${t('No photos yet.')}</p></div>`}
+    <div id="ph_view" hidden></div>`,
+  bind() {
+    const err = $('#ph_err');
+    const add = (src) => async () => { err.textContent = '';
+      try { const kind = (document.querySelector('input[name="ph_kind"]:checked') || {}).value; const item = await addDoc(src, $('#ph_label').value.trim(), kind); if (item) { ctx.flash = t('Photo saved on this phone.'); ctx.render(); } }
+      catch (x) { err.textContent = t(x.message || 'Something went wrong. Please try again.'); } };
+    $('#ph_cam').onclick = add('camera'); $('#ph_lib').onclick = add('photos');
+    const find = async (id) => (await listDocs()).find((x) => x.id === id);
+    $$('[data-view]').forEach((b) => (b.onclick = async () => { const d = await find(b.dataset.view); if (!d) return; const v = $('#ph_view');
+      v.innerHTML = `<div class="card"><img src="${await docDataUrl(d)}" alt="${esc(d.label || '')}" style="width:100%;border-radius:8px"><button class="btn secondary" type="button" id="ph_close">${t('Close')}</button></div>`; v.hidden = false; v.scrollIntoView();
+      $('#ph_close').onclick = () => { v.hidden = true; v.innerHTML = ''; }; }));
+    $$('[data-sharedoc]').forEach((b) => (b.onclick = async () => { const d = await find(b.dataset.sharedoc); if (d) { try { await shareDoc(d, d.label || t('Photo')); } catch {} } }));
+    $$('[data-deldoc]').forEach((b) => (b.onclick = async () => { if (!confirm(t('Delete this photo from this phone? This cannot be undone.'))) return; await removeDoc(b.dataset.deldoc); ctx.flash = t('Photo deleted.'); ctx.render(); }));
+  } };
+}
+
 export const notesScreens = {
-  notes: (p) => { const kind = KIND[p[0]] ? p[0] : 'cases'; if (p[1] === 'new') return formScreen(kind); if (p[1] === 'edit') return formScreen(kind, p[2]); return listScreen(kind); },
+  notes: (p) => { if (p[0] === 'photos') return photosScreen(); const kind = KIND[p[0]] ? p[0] : 'cases'; if (p[1] === 'new') return formScreen(kind); if (p[1] === 'edit') return formScreen(kind, p[2]); return listScreen(kind); },
   share: shareScreen,
   claim: claimScreen,
 };

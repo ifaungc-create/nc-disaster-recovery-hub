@@ -17,6 +17,7 @@ import { notesScreens } from './screens/notes.js';
 import { placeScreens } from './screens/places.js';
 import { infoScreens } from './screens/info.js';
 import { adminScreens, responderNotice } from './screens/admin.js';
+import { can as nativeCan, lockStatus, setLock, biometryName, listenForTaps } from './native.js';
 
 const app = $('#app');
 import { ctx } from './ctx.js';
@@ -216,6 +217,7 @@ screens.settings = () => {
     <h2>${t('Settings')}</h2>
     <div class="card" id="langcard"><h3>${t('Language')}</h3><p>${t('Choose the language for the app. Your choice is saved on this device only.')}</p>
       <div class="actions"><button class="btn ${getLang() === 'en' ? '' : 'secondary'}" data-setlang="en" lang="en" aria-pressed="${getLang() === 'en'}">English</button><button class="btn ${getLang() === 'es' ? '' : 'secondary'}" data-setlang="es" lang="es" aria-pressed="${getLang() === 'es'}">Español</button></div></div>
+    ${nativeCan.lock() ? '<div class="card" id="lockcard"></div>' : ''}
     ${me ? `<div class="card"><h3>${t('Your account')}</h3><dl class="kv"><dt>${t('Name')}</dt><dd>${esc(me.name)}</dd><dt>${t('Email')}</dt><dd>${esc(me.email)}</dd><dt>${t('Account type')}</dt><dd>${esc(t(ROLES[me.role]))}${me.isAdmin ? ' · ' + t('Administrator') : ''}</dd>${me.role === 'responder' && ADAPTER === 'remote' ? `<dt>${t('Responder status')}</dt><dd>${esc(t(RESPONDER_STATUS[me.responderStatus] || ''))}</dd>` : ''}${me.org ? `<dt>${t('Organization')}</dt><dd>${esc(me.org)}</dd>` : ''}</dl>
       ${me.isAdmin ? `<a class="btn" href="#admin">${t('Admin area')}</a>` : ''}<button class="btn secondary" id="logout">${t('Sign out')}</button></div>
       ${me.adminPending ? `<div class="card warn" id="claimcard"><h3>${t('Confirm admin access')}</h3><p>${t('This email is on the administrator list, but admin access stays off until you prove the account is yours with a one-time code. Get the code from the site\'s server log (only the people who run the site can read it) or from another administrator.')}</p>
@@ -277,6 +279,23 @@ async function render() {
   try { out = await fn(rest, route); } catch (e) { out = { html: `<h2>${t('Something went wrong')}</h2><p>${esc(t(e.message))}</p><a class="btn" href="#home">${t('Go home')}</a>` }; }
   if (typeof out === 'string') out = { html: out };
   applyLang(); shell(route, out.html); if (langChosen()) focusTitle(); out.bind?.(); setMeta(route);
+  if (name === 'settings') mountLockCard();
+}
+// iPhone app only: Face ID / passcode lock for the app (native AppLock plugin).
+async function mountLockCard(done = '') {
+  const box = $('#lockcard'); if (!box) return;
+  try {
+    const st = await lockStatus(); const how = biometryName(st.biometry) || t('your passcode');
+    box.innerHTML = !st.available
+      ? `<h3>${t('Lock the app')}</h3><p class="small">${t('Set a passcode in your iPhone Settings first. Then you can lock this app.')}</p>`
+      : `<h3>${t('Lock the app')}</h3><p>${st.enabled ? t('The app asks for {how} when you open it, so no one else can read your notes and case numbers.', { how }) : t('Ask for {how} when you open the app, so no one else can read your notes and case numbers.', { how })}</p>
+        <p class="small">${t('The emergency call buttons still work from the lock screen.')}</p>
+        <button class="btn ${st.enabled ? 'secondary' : ''}" type="button" id="locktoggle">${st.enabled ? t('Turn off the lock') : t('Turn on the lock with {how}', { how })}</button>
+        <p class="small" role="status" id="lockmsg">${esc(done)}</p>`;
+    const b = $('#locktoggle'); if (b) b.onclick = async () => { b.disabled = true;
+      try { const r = await setLock(!st.enabled); mountLockCard(r?.enabled ? t('The lock is on.') : t('The lock is off.')); }
+      catch (x) { b.disabled = false; $('#lockmsg').textContent = t(x?.message || 'Something went wrong. Please try again.'); } };
+  } catch { box.remove(); }
 }
 ctx.render = render;
 
@@ -292,5 +311,6 @@ if (onTranslateProxy()) document.addEventListener('click', (e) => {
   applyLang();
   ctx.me = await auth.currentUser();
   render();
+  listenForTaps().catch(() => {});
   if (import.meta.env.PROD && 'serviceWorker' in navigator) navigator.serviceWorker.register('/sw.js', { updateViaCache: 'none' }).then((r) => r.update()).catch(() => {});
 })();

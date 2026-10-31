@@ -1,9 +1,11 @@
 // Web Push (VAPID) for alerts. Subscriptions are stored per device, never linked to an account:
 //   push/sub/<sha256(endpoint)>  sealed (admin key) { endpoint, keys, topics, lang, createdAt, updatedAt }
 //   push/log/<ts>-<rand>         plaintext send log: admin, target, title, counts, time (no subscriber data)
-// Topics: 'statewide' and 'county:<Name>' (NC_COUNTIES). Endpoints must belong to a known browser push service.
+// Topics: 'statewide' and 'county:<Name>' (NC_COUNTIES). Endpoints must belong to a known browser push service,
+// or be an iPhone app device token written as "apns:<hex>" (sent through Apple Push, see apns.js).
 import { createHash, randomBytes } from 'node:crypto';
 import webpush from 'web-push';
+import { isApns, apnsToken, validApnsEndpoint, apnsSession } from './apns.js';
 import { store } from './store.js';
 import { seal, open, adminKey } from './crypto.js';
 import { ConfigError } from './env.js';
@@ -32,6 +34,7 @@ export function cleanTopics(t) {
 }
 export function cleanSubscription(s) {
   const endpoint = typeof s?.endpoint === 'string' ? s.endpoint : '';
+  if (isApns(endpoint)) { if (!validApnsEndpoint(endpoint)) throw err('This iPhone gave an invalid push address.'); return { endpoint }; }
   let u; try { u = new URL(endpoint); } catch { throw err('This browser gave an invalid push address.'); }
   const testOrigin = devMode() && process.env.NCDRH_TEST_PUSH_ORIGIN;
   const okHost = u.protocol === 'https:' && (PUSH_HOSTS.some((r) => r.test(u.hostname)) || (testOrigin && u.origin === testOrigin));
@@ -83,8 +86,14 @@ export async function count(target) { let n = 0; for await (const s of subs.all(
 async function deliver(list, msg, by, { concurrency = 25, test = false } = {}) {
   const { pub, priv, subject } = vapid();
   let sent = 0, failed = 0, removed = 0; const tag = 'ncdrh-' + Date.now();
+  const apns = list.some((s) => isApns(s.endpoint)) ? apnsSession() : null;
   const one = async (s) => {
     const es = s.lang === 'es' && msg.titleEs;
+    if (isApns(s.endpoint)) {
+      const r = await apns.send(apnsToken(s.endpoint), { title: es ? msg.titleEs : msg.title, body: es ? msg.bodyEs : msg.body, url: msg.url });
+      if (r.ok) sent++; else if (r.gone && s.key) { await store().delete(s.key); removed++; } else failed++;
+      return;
+    }
     const payload = JSON.stringify({ title: es ? msg.titleEs : msg.title, body: es ? msg.bodyEs : msg.body, url: msg.url, lang: es ? 'es' : 'en', tag });
     try {
       await webpush.sendNotification({ endpoint: s.endpoint, keys: s.keys }, payload, { vapidDetails: { subject, publicKey: pub, privateKey: priv }, TTL: 24 * 3600, urgency: 'high', timeout: 10000 });
@@ -93,7 +102,8 @@ async function deliver(list, msg, by, { concurrency = 25, test = false } = {}) {
       if ((e?.statusCode === 404 || e?.statusCode === 410) && s.key) { await store().delete(s.key); removed++; } else failed++;
     }
   };
-  for (let i = 0; i < list.length; i += concurrency) await Promise.all(list.slice(i, i + concurrency).map(one));
+  try { for (let i = 0; i < list.length; i += concurrency) await Promise.all(list.slice(i, i + concurrency).map(one)); }
+  finally { apns?.close(); }
   const at = now();
   const entry = { at, admin: by, target: msg.target, title: msg.title, body: msg.body, hasSpanish: !!msg.titleEs, url: msg.url, matched: list.length, sent, failed, removed, ...(test ? { test: true } : {}) };
   await store().setJSON(`push/log/${at}-${randomBytes(3).toString('hex')}`, entry);

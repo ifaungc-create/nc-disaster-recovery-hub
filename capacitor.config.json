@@ -1,0 +1,22 @@
+{
+  "appId": "app.disasterresources.nchub",
+  "appName": "NC Disaster Recovery Hub",
+  "webDir": "dist",
+  "server": {
+    "url": "https://disaster-resources.app",
+    "allowNavigation": ["disaster-resources.app"],
+    "cleartext": false,
+    "errorPath": "offline.html"
+  },
+  "ios": {
+    "contentInset": "always",
+    "backgroundColor": "#12355B",
+    "limitsNavigationsToAppBoundDomains": true
+  },
+  "plugins": {
+    "SplashScreen": { "launchShowDuration": 1000, "backgroundColor": "#12355B", "showSpinner": false },
+    "StatusBar": { "style": "DARK", "backgroundColor": "#12355B" },
+    "PushNotifications": { "presentationOptions": ["badge", "sound", "alert"] },
+    "LocalNotifications": { "iconColor": "#12355B" }
+  }
+}

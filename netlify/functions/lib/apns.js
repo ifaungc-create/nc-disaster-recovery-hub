@@ -13,11 +13,19 @@ export const isApns = (endpoint) => typeof endpoint === 'string' && endpoint.sta
 export const apnsToken = (endpoint) => endpoint.slice(5);
 export const validApnsEndpoint = (endpoint) => /^apns:[0-9a-f]{64,200}$/.test(String(endpoint || ''));
 
+// Accepts the .p8 contents however it was pasted: with real line breaks, with "\n", flattened onto one
+// line, wrapped in quotes, or just the base64 body without the BEGIN/END lines.
+export function normalizePem(raw) {
+  let t = String(raw).replace(/\\n/g, '\n').trim().replace(/^["']+|["']+$/g, '');
+  t = t.replace(/-----(BEGIN|END) [A-Z ]*PRIVATE KEY-----/g, ' ');
+  const body = t.replace(/[^A-Za-z0-9+/=]/g, '');
+  return '-----BEGIN PRIVATE KEY-----\n' + body.match(/.{1,64}/g).join('\n') + '\n-----END PRIVATE KEY-----\n';
+}
 export function apnsConfigured() { return !!(process.env.APNS_KEY && process.env.APNS_KEY_ID); }
 function config() {
-  const raw = String(process.env.APNS_KEY || '').replace(/\\n/g, '\n').trim();
+  const raw = String(process.env.APNS_KEY || '');
   return {
-    key: raw ? createPrivateKey(raw) : null,
+    key: raw.trim() ? createPrivateKey(normalizePem(raw)) : null,
     keyId: String(process.env.APNS_KEY_ID || '').trim(),
     teamId: String(process.env.APNS_TEAM_ID || 'HG3J2Z782D').trim(),
     topic: String(process.env.APNS_TOPIC || 'app.disasterresources.nchub').trim(),
@@ -69,4 +77,25 @@ export function apnsSession() {
     req.end(payload);
   });
   return { send, close() { try { client.close(); } catch {} } };
+}
+
+// Health check: is the APNs key present, readable and accepted by Apple? Sends to an all-zero device token,
+// which Apple answers with BadDeviceToken when the key is valid (nothing is delivered to anyone).
+// Returns 'ok' | 'not-configured' | 'bad-key' | 'rejected:<Apple reason>' | 'unreachable'. Cached for 30 minutes.
+let health = { at: 0, v: '' };
+export async function apnsHealth() {
+  if (Date.now() - health.at < 30 * 60 * 1000 && health.v) return health.v;
+  let v;
+  if (!apnsConfigured()) v = 'not-configured';
+  else {
+    try { config(); } catch { v = 'bad-key'; }
+    if (!v) {
+      const s = apnsSession();
+      try {
+        const r = await s.send('0'.repeat(64), { title: 'health check', body: 'health check', url: '' });
+        v = r.ok || r.reason === 'BadDeviceToken' ? 'ok' : (/timeout|ECONN|ENOTFOUND|EAI_AGAIN/i.test(String(r.reason)) ? 'unreachable' : 'rejected:' + String(r.reason).slice(0, 40));
+      } finally { s.close(); }
+    }
+  }
+  health = { at: Date.now(), v }; return v;
 }

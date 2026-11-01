@@ -57,31 +57,60 @@ const branding = () => ({
 });
 
 // Crawlable copies of the app shell for the public sections (/hotels, /insurance, /county/wake …), written as dist/<path>.html.
-// Same JS and CSS as /index.html; only <title>, description, canonical and Open Graph tags differ.
-// main.js maps the path to the matching screen. Listed in public/sitemap.xml (scripts/make-sitemap.mjs).
+// Same JS and CSS as /index.html; <title>, description, canonical, Open Graph and structured data differ, and
+// #app holds a plain-HTML version of the page (heading, summary, links; county offices with phone numbers)
+// so search engines and slow connections see real content before the app starts. main.js replaces #app on
+// first render. Listed in public/sitemap.xml (scripts/make-sitemap.mjs).
+const ORG = { '@type': 'NGO', '@id': 'https://c4iveteranservices.org/#org', name: 'C4I Veteran Services Corp.', url: 'https://c4iveteranservices.org/' };
+// Meta description: page summary plus tagline when it fits in 160 characters, else the summary alone, cut at a word.
+export const metaDesc = (d) => {
+  const both = `${d} ${APP_TAGLINE}`; if (both.length <= 160) return both; if (d.length <= 160) return d;
+  return d.slice(0, 157).replace(/[\s,;:]+\S*$/, '') + '…';
+};
 const publicPages = () => {
   let outDir = 'dist';
-  const attr = (t) => t.replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;');
+  const attr = (t) => String(t).replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  const tel = (p) => (p ? `<a href="tel:${attr(String(p).replace(/[^\d+]/g, ''))}">${attr(p)}</a>` : '');
+  const link = (u, label) => (u ? `<a href="${attr(u)}" rel="noopener">${attr(label)}</a>` : '');
+  const ld = (o) => `<script type="application/ld+json">${JSON.stringify(o).replace(/</g, '\\u003c')}</script>`;
   return {
     name: 'public-pages', apply: 'build',
     configResolved(c) { outDir = c.build.outDir; },
     closeBundle() {
       const html = readFileSync(`${outDir}/index.html`, 'utf8');
       const counties = JSON.parse(readFileSync(new URL('./public/data/counties.json', import.meta.url), 'utf8'));
-      const pages = [...PUBLIC_PAGES, ...counties.map((c) => countyPage(c.name))];
-      for (const pg of pages) {
-        const url = SITE_URL + pg.path, title = `${pg.title} · ${APP_NAME}`, desc = `${pg.desc} ${APP_TAGLINE}`;
+      const countyPages = counties.map((c) => ({ ...countyPage(c.name), county: c }));
+      const sections = PUBLIC_PAGES.filter((p) => !['/about', '/accessibility', '/delete-account', '/privacy', '/alerts'].includes(p.path));
+      const nav = `<nav aria-label="Sections"><h2>Find help</h2><ul>${sections.map((p) => `<li><a href="${p.path}">${attr(p.title)}</a></li>`).join('')}</ul></nav>`;
+      const countyList = `<h2>North Carolina counties</h2><ul class="cols">${countyPages.map((p) => `<li><a href="${p.path}">${attr(p.county.name)} County</a></li>`).join('')}</ul>`;
+      const office = (title, o) => (o ? `<li><strong>${attr(o.name || o.title || title)}</strong>${o.phone ? ' · ' + tel(o.phone) : ''}${o.afterHours ? ' · after hours ' + tel(o.afterHours) : ''}${o.address ? '<br>' + attr(o.address) : ''}${o.url ? '<br>' + link(o.url, 'Website') : ''}</li>` : '');
+      const countyBody = (c) => `<h2>County offices</h2><ul>${office('Emergency management', c.em)}${office('Department of Social Services', c.dss)}${office('Health department', c.health)}${office('Register of Deeds', c.rod)}${office('Fire marshal', c.fireMarshal)}${c.website?.url ? `<li><strong>${attr(c.name)} County government</strong><br>${link(c.website.url, 'Website')}</li>` : ''}</ul>${(c.ltrg || []).length ? `<h2>Long-term recovery groups</h2><ul>${c.ltrg.map((g) => `<li>${g.url ? link(g.url, g.name) : attr(g.name)}</li>`).join('')}</ul>` : ''}<p><a href="/fire-departments">Fire departments</a> · <a href="/school-districts">School districts</a> · <a href="/counties">All counties</a></p>`;
+      const body = (pg, extra) => `<div class="prerender"><p class="small"><a href="/">${attr(APP_NAME)}</a> · ${attr(APP_TAGLINE)}</p><h1>${attr(pg.title)}</h1><p>${attr(pg.desc)}</p>${extra || ''}${nav}</div>`;
+      const site = { '@context': 'https://schema.org', '@graph': [{ '@type': 'WebSite', '@id': SITE_URL + '/#site', name: APP_NAME, url: SITE_URL + '/', inLanguage: ['en', 'es'], publisher: { '@id': ORG['@id'] } }, ORG] };
+      const crumbs = (items) => ({ '@context': 'https://schema.org', '@type': 'BreadcrumbList', itemListElement: items.map(([name, path], i) => ({ '@type': 'ListItem', position: i + 1, name, item: SITE_URL + path })) });
+      const write = (file, pg, url, extra, extraLd) => {
+        const title = pg.path === '/' ? `${APP_NAME} · Disaster help in North Carolina` : `${pg.title} · ${APP_NAME}`, desc = metaDesc(pg.desc);
         const out = html
           .replace(/<title>[^<]*<\/title>/, `<title>${attr(title)}</title>`)
           .replace(/(<meta name="description" content=")[^"]*"/, `$1${attr(desc)}"`)
           .replace(/(<meta property="og:description" content=")[^"]*"/, `$1${attr(desc)}"`)
           .replace(/(<meta property="og:title" content=")[^"]*"/, `$1${attr(title)}"`)
           .replace(/(<link rel="canonical" href=")[^"]*"/, `$1${url}"`)
-          .replace(/(<meta property="og:url" content=")[^"]*"/, `$1${url}"`);
-        if (out === html || !out.includes(`href="${url}"`)) throw new Error('public-pages: could not rewrite head for ' + pg.path);
+          .replace(/(<meta property="og:url" content=")[^"]*"/, `$1${url}"`)
+          .replace('</head>', `${ld(site)}${extraLd ? ld(extraLd) : ''}\n</head>`)
+          .replace(/<div id="app">[\s\S]*?<\/div>(?=\s*(<\/body>|<script))/, `<div id="app">${body(pg, extra)}</div>`);
+        if (out === html || !out.includes(`href="${url}"`) || !out.includes('class="prerender"')) throw new Error('public-pages: could not rewrite ' + file);
+        writeFileSync(file, out);
+      };
+      // Home (/index.html is also the app shell for hash routes; its content is replaced on load like the others).
+      write(`${outDir}/index.html`, { path: '/', title: 'Help after a disaster in North Carolina', desc: 'Find shelter, phone numbers for your county, free legal help and step-by-step guides after a fire, flood or hurricane. Keep your case numbers and notes in one private place.' }, SITE_URL + '/', countyList);
+      for (const pg of [...PUBLIC_PAGES, ...countyPages]) {
+        const url = SITE_URL + pg.path;
         // <path>.html: Netlify serves it at the extensionless URL (/hotels) with no trailing-slash redirect.
         mkdirSync(`${outDir}${pg.path.replace(/\/[^/]+$/, '')}`, { recursive: true });
-        writeFileSync(`${outDir}${pg.path}.html`, out);
+        const extra = pg.county ? countyBody(pg.county) : pg.path === '/counties' ? countyList : '';
+        const trail = pg.county ? crumbs([['Home', '/'], ['County services', '/counties'], [`${pg.county.name} County`, pg.path]]) : crumbs([['Home', '/'], [pg.title, pg.path]]);
+        write(`${outDir}${pg.path}.html`, pg, url, extra, trail);
       }
     },
   };

@@ -14,6 +14,7 @@ import { hashPassword, verifyPassword, emailIndex, tempPassword } from './lib/cr
 import { sessionSecret, ConfigError, isAdminEmail } from './lib/env.js';
 import { limit } from './lib/ratelimit.js';
 import * as push from './lib/push.js';
+import { apnsHealth } from './lib/apns.js';
 import { KINDS, validateSignup, cleanItem, cleanCard, cardToNote, newCode, normCode, err, cleanSubmission } from '../../src/data/shared.js';
 
 export const SHARE_CARD_DAYS = 30;
@@ -229,6 +230,7 @@ export default async (req, context) => {
       }
       case 'mySubmissions': { const id = await needResponder(); result = (await submissions.list(id)).map(({ uid, ...x }) => x).sort((x, y) => y.createdAt.localeCompare(x.createdAt)); break; }
       // ---------- push alerts (per device; never linked to an account)
+      case 'pushHealth': { await limit('push', req, context); result = { ios: await apnsHealth() }; break; } // status word only, never key material
       case 'pushKey': { result = { publicKey: push.vapid().pub, maxCounties: push.MAX_COUNTIES }; break; }
       case 'pushSubscribe': {
         await limit('push', req, context); push.vapid();

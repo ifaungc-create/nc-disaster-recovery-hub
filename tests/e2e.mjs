@@ -321,7 +321,7 @@ try {
   await go('hotels'); await page.fill('#hq', '28401'); await page.click('#hf button[type=submit]'); await page.waitForSelector('li.hotel');
   const nH = await page.locator('li.hotel').count(); assert.ok(nH >= 5, 'hotels near 28401: ' + nH); assert.equal(overpassBody, null, 'on-device search sends nothing');
   const dists = await page.$$eval('li.hotel .dist', (e) => e.map((x) => parseFloat(x.textContent))); assert.deepEqual(dists, [...dists].sort((x, y) => x - y));
-  assert.ok(await page.locator('li.hotel >> a:has-text("Directions")').count() === nH); assert.match(await page.textContent('main'), /OpenStreetMap data as of 2026-10-2\d/);
+  assert.ok(await page.locator('li.hotel >> a:has-text("Directions")').count() === nH); assert.ok((await page.textContent('main')).includes('OpenStreetMap data as of ' + JSON.parse((await import('node:fs')).readFileSync(ROOT + 'public/data/hotels.json', 'utf8')).osmTimestamp.slice(0, 10)));
   await shotAt('09-hotels', '#hsum'); step(`hotel search by ZIP 28401 on the device: ${nH} results, nearest first, nothing sent`);
   // map listing buttons: plain links on every result, correct URLs, nothing fetched
   assert.equal(await page.locator('li.hotel a.gmaps').count(), nH); assert.equal(await page.locator('li.hotel a.amaps').count(), nH);

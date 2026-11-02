@@ -7,6 +7,12 @@
 
 **Full description** (max 4000):
 
+<!-- Google Play Misleading Claims policy (rejections Oct 30 and Nov 2, 2026): the disclaimer must be
+     easy to see (kept first) and every government source must be listed with a working link.
+     Keep the source list in step with the government links in src/ and public/data/. -->
+
+NOT A GOVERNMENT APP. NC Disaster Recovery Hub is a free project of C4I Veteran Services Corp., a 501(c)(3) nonprofit. It is not a government agency and does not represent or act for FEMA, the State of North Carolina, any county or any agency listed in the app. It does not take applications for government benefits. In an emergency, call 911.
+
 NC Disaster Recovery Hub helps people in North Carolina find help after a hurricane, flood, fire or other disaster — and keep track of it.
 
 Find help
@@ -30,9 +36,35 @@ Built for everyone
 • Works offline for saved lists
 • No ads, no tracking, no analytics
 
-NC Disaster Recovery Hub is a project of C4I Veteran Services Corp. It is not a government agency and is not affiliated with FEMA, the State of North Carolina or any listed organization. Information comes from official sources and can change — please confirm before you go.
+Official sources for the government information in this app
+• NC Emergency Management / ReadyNC: https://www.readync.gov and https://www.ncdps.gov
+• FEMA: https://www.fema.gov
+• Disaster assistance: https://www.disasterassistance.gov
+• Ready.gov: https://www.ready.gov
+• Flood insurance (NFIP): https://www.floodsmart.gov
+• NC Dept. of Health and Human Services, county social services and Medicaid: https://www.ncdhhs.gov
+• NC Vital Records: https://vitalrecords.nc.gov
+• NC Dept. of Insurance and Office of State Fire Marshal: https://www.ncdoi.gov and https://www.ncosfm.gov
+• NC Dept. of Transportation / DMV: https://www.ncdot.gov
+• NC Division of Employment Security: https://des.nc.gov
+• NCWorks: https://www.ncworks.gov
+• ReBuild NC: https://rebuild.nc.gov
+• NC Dept. of Justice: https://ncdoj.gov
+• NC State Board of Elections: https://www.ncsbe.gov
+• Social Security Administration: https://www.ssa.gov
+• Medicare: https://www.medicare.gov
+• IRS: https://www.irs.gov
+• U.S. passports: https://travel.state.gov
+• U.S. Small Business Administration: https://www.sba.gov
+• CDC: https://www.cdc.gov
+• EPA: https://www.epa.gov
+• USDA food safety: https://www.fsis.usda.gov
+• FCC: https://www.fcc.gov
+• FTC and IdentityTheft.gov: https://consumer.ftc.gov and https://www.identitytheft.gov
+• Consumer Financial Protection Bureau: https://www.consumerfinance.gov
+County, city and school district phone numbers and links come from each one's own official website, linked on its page in the app.
 
-Questions or a wrong phone number? Email info@c4iveteranservices.org
+Information can change. Please confirm with the agency before you go. Questions or a wrong phone number? Email info@c4iveteranservices.org
 
 **Contact email:** info@c4iveteranservices.org
 **Website:** https://disaster-resources.app

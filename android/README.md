@@ -11,7 +11,7 @@ Nothing extra is collected by the wrapper.
 | | |
 |---|---|
 | Package (applicationId) | `app.disasterresources.nchub` — **can never change after the first upload** |
-| Version | versionCode 1, versionName 1.0.0 (raise versionCode by 1 for every upload) |
+| Version | versionCode 2, versionName 1.0.1 (raise versionCode by 1 for every upload) |
 | SDK | compileSdk 36, **targetSdk 36** (Android 16; Play requires 36 for new apps from Aug 31, 2026), minSdk 24 (Android 7.0, required by androidbrowserhelper 2.7.4) |
 | Start URL | `https://disaster-resources.app/?source=android` |
 | Fallback | Custom Tab if the browser has no TWA support |
@@ -19,6 +19,7 @@ Nothing extra is collected by the wrapper.
 | Libraries | `com.google.androidbrowserhelper:androidbrowserhelper:2.7.4`, AGP 8.13.2, Gradle 8.14.3, Java 17 |
 
 ## What the manifest declares
+- `ManageDataLauncherActivity` (plus `android:manageSpaceActivity`). **Required, do not remove.** `LauncherActivity` switches this activity on or off by class name at every launch (the "Manage data" long-press shortcut). Without it Android throws `Component class … does not exist` and the app crashes at start. That crash caused the Google Play "Broken Functionality: app does not open" rejections of 1.0.0 (Oct 30 and Nov 2, 2026). Fixed in 1.0.1.
 - `POST_NOTIFICATIONS` (Android 13+). The app never asks at launch: the permission prompt appears only
   after the person taps **Turn on alerts** on the Alerts screen (the web page calls
   `Notification.requestPermission()`, Chrome hands it to `NotificationPermissionRequestActivity`).

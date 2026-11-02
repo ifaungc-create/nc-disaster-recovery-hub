@@ -22,10 +22,22 @@
         android:roundIcon="@mipmap/ic_launcher"
         android:label="@string/appName"
         android:supportsRtl="true"
+        android:manageSpaceActivity="com.google.androidbrowserhelper.trusted.ManageDataLauncherActivity"
         android:theme="@android:style/Theme.Translucent.NoTitleBar">
 
         <meta-data android:name="asset_statements" android:resource="@string/assetStatements" />
         <meta-data android:name="web_manifest_url" android:value="@string/webManifestUrl" />
+
+        <!-- REQUIRED. LauncherActivity enables/disables this activity by class on every launch
+             (the "Manage data" long-press shortcut). Without this entry Android throws
+             "Component class ... does not exist" and the app crashes at start — the cause of the
+             Google Play "Broken Functionality: app does not open" rejections (Oct 30, Nov 2 2026).
+             Declaring it here also stops R8 from renaming the class. -->
+        <activity
+            android:name="com.google.androidbrowserhelper.trusted.ManageDataLauncherActivity"
+            android:exported="false">
+            <meta-data android:name="android.support.customtabs.trusted.MANAGE_SPACE_URL" android:value="@string/launchUrl" />
+        </activity>
 
         <activity
             android:name="com.google.androidbrowserhelper.trusted.LauncherActivity"

@@ -7,7 +7,7 @@ import { esc, tel, ext, verifyBadge, report, contactLine } from '../ui.js';
 import { getCommunity, communityBlock } from '../community.js';
 import { insurerDirectory } from '../insurers.js';
 
-const item = (it) => `<div class="card${it.warn ? ' warn' : ''}"><h3>${esc(it.title)}${it.verify ? ' ' + verifyBadge(it.verify) : ''}</h3>
+const item = (it, id = '') => `<div class="card${it.warn ? ' warn' : ''}"${id ? ` id="${id}"` : ''}><h3>${esc(it.title)}${it.verify ? ' ' + verifyBadge(it.verify) : ''}</h3>
   ${it.body ? `<p>${esc(it.body)}</p>` : ''}${it.steps ? `<ol class="steps">${it.steps.map((s) => `<li>${esc(s)}</li>`).join('')}</ol>` : ''}
   ${(it.phones || []).map(([l, n]) => tel(l, n)).join('')}${it.links ? `<div class="links">${it.links.map(([l, u]) => ext(l, u)).join('')}</div>` : ''}
   ${it.verify ? `<p class="small">${t('Not verified')}: ${esc(it.verify)}</p>` : ''}${it.honest ? `<p class="small"><b>${t('Honest take:')}</b> ${esc(it.honest)}</p>` : ''}${(it.phones?.length || it.links?.length) ? report(it.title) : ''}</div>`;
@@ -27,7 +27,7 @@ async function resources(parts) {
   const added = (await getCommunity()).filter((r) => r.category === s.id);
   let dir = null;
   if (s.id === 'insurance') dir = await insurerDirectory().catch(() => ({ html: `<div class="card"><p class="err">${t('The insurance claim phone list could not be loaded. Check your connection and try again.')}</p></div>` }));
-  const html = `<p><a href="#resources">‹ ${t('All resources')}</a></p><h2>${esc(s.title)}</h2><p>${esc(s.intro)}</p>${esNote()}${dir ? dir.html : ''}${s.items.map(item).join('')}
+  const html = `<p><a href="#resources">‹ ${t('All resources')}</a></p><h2>${esc(s.title)}</h2><p>${esc(s.intro)}</p>${esNote()}${dir ? dir.html : ''}${s.items.map((it, i) => item(it, `ri-${s.id}-${i}`)).join('')}
     ${communityBlock(added, t('Added by verified responders'))}
     <p class="small">${t('Numbers and links checked {date}. Programs change: confirm details with the agency.', { date: esc(DATA_DATE) })}</p>`;
   return dir?.bind ? { html, bind: dir.bind } : html;

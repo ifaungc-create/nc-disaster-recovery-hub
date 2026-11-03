@@ -16,6 +16,7 @@ import { PUBLIC_PAGES, countyPage } from './paths.js';
 import { notesScreens } from './screens/notes.js';
 import { placeScreens } from './screens/places.js';
 import { infoScreens } from './screens/info.js';
+import { searchScreens, searchForm, bindSearchForm } from './screens/search.js';
 import { adminScreens, responderNotice } from './screens/admin.js';
 import { can as nativeCan, lockStatus, setLock, biometryName, listenForTaps } from './native.js';
 
@@ -30,6 +31,7 @@ const go = (r) => { if (location.hash === '#' + r) render(); else location.hash 
 ctx.go = go;
 
 const MARK = '<svg viewBox="0 0 64 64" aria-hidden="true"><rect width="64" height="64" rx="14" fill="#fff"/><path d="M32 12 10 31h6v19h32V31h6z" fill="#12355B"/><path d="M32 46s-10-6.3-10-12.4A5.6 5.6 0 0 1 32 30a5.6 5.6 0 0 1 10 3.6C42 39.7 32 46 32 46z" fill="#fff"/></svg>';
+const SEARCH_ICO = '<svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor" aria-hidden="true"><path d="M10 3a7 7 0 015.6 11.2l5.1 5.1-1.4 1.4-5.1-5.1A7 7 0 1110 3zm0 2a5 5 0 100 10 5 5 0 000-10z"/></svg>';
 const ico = { home: 'M12 3l9 8h-3v9h-5v-6h-2v6H6v-9H3z', notes: 'M6 2h9l5 5v15H6zm8 1v5h5M9 12h8M9 16h8', help: 'M4 5h16v3H4zm0 5h16v3H4zm0 5h10v3H4z', county: 'M12 2a7 7 0 00-7 7c0 5 7 13 7 13s7-8 7-13a7 7 0 00-7-7zm0 9.5A2.5 2.5 0 1112 6.5a2.5 2.5 0 010 5z', me: 'M12 12a4 4 0 100-8 4 4 0 000 8zm-8 9a8 8 0 0116 0z' };
 const NAV = () => [['home', t('Home'), ico.home], ['notes', t('My Notes'), ico.notes], ['resources', t('Help'), ico.help], ['counties', t('County'), ico.county], ['settings', t('Settings'), ico.me]];
 // Language switch, shown in the header of every screen. The other language is named in its own language.
@@ -40,10 +42,10 @@ const crisisBar = () => `<nav class="crisis" aria-label="${t('Crisis and emergen
 
 function shell(route, inner) {
   const top = route.split('/')[0];
-  const navTop = { case: 'notes', share: 'notes', claim: 'notes', county: 'counties', schools: 'counties', fire: 'home', hotels: 'home', 'cultural-food': 'home', 'home-care': 'home', translation: 'home', alerts: 'settings', accessibility: 'settings', 'delete-account': 'settings', phone: 'resources', privacy: 'settings', about: 'settings', login: 'settings', signup: 'settings', admin: 'settings', submit: 'home' }[top] || top;
+  const navTop = { case: 'notes', share: 'notes', claim: 'notes', county: 'counties', schools: 'counties', fire: 'home', hotels: 'home', 'cultural-food': 'home', 'home-care': 'home', translation: 'home', alerts: 'settings', accessibility: 'settings', 'delete-account': 'settings', phone: 'resources', privacy: 'settings', about: 'settings', login: 'settings', signup: 'settings', admin: 'settings', submit: 'home', search: 'home' }[top] || top;
   app.innerHTML = `
   <a class="skip" href="#main">${t('Skip to content')}</a>
-  <header class="top"><h1 class="brandh"><a href="#home" class="brand">${MARK}<span>${esc(APP_NAME)}<small class="tagline">${esc(t(APP_TAGLINE))}</small></span></a></h1><span class="hbtns">${langSwitch()}${ctx.me ? `<a class="hbtn" href="#settings">${esc(ctx.me.name.split(' ')[0])}<span class="sr"> · ${t('Account and settings')}</span></a>` : `<a class="hbtn" href="#login">${t('Sign in')}</a>`}</span></header>
+  <header class="top"><h1 class="brandh"><a href="#home" class="brand">${MARK}<span>${esc(APP_NAME)}<small class="tagline">${esc(t(APP_TAGLINE))}</small></span></a></h1><span class="hbtns"><a class="hbtn search" href="#search" id="hsearch">${SEARCH_ICO}<span class="sr">${t('Search the app')}</span></a>${langSwitch()}${ctx.me ? `<a class="hbtn" href="#settings">${esc(ctx.me.name.split(' ')[0])}<span class="sr"> · ${t('Account and settings')}</span></a>` : `<a class="hbtn" href="#login">${t('Sign in')}</a>`}</span></header>
   ${crisisBar()}
   <main id="main" tabindex="-1">${ctx.flash ? `<div class="note" role="status">${ctx.flash}</div>` : ''}${inner}</main>
   <footer class="disc"><p><b>${esc(APP_NAME)}</b> · ${esc(t(APP_TAGLINE))}</p><p>${t('This app shares public information and keeps your notes private. It is not a government service and does not replace 911. Listed agencies and organizations are not affiliated with this app. Information collected {date}; always confirm with the agency.', { date: esc(DATA_DATE) })}</p><p id="footcontact">${contactLine()}</p><p><a href="#about">${t('About &amp; disclaimer')}</a> · <a href="#privacy">${t('Privacy')}</a> · <a href="#accessibility">${t('Accessibility')}</a> · <a href="#delete-account">${t('Delete your account')}</a></p></footer>
@@ -67,7 +69,7 @@ function shell(route, inner) {
 }
 function focusTitle() { const h = $('main h2'); if (h) { h.tabIndex = -1; h.focus({ preventScroll: true }); } window.scrollTo(0, 0); }
 
-const screens = { ...notesScreens, ...placeScreens, ...infoScreens, ...adminScreens, ...foodScreens, ...homeCareScreens, ...translationScreens, ...alertScreens, ...legalScreens };
+const screens = { ...notesScreens, ...placeScreens, ...infoScreens, ...adminScreens, ...foodScreens, ...homeCareScreens, ...translationScreens, ...alertScreens, ...legalScreens, ...searchScreens };
 
 screens.home = () => {
   const loc = getLoc(); const me = ctx.me;
@@ -75,6 +77,7 @@ screens.home = () => {
   return { html: `
     <h2>${me ? t('Hi, {name}', { name: esc(me.name.split(' ')[0]) }) : t('Help after a disaster in North Carolina')}</h2>
     ${me ? `<p class="muted">${esc(t(ROLES[me.role]))}${me.org ? ' · ' + esc(me.org) : ''}</p>` : `<p>${t('Find shelter, phone numbers for your county, free legal help and step-by-step guides. Keep your case numbers and notes in one private place.')}</p>`}
+    ${searchForm('', 'gs')}
     <div class="card loc"><div>${loc?.county ? `<b>${t('Your county: {county}', { county: esc(loc.county) })}</b><br><span class="small">${t('Saved on this device only')}</span>` : `<b>${t('Find your county')}</b><br><span class="small">${t("Shows your county's offices and nearby fire departments first.")}</span>`}</div>${loc?.county ? `<a class="btn small" href="#county/${encodeURIComponent(loc.county)}">${t('Open')}</a>` : `<a class="btn small" href="#counties">${t('Choose')}</a>`}</div>
     <div class="tiles">
       ${me ? tile('notes/cases', t('My case numbers'), t('FEMA, Red Cross, insurance…')) : tile('signup', t('Create a free account'), t('Private notes & case numbers'))}
@@ -96,7 +99,7 @@ screens.home = () => {
     ${me?.isAdmin ? `<a class="btn" href="#admin" id="adminlink">${t('Admin: review responders and records')}</a>` : ''}
     ${me?.role === 'responder' && me.responderStatus === 'approved' ? `<a class="btn" href="#share">${t('Create a share card for a client')}</a>${ADAPTER === 'remote' ? `<a class="btn secondary" href="#submit">${t('Add a resource to the lists')}</a>` : ''}` : me?.role === 'responder' ? '' : `<a class="btn secondary" href="#claim">${t('Got a code from a responder? Enter it')}</a>`}
     <div class="card" id="homedisc"><p class="small">${t('<b>Please note:</b> the agencies and organizations listed here are not affiliated with this app or with C4I Veteran Services Corp. This is a research and referral tool; information changes, so confirm before you go.')} <a href="#about">${t('Full disclaimer')}</a></p></div>
-    <div class="card warn"><h3>${t('Someone at the door offering to board up or clean?')}</h3><p>${t('Talk to your insurance company before you sign anything.')} <a href="#resources/boardup">${t('What to know')}</a></p></div>` };
+    <div class="card warn"><h3>${t('Someone at the door offering to board up or clean?')}</h3><p>${t('Talk to your insurance company before you sign anything.')} <a href="#resources/boardup">${t('What to know')}</a></p></div>`, bind() { bindSearchForm('gs'); } };
 };
 
 const proxyNote = (route) => (onTranslateProxy() ? `<div class="card warn" id="proxynote"><p>${t('You are viewing this page through Google Translate. Signing in and accounts only work on the app itself.')}</p><a class="btn" href="https://disaster-resources.app/#${route}" target="_top" rel="noopener">${t('Open the app to sign in')}</a></div>` : '');
@@ -279,6 +282,9 @@ async function render() {
   try { out = await fn(rest, route); } catch (e) { out = { html: `<h2>${t('Something went wrong')}</h2><p>${esc(t(e.message))}</p><a class="btn" href="#home">${t('Go home')}</a>` }; }
   if (typeof out === 'string') out = { html: out };
   applyLang(); shell(route, out.html); if (langChosen()) focusTitle(); out.bind?.(); setMeta(route);
+  // From a search result: scroll to the matching card and move focus to it.
+  if (ctx.jump) { const el = document.getElementById(ctx.jump); ctx.jump = ''; if (el) { el.classList.add('jumped'); el.tabIndex = -1; el.scrollIntoView({ block: 'start' }); el.focus({ preventScroll: true }); } }
+  else if (ctx.keepScroll != null) { window.scrollTo(0, ctx.keepScroll); ctx.keepScroll = null; }
   if (name === 'settings') mountLockCard();
 }
 // iPhone app only: Face ID / passcode lock for the app (native AppLock plugin).

@@ -42,7 +42,7 @@ Official sources for the government information in this app
 • Disaster assistance: https://www.disasterassistance.gov
 • Ready.gov: https://www.ready.gov
 • Flood insurance (NFIP): https://www.floodsmart.gov
-• NC Dept. of Health and Human Services, county social services and Medicaid: https://www.ncdhhs.gov
+• NC Dept. of Health and Human Services, county social services and Medicaid: https://www.ncdhhs.gov and ePASS https://epass.nc.gov
 • NC Vital Records: https://vitalrecords.nc.gov
 • NC Dept. of Insurance and Office of State Fire Marshal: https://www.ncdoi.gov and https://www.ncosfm.gov
 • NC Dept. of Transportation / DMV: https://www.ncdot.gov
@@ -60,8 +60,10 @@ Official sources for the government information in this app
 • EPA: https://www.epa.gov
 • USDA food safety: https://www.fsis.usda.gov
 • FCC: https://www.fcc.gov
-• FTC and IdentityTheft.gov: https://consumer.ftc.gov and https://www.identitytheft.gov
+• FTC and IdentityTheft.gov: https://consumer.ftc.gov, https://www.identitytheft.gov and https://www.robodeidentidad.gov
 • Consumer Financial Protection Bureau: https://www.consumerfinance.gov
+• Federal regulations (eCFR): https://www.ecfr.gov
+• Eastern Band of Cherokee Indians: https://www.ebci.gov
 County, city and school district phone numbers and links come from each one's own official website, linked on its page in the app.
 
 Information can change. Please confirm with the agency before you go. Questions or a wrong phone number? Email info@c4iveteranservices.org

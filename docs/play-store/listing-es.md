@@ -38,7 +38,7 @@ Fuentes oficiales de la información del gobierno en esta app
 • Asistencia por desastre: https://www.disasterassistance.gov
 • Ready.gov: https://www.ready.gov
 • Seguro contra inundaciones (NFIP): https://www.floodsmart.gov
-• Departamento de Salud y Servicios Humanos de NC, servicios sociales del condado y Medicaid: https://www.ncdhhs.gov
+• Departamento de Salud y Servicios Humanos de NC, servicios sociales del condado y Medicaid: https://www.ncdhhs.gov y ePASS https://epass.nc.gov
 • Registros Vitales de NC: https://vitalrecords.nc.gov
 • Departamento de Seguros y Oficina del Jefe de Bomberos del Estado de NC: https://www.ncdoi.gov y https://www.ncosfm.gov
 • Departamento de Transporte de NC / DMV: https://www.ncdot.gov
@@ -58,6 +58,8 @@ Fuentes oficiales de la información del gobierno en esta app
 • FCC: https://www.fcc.gov
 • FTC y RobodeIdentidad.gov: https://consumer.ftc.gov y https://www.robodeidentidad.gov
 • Oficina para la Protección Financiera del Consumidor: https://www.consumerfinance.gov
+• Reglamentos federales (eCFR): https://www.ecfr.gov
+• Banda Oriental de los Cherokee: https://www.ebci.gov
 Los teléfonos y enlaces de cada condado, ciudad y distrito escolar vienen de su propio sitio web oficial, enlazado en su página dentro de la app.
 
 La información puede cambiar: confírmela con la agencia antes de ir. ¿Preguntas o un número equivocado? Escriba a info@c4iveteranservices.org

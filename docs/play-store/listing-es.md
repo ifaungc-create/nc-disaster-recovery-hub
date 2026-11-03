@@ -14,53 +14,52 @@ NC Disaster Recovery Hub ayuda a las personas en Carolina del Norte a encontrar 
 Encuentre ayuda
 • La oficina de manejo de emergencias de su condado, servicios sociales y los departamentos de bomberos cercanos, con teléfonos y enlaces
 • Ayuda con refugio y vivienda, hoteles y moteles cercanos con indicaciones
-• Ayuda legal gratis, ayuda con seguros y cómo presentar un reclamo, cómo reemplazar documentos perdidos, comida y despensas de comida cultural, pasos para cuidar su casa después de un desastre
+• Ayuda legal gratis, seguros y reclamos, reemplazo de documentos perdidos, despensas de comida (también comida cultural) y cuidado de su casa después de un desastre
 • Apps de traducción gratis, la traducción que viene en su teléfono y cómo pedir un intérprete gratis
 
 Lleve el control
 • Guarde números de caso, de reclamo y de solicitud (FEMA, seguros y más), con a quién llamar y cuándo
-• Notas privadas y referencias, cifradas y visibles solo para usted
+• Notas privadas y referencias, guardadas cifradas y nunca compartidas
 • Descargue sus datos o elimine su cuenta en cualquier momento
 
 Alertas (opcionales)
-• Active notificaciones de noticias estatales o de los condados que elija; desactívelas cuando quiera
+• Active notificaciones de avisos estatales o de los condados que elija; desactívelas cuando quiera
 • Este no es un sistema de alertas de emergencia: mantenga activadas las Alertas Inalámbricas de Emergencia y llame al 911 en una emergencia
 
 Hecha para todos
 • En inglés y español
-• Diseñada para cumplir las pautas de accesibilidad WCAG 2.1 AA
-• Las listas guardadas funcionan sin conexión
+• Hecha según las pautas de accesibilidad WCAG 2.1 AA
+• Las listas de recursos funcionan sin conexión después de su primera visita
 • Sin anuncios, sin rastreo, sin analíticas
 
 Fuentes oficiales de la información del gobierno en esta app
-• Manejo de Emergencias de NC / ReadyNC: https://www.readync.gov y https://www.ncdps.gov
-• FEMA: https://www.fema.gov
-• Asistencia por desastre: https://www.disasterassistance.gov
-• Ready.gov: https://www.ready.gov
-• Seguro contra inundaciones (NFIP): https://www.floodsmart.gov
-• Departamento de Salud y Servicios Humanos de NC, servicios sociales del condado y Medicaid: https://www.ncdhhs.gov y ePASS https://epass.nc.gov
-• Registros Vitales de NC: https://vitalrecords.nc.gov
-• Departamento de Seguros y Oficina del Jefe de Bomberos del Estado de NC: https://www.ncdoi.gov y https://www.ncosfm.gov
-• Departamento de Transporte de NC / DMV: https://www.ncdot.gov
-• División de Seguridad de Empleo de NC: https://des.nc.gov
-• NCWorks: https://www.ncworks.gov
-• ReBuild NC: https://rebuild.nc.gov
-• Departamento de Justicia de NC: https://ncdoj.gov
-• Junta Electoral del Estado de NC: https://www.ncsbe.gov
-• Administración del Seguro Social: https://www.ssa.gov
-• Medicare: https://www.medicare.gov
-• IRS: https://www.irs.gov
-• Pasaportes de EE. UU.: https://travel.state.gov
-• Administración de Pequeñas Empresas: https://www.sba.gov
-• CDC: https://www.cdc.gov
-• EPA: https://www.epa.gov
-• Seguridad alimentaria del USDA: https://www.fsis.usda.gov
-• FCC: https://www.fcc.gov
-• FTC y RobodeIdentidad.gov: https://consumer.ftc.gov y https://www.robodeidentidad.gov
-• Oficina para la Protección Financiera del Consumidor: https://www.consumerfinance.gov
-• Reglamentos federales (eCFR): https://www.ecfr.gov
+Carolina del Norte
+• NC.gov (sitios de los condados): https://www.nc.gov
+• Manejo de Emergencias / ReadyNC: https://www.readync.gov y https://www.ncdps.gov
+• Salud y Servicios Humanos, servicios sociales del condado, Medicaid y ePASS: https://www.ncdhhs.gov, https://www.ncdhhs.gov/localdss y https://epass.nc.gov
+• Registros Vitales: https://vitalrecords.nc.gov
+• Seguros y Jefe de Bomberos del Estado: https://www.ncdoi.gov y https://www.ncosfm.gov
+• Instrucción Pública (distritos escolares): https://www.dpi.nc.gov
+• Transporte / DMV: https://www.ncdot.gov
+• Seguridad de Empleo y NCWorks: https://des.nc.gov y https://www.ncworks.gov
+• ReBuild NC y Renew NC: https://rebuild.nc.gov y https://www.renewnc.org
+• Agencia de Financiamiento de Vivienda: https://www.nchfa.com y https://www.nchousingsearch.org
+• Junta de Licencias de Contratistas: https://www.nclbgc.org
+• Departamento de Justicia: https://ncdoj.gov
+• Junta Electoral: https://www.ncsbe.gov
 • Banda Oriental de los Cherokee: https://www.ebci.gov
-Los teléfonos y enlaces de cada condado, ciudad y distrito escolar vienen de su propio sitio web oficial, enlazado en su página dentro de la app.
+Federales
+• FEMA: https://www.fema.gov, https://www.disasterassistance.gov, https://www.ready.gov, https://www.floodsmart.gov y https://www.femaemergencyhotels.com
+• Seguro Social, Medicare e IRS: https://www.ssa.gov, https://www.medicare.gov y https://www.irs.gov
+• Pasaportes: https://travel.state.gov
+• Pequeñas Empresas (SBA): https://www.sba.gov
+• Correo (USPS): https://www.usps.com
+• CDC, EPA y USDA: https://www.cdc.gov, https://www.epa.gov y https://www.fsis.usda.gov
+• FCC y Lifeline: https://www.fcc.gov y https://www.lifelinesupport.org
+• FTC: https://consumer.ftc.gov, https://www.identitytheft.gov y https://www.robodeidentidad.gov
+• Protección Financiera del Consumidor: https://www.consumerfinance.gov
+• Reglamentos federales (eCFR): https://www.ecfr.gov
+Los teléfonos y enlaces de cada condado, ciudad y distrito escolar vienen de su sitio web oficial, enlazado en la app.
 
 La información puede cambiar: confírmela con la agencia antes de ir. ¿Preguntas o un número equivocado? Escriba a info@c4iveteranservices.org
 

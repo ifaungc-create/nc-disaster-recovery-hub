@@ -16,6 +16,7 @@ import { PUBLIC_PAGES, countyPage } from './paths.js';
 import { notesScreens } from './screens/notes.js';
 import { placeScreens } from './screens/places.js';
 import { infoScreens } from './screens/info.js';
+import { sourcesScreens } from './screens/sources.js';
 import { searchScreens, searchForm, bindSearchForm } from './screens/search.js';
 import { adminScreens, responderNotice } from './screens/admin.js';
 import { can as nativeCan, lockStatus, setLock, biometryName, listenForTaps } from './native.js';
@@ -26,7 +27,7 @@ import { routeFromPath } from './paths.js';
 import { onTranslateProxy } from './proxy.js';
 const PRIVATE = ['notes', 'share', 'submit', 'admin'];
 // While a temporary password is in use, only these screens open (the server blocks everything else too).
-const MUST_CHANGE_OK = ['set-password', 'privacy', 'about', 'accessibility'];
+const MUST_CHANGE_OK = ['set-password', 'privacy', 'about', 'accessibility', 'sources'];
 const go = (r) => { if (location.hash === '#' + r) render(); else location.hash = r; };
 ctx.go = go;
 
@@ -42,13 +43,13 @@ const crisisBar = () => `<nav class="crisis" aria-label="${t('Crisis and emergen
 
 function shell(route, inner) {
   const top = route.split('/')[0];
-  const navTop = { case: 'notes', share: 'notes', claim: 'notes', county: 'counties', schools: 'counties', fire: 'home', hotels: 'home', 'cultural-food': 'home', 'home-care': 'home', translation: 'home', alerts: 'settings', accessibility: 'settings', 'delete-account': 'settings', phone: 'resources', privacy: 'settings', about: 'settings', login: 'settings', signup: 'settings', admin: 'settings', submit: 'home', search: 'home' }[top] || top;
+  const navTop = { case: 'notes', share: 'notes', claim: 'notes', county: 'counties', schools: 'counties', fire: 'home', hotels: 'home', 'cultural-food': 'home', 'home-care': 'home', translation: 'home', alerts: 'settings', accessibility: 'settings', 'delete-account': 'settings', phone: 'resources', privacy: 'settings', about: 'settings', sources: 'settings', login: 'settings', signup: 'settings', admin: 'settings', submit: 'home', search: 'home' }[top] || top;
   app.innerHTML = `
   <a class="skip" href="#main">${t('Skip to content')}</a>
   <header class="top"><h1 class="brandh"><a href="#home" class="brand">${MARK}<span>${esc(APP_NAME)}<small class="tagline">${esc(t(APP_TAGLINE))}</small></span></a></h1><span class="hbtns"><a class="hbtn search" href="#search" id="hsearch">${SEARCH_ICO}<span class="sr">${t('Search the app')}</span></a>${langSwitch()}${ctx.me ? `<a class="hbtn" href="#settings">${esc(ctx.me.name.split(' ')[0])}<span class="sr"> · ${t('Account and settings')}</span></a>` : `<a class="hbtn" href="#login">${t('Sign in')}</a>`}</span></header>
   ${crisisBar()}
   <main id="main" tabindex="-1">${ctx.flash ? `<div class="note" role="status">${ctx.flash}</div>` : ''}${inner}</main>
-  <footer class="disc"><p><b>${esc(APP_NAME)}</b> · ${esc(t(APP_TAGLINE))}</p><p>${t('This app shares public information and keeps your notes private. It is not a government service and does not replace 911. Listed agencies and organizations are not affiliated with this app. Information collected {date}; always confirm with the agency.', { date: esc(DATA_DATE) })}</p><p id="footcontact">${contactLine()}</p><p><a href="#about">${t('About &amp; disclaimer')}</a> · <a href="#privacy">${t('Privacy')}</a> · <a href="#accessibility">${t('Accessibility')}</a> · <a href="#delete-account">${t('Delete your account')}</a></p></footer>
+  <footer class="disc"><p><b>${esc(APP_NAME)}</b> · ${esc(t(APP_TAGLINE))}</p><p>${t('This app shares public information and keeps your notes private. It is not a government service and does not replace 911. Listed agencies and organizations are not affiliated with this app. Information collected {date}; always confirm with the agency.', { date: esc(DATA_DATE) })}</p><p id="footcontact">${contactLine()}</p><p><a href="#about">${t('About &amp; disclaimer')}</a> · <a href="#sources">${t('Official sources')}</a> · <a href="#privacy">${t('Privacy')}</a> · <a href="#accessibility">${t('Accessibility')}</a> · <a href="#delete-account">${t('Delete your account')}</a></p></footer>
   <nav class="bottom" aria-label="${t('Main')}">${NAV().map(([id, l, d]) => `<a href="#${id}" ${navTop === id ? 'aria-current="page"' : ''}><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="${d}"/></svg>${l}</a>`).join('')}</nav>`;
   ctx.flash = '';
   $('#langsw').onclick = (e) => { setLang(e.currentTarget.dataset.lang); render(); };
@@ -69,7 +70,7 @@ function shell(route, inner) {
 }
 function focusTitle() { const h = $('main h2'); if (h) { h.tabIndex = -1; h.focus({ preventScroll: true }); } window.scrollTo(0, 0); }
 
-const screens = { ...notesScreens, ...placeScreens, ...infoScreens, ...adminScreens, ...foodScreens, ...homeCareScreens, ...translationScreens, ...alertScreens, ...legalScreens, ...searchScreens };
+const screens = { ...notesScreens, ...placeScreens, ...infoScreens, ...adminScreens, ...foodScreens, ...homeCareScreens, ...translationScreens, ...alertScreens, ...legalScreens, ...sourcesScreens, ...searchScreens };
 
 screens.home = () => {
   const loc = getLoc(); const me = ctx.me;
@@ -98,7 +99,7 @@ screens.home = () => {
     ${responderNotice(me)}
     ${me?.isAdmin ? `<a class="btn" href="#admin" id="adminlink">${t('Admin: review responders and records')}</a>` : ''}
     ${me?.role === 'responder' && me.responderStatus === 'approved' ? `<a class="btn" href="#share">${t('Create a share card for a client')}</a>${ADAPTER === 'remote' ? `<a class="btn secondary" href="#submit">${t('Add a resource to the lists')}</a>` : ''}` : me?.role === 'responder' ? '' : `<a class="btn secondary" href="#claim">${t('Got a code from a responder? Enter it')}</a>`}
-    <div class="card" id="homedisc"><p class="small">${t('<b>Please note:</b> the agencies and organizations listed here are not affiliated with this app or with C4I Veteran Services Corp. This is a research and referral tool; information changes, so confirm before you go.')} <a href="#about">${t('Full disclaimer')}</a></p></div>
+    <div class="card" id="homedisc"><p class="small" id="homenotgov">${t('<b>Not a government app.</b> This app is run by C4I Veteran Services Corp., a nonprofit. It does not represent FEMA, the State of North Carolina, any county or any agency.')} <a href="#sources">${t('Official sources')}</a></p><p class="small">${t('<b>Please note:</b> the agencies and organizations listed here are not affiliated with this app or with C4I Veteran Services Corp. This is a research and referral tool; information changes, so confirm before you go.')} <a href="#about">${t('Full disclaimer')}</a></p></div>
     <div class="card warn"><h3>${t('Someone at the door offering to board up or clean?')}</h3><p>${t('Talk to your insurance company before you sign anything.')} <a href="#resources/boardup">${t('What to know')}</a></p></div>`, bind() { bindSearchForm('gs'); } };
 };
 
@@ -235,6 +236,7 @@ screens.settings = () => {
     <div class="card"><h3>${t('Location')}</h3><p>${loc?.county ? (loc.la != null ? t('Saved on this device: <b>{county} County</b> and an approximate position (about 100 m). It is never sent to our server.', { county: esc(loc.county) }) : t('Saved on this device: <b>{county} County</b>. It is never sent to our server.', { county: esc(loc.county) })) : t('No location is saved.')}</p>${loc ? `<button class="btn secondary" id="clearloc">${t('Forget my location')}</button>` : ''}</div>
     <div class="card" id="settingscontact"><h3>${t('Problems with the app?')}</h3><p>${contactLine()}</p><p class="small">${t('To report a broken link or wrong phone number, use the "Report a broken link or number" link under the listing.')}</p></div>
     <a class="btn secondary" href="#about">${t('About &amp; disclaimer')}</a>
+    <a class="btn secondary" href="#sources" id="setsources">${t('Official sources')}</a>
     <a class="btn secondary" href="#privacy">${t('Privacy: how your information is handled')}</a>
     <p class="small">${ADAPTER === 'local' ? t('Data storage: this device only (prototype).') : t('Data storage: server.')}</p>`,
   bind() {
@@ -314,6 +316,8 @@ if (onTranslateProxy()) document.addEventListener('click', (e) => {
   e.preventDefault(); location.hash = h.slice(1);
 });
 (async () => {
+  // A shared link can pick the language: /official-sources?lang=es. Saved like the language button.
+  try { const q = new URLSearchParams(location.search).get('lang'); if (q === 'es' || q === 'en') setLang(q); } catch {}
   applyLang();
   ctx.me = await auth.currentUser();
   render();

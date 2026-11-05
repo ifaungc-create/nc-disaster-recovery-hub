@@ -1,6 +1,7 @@
 import { defineConfig } from 'vite';
 import { readFileSync, writeFileSync, mkdirSync } from 'node:fs';
 import { PUBLIC_PAGES, countyPage } from './src/paths.js';
+import { OFFICIAL_SOURCES } from './src/content/official-sources.js';
 import { APP_NAME, APP_SHORT_NAME, APP_TAGLINE, APP_DESCRIPTION, THEME_COLOR, SITE_URL } from './src/config.js';
 
 // On Netlify builds (NETLIFY=true) the server-backed adapter is the default; locally the on-device
@@ -85,6 +86,9 @@ const publicPages = () => {
       const countyList = `<h2>North Carolina counties</h2><ul class="cols">${countyPages.map((p) => `<li><a href="${p.path}">${attr(p.county.name)} County</a></li>`).join('')}</ul>`;
       const office = (title, o) => (o ? `<li><strong>${attr(o.name || o.title || title)}</strong>${o.phone ? ' · ' + tel(o.phone) : ''}${o.afterHours ? ' · after hours ' + tel(o.afterHours) : ''}${o.address ? '<br>' + attr(o.address) : ''}${o.url ? '<br>' + link(o.url, 'Website') : ''}</li>` : '');
       const countyBody = (c) => `<h2>County offices</h2><ul>${office('Emergency management', c.em)}${office('Department of Social Services', c.dss)}${office('Health department', c.health)}${office('Register of Deeds', c.rod)}${office('Fire marshal', c.fireMarshal)}${c.website?.url ? `<li><strong>${attr(c.name)} County government</strong><br>${link(c.website.url, 'Website')}</li>` : ''}</ul>${(c.ltrg || []).length ? `<h2>Long-term recovery groups</h2><ul>${c.ltrg.map((g) => `<li>${g.url ? link(g.url, g.name) : attr(g.name)}</li>`).join('')}</ul>` : ''}<p><a href="/fire-departments">Fire departments</a> · <a href="/school-districts">School districts</a> · <a href="/counties">All counties</a></p>`;
+      // Official sources, readable without JavaScript (English): not-a-government notice, then each group.
+      const sourcesBody = () => `<p><strong>Not a government app.</strong> ${attr(APP_NAME)} is a project of C4I Veteran Services Corp., a 501(c)(3) nonprofit. It is not a government agency and does not represent FEMA, the State of North Carolina, any county or any agency listed here.</p>` +
+        [['nc', 'North Carolina government'], ['federal', 'Federal government'], ['tribal', 'Tribal government'], ['other', 'Other organizations (not government)']].map(([g, h]) => `<h2>${h}</h2><ul>${OFFICIAL_SOURCES.filter((s) => s.group === g).map((s) => `<li><strong>${attr(s.name.en)}</strong>${s.url ? '<br>' + link(s.url, s.url) : ''}<br>${attr(s.uses.en)}</li>`).join('')}</ul>`).join('');
       const body = (pg, extra) => `<div class="prerender"><p class="small"><a href="/">${attr(APP_NAME)}</a> · ${attr(APP_TAGLINE)}</p><h1>${attr(pg.title)}</h1><p>${attr(pg.desc)}</p>${extra || ''}${nav}</div>`;
       const site = { '@context': 'https://schema.org', '@graph': [{ '@type': 'WebSite', '@id': SITE_URL + '/#site', name: APP_NAME, url: SITE_URL + '/', inLanguage: ['en', 'es'], publisher: { '@id': ORG['@id'] } }, ORG] };
       const crumbs = (items) => ({ '@context': 'https://schema.org', '@type': 'BreadcrumbList', itemListElement: items.map(([name, path], i) => ({ '@type': 'ListItem', position: i + 1, name, item: SITE_URL + path })) });
@@ -108,7 +112,7 @@ const publicPages = () => {
         const url = SITE_URL + pg.path;
         // <path>.html: Netlify serves it at the extensionless URL (/hotels) with no trailing-slash redirect.
         mkdirSync(`${outDir}${pg.path.replace(/\/[^/]+$/, '')}`, { recursive: true });
-        const extra = pg.county ? countyBody(pg.county) : pg.path === '/counties' ? countyList : '';
+        const extra = pg.county ? countyBody(pg.county) : pg.path === '/counties' ? countyList : pg.path === '/official-sources' ? sourcesBody() : '';
         const trail = pg.county ? crumbs([['Home', '/'], ['County services', '/counties'], [`${pg.county.name} County`, pg.path]]) : crumbs([['Home', '/'], [pg.title, pg.path]]);
         write(`${outDir}${pg.path}.html`, pg, url, extra, trail);
       }

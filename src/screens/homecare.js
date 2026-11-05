@@ -1,7 +1,7 @@
 // Home care after a fire or flood: cleaning clothes and the home, smoke smell, mold, food in a power
 // outage, safe washing and what NOT to do. Content and sources: src/content/homecare.js (English and Spanish).
 import { t, isEs, pick } from '../i18n/index.js';
-import { esc, tel, ext, fmtDate } from '../ui.js';
+import { esc, tel, ext, fmtDate, srcNote } from '../ui.js';
 import { SECTIONS, DONTS, SOURCES, CHECKED } from '../content/homecare.js';
 
 // In Spanish, link the agency's Spanish page when there is one; otherwise mark the English page.
@@ -23,7 +23,7 @@ const sectionHtml = (sec, cls = '') => `<section class="card hc${cls}" id="hc-${
 function homeCare() {
   const all = [...SECTIONS, DONTS];
   return { html: `<h2>${t('Home care after a fire or flood')}</h2>
-    <p>${t('How to clean clothes and your home, get rid of smoke smell, stop mold, keep food safe when the power is out, and what not to do. Each section lists the official sources it comes from.')}</p>
+    <p>${t('How to clean clothes and your home, get rid of smoke smell, stop mold, keep food safe when the power is out, and what not to do. Each section lists the official sources it comes from.')}</p>${srcNote()}
     <div class="note"><b>${t('Safety first.')}</b> ${t('Only go back inside when officials say it is safe. If you smell gas, leave and call 911 from outside. Before you clean, take photos of the damage for your insurance.')}</div>
     ${isEs() ? `<p class="small esnote">${t('Many official websites are only in English. Links marked "(en inglés)" open an English page. Names of agencies and programs are left in English so you can find them.')}</p>` : ''}
     <nav class="card" aria-label="${t('On this page')}"><b>${t('On this page')}</b><ul class="toc">${all.map((s) => `<li><a href="#hc-${s.id}" data-jump="hc-${s.id}">${esc(pick(s.title))}</a></li>`).join('')}</ul></nav>

@@ -54,6 +54,7 @@ const pages = () => [
   ['settings', 'Settings', tk('Language, account, location'), 'settings ajustes account cuenta language idioma password'],
   ['privacy', 'Privacy', 'How your information is handled', 'privacy privacidad data datos'],
   ['delete-account', 'Delete your account', tk('Remove your account and data'), 'delete borrar eliminar cuenta account'],
+  ['sources', 'Official sources', tk('Where the information comes from'), 'sources fuentes official oficial government gobierno agency agencia fema gov'],
   ['about', 'About &amp; disclaimer', tk('Who runs this app'), 'about acerca disclaimer aviso c4i contact contacto'],
 ].map(([href, title, sub, alt]) => ({ kind: 'page', href: '#' + href, title: t(title), sub: t(sub), alt: `${ES[title] || ''} ${ES[sub] || ''} ${title} ${sub} ${alt}`, w: 30 }));
 

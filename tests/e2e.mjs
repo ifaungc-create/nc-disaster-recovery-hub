@@ -97,6 +97,17 @@ try {
   assert.ok(await page.locator('main a[href="#about"]').count()); step('tagline on sign-in, sign-up and privacy; disclaimer linked from privacy');
   await go('signup'); assert.equal(await page.getAttribute('#signupdisc', 'href'), '#about'); step('sign-up links to the disclaimer');
   await go('settings'); assert.match(await page.textContent('#settingscontact'), /Problems with the app\? Email info@c4iveteranservices\.org/); step('Settings shows the app-problems contact');
+  // ---- Official sources (Google Play: source links for government information)
+  assert.ok(await page.locator('footer a[href="#sources"]').count()); await page.click('#setsources'); await page.waitForSelector('h2:has-text("Official sources")');
+  assert.match(await page.textContent('#notgov'), /not a government app[\s\S]*does not represent FEMA, the State of North Carolina/);
+  for (const [id, h] of [['src-nc', 'North Carolina government'], ['src-federal', 'Federal government'], ['src-tribal', 'Tribal government'], ['src-other', 'Other organizations (not government)']]) assert.equal((await page.textContent('#' + id)).trim(), h);
+  for (const u of ['https://www.fema.gov/assistance/individual', 'https://www.ncdps.gov/our-organization/emergency-management', 'https://www.ebci.gov/department-of-operations/']) assert.ok(await page.locator(`main a[href="${u}"][target="_blank"]`).count(), u);
+  assert.equal(await page.locator('script[src^="http"]').count(), 0); await shot('21-official-sources'); step('Official sources page (from Settings and the footer): not-a-government notice, NC / federal / tribal / other groups, official links');
+  await go('home'); assert.match(await page.textContent('#homenotgov'), /Not a government app\./); assert.ok(await page.locator('#homenotgov a[href="#sources"]').count());
+  await go('resources/housing'); await page.waitForSelector('h2:has-text("Housing")'); assert.ok(await page.locator('main .srcnote a[href="#sources"]').count()); assert.ok(await page.locator('main .srcline a[href="https://www.fema.gov/assistance/individual"]').count());
+  await go('about'); assert.ok(await page.locator('#aboutsources').count()); step('home says "Not a government app" and links the sources; resource pages show "Source: <agency> (official site)"; About links the sources');
+  await page.goto(BASE + '/official-sources?lang=es'); await page.waitForSelector('h2:has-text("Fuentes oficiales")'); assert.equal(await page.getAttribute('html', 'lang'), 'es');
+  assert.match(await page.textContent('#notgov'), /No es una aplicación del gobierno/); await page.evaluate(() => localStorage.setItem('ncdrh.lang', 'en')); step('/official-sources?lang=es opens the page in Spanish');
   await go('resources/legal'); await page.waitForSelector('h2:has-text("Free legal help")'); const rl = page.locator('[data-report]').first(); const rname = await rl.getAttribute('data-report');
   assert.equal(await rl.getAttribute('href'), MAIL + '?subject=' + encodeURIComponent('Broken link or number: ' + rname) + '&body=' + encodeURIComponent('Item: ' + rname + '\nWhat is wrong (number does not work, link broken, closed…):\n'));
   await go('county/Wake'); await page.waitForSelector('a[data-report="Wake County Emergency Management"]'); assert.ok(await page.locator('a[data-report="Wake County Department of Social Services (DSS)"]').count());

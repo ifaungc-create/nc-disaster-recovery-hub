@@ -4,7 +4,7 @@
 // Filtering runs on the device; the list is precached for offline use.
 import { loadData } from '../geo.js';
 import { t, tk, isEs, pick } from '../i18n/index.js';
-import { $, esc, tel, ext, verifyBadge, report, fmtDate } from '../ui.js';
+import { $, esc, tel, ext, verifyBadge, report, fmtDate, srcNote } from '../ui.js';
 
 export const FOOD_TYPES = [
   ['halal', tk('Halal')], ['kosher', tk('Kosher')], ['muslim', tk('Muslim community')], ['jewish', tk('Jewish community')],
@@ -55,7 +55,7 @@ async function culturalFood() {
   const used = new Set(d.items.flatMap((x) => x.types));
   const unver = d.items.filter((x) => !x.verified).length;
   return { html: `<h2>${t('Cultural & religious food: pantries and stores')}</h2>
-    <p>${t('Free food and stores for halal, kosher, Latino, Asian, South Asian, Middle Eastern and other foods in North Carolina. Free pantries and meals are listed first, then the regional food banks, then stores by region and city.')}</p>
+    <p>${t('Free food and stores for halal, kosher, Latino, Asian, South Asian, Middle Eastern and other foods in North Carolina. Free pantries and meals are listed first, then the regional food banks, then stores by region and city.')}</p>${srcNote()}
     <div class="note"><b>${t('Call ahead.')}</b> ${t('Hours, food on hand and certifications change. Call before you go, and ask whether food is halal or kosher certified if that matters to you. We only say "certified" when the place itself says so.')}</div>
     ${isEs() ? `<p class="small esnote">${t('Many websites in this list are only in English. Names and addresses are left as written.')}</p>` : ''}
     <form id="cff" class="card" role="search"><label for="cft">${t('Type of food')}</label><select id="cft"><option value="">${t('All types')}</option>${FOOD_TYPES.filter(([k]) => used.has(k)).map(([k, l]) => `<option value="${k}">${esc(t(l))}</option>`).join('')}</select>

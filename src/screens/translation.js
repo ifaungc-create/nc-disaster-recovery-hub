@@ -2,7 +2,7 @@
 // "open this app in Google Translate" link. Nothing is sent to Google unless the person taps that link.
 // Content and sources: src/content/translation.js (English and Spanish).
 import { t, isEs, pick } from '../i18n/index.js';
-import { esc, tel, ext, fmtDate, $ } from '../ui.js';
+import { esc, tel, ext, fmtDate, $, srcNote } from '../ui.js';
 import { SITE_URL } from '../config.js';
 import { PUBLIC_PAGES } from '../paths.js';
 import { SOURCES, APPS, HOWTO, RIGHTS, GT_LANGS, CHECKED, gtUrl, langDir } from '../content/translation.js';
@@ -18,7 +18,7 @@ const pageChoices = () => [{ path: '/', title: t('Home'), route: 'home' }, ...PU
 function translation() {
   const toc = [['tr-help', t('Free interpreters')], ['tr-apps', t('Free translation apps')], ['tr-phone', t('Translation built into your phone')], ['tr-gt', t('Read this app in another language')]];
   return { html: `<h2>${t('Translation apps & interpreters')}</h2>
-    <p>${t('This app is in English and Spanish. For other languages, you can get a free interpreter, use a free translation app, or use the translation built into your phone.')}</p>
+    <p>${t('This app is in English and Spanish. For other languages, you can get a free interpreter, use a free translation app, or use the translation built into your phone.')}</p>${srcNote()}
     <div class="note"><b>${t('Check important details with a person.')}</b> ${t('Apps can translate wrong. For deadlines, money amounts, case numbers and medical or legal information, ask for an interpreter.')}</div>
     ${isEs() ? `<p class="small esnote">${t('Many official websites are only in English. Links marked "(en inglés)" open an English page. Names of agencies and programs are left in English so you can find them.')}</p>` : ''}
     <nav class="card" aria-label="${t('On this page')}"><b>${t('On this page')}</b><ul class="toc">${toc.map(([id, l]) => `<li><a href="#${id}" data-jump="${id}">${esc(l)}</a></li>`).join('')}</ul></nav>

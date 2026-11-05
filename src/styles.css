@@ -148,3 +148,12 @@ legend { font-weight: 700; font-size: 18px; padding: 0; margin-bottom: 4px; }
 .sres .sacts { margin-top: 6px; }
 a.chip { display: inline-flex; align-items: center; min-height: 48px; padding: 0 16px; background: #EAF1F8; border: 1px solid var(--brand); border-radius: 999px; color: var(--brand); font-weight: 600; text-decoration: none; }
 .jumped { outline: 3px solid var(--focus); outline-offset: 2px; scroll-margin-top: 72px; }
+/* Official sources page: long official URLs wrap instead of scrolling sideways. */
+.srclist { list-style: none; padding: 0; margin: 0; }
+.srclist li.src { padding: 10px 0; border-top: 1px solid var(--line, #ddd); }
+.srclist li.src:first-child { border-top: 0; }
+.srcurl a { overflow-wrap: anywhere; word-break: break-word; }
+.srcjump { display: flex; flex-wrap: wrap; gap: 4px 16px; padding: 0; list-style: none; }
+.srcjump a { display: inline-flex; align-items: center; min-height: 48px; }
+.srcnote a { display: inline-flex; align-items: center; min-height: 48px; }
+.srcline { line-height: 2; }

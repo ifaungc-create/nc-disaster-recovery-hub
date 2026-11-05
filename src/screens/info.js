@@ -2,14 +2,20 @@
 import { APP_NAME, APP_TAGLINE, DATA_DATE, DISCLAIMER, CONTACT_EMAIL } from '../config.js';
 import { ADAPTER } from '../data/index.js';
 import { sections, phoneInfo } from '../content/index.js';
-import { t, isEs } from '../i18n/index.js';
-import { esc, tel, ext, verifyBadge, report, contactLine } from '../ui.js';
+import { t, isEs, pick } from '../i18n/index.js';
+import { esc, tel, ext, verifyBadge, report, contactLine, srcNote } from '../ui.js';
+import { sourceFor } from '../content/official-sources.js';
 import { getCommunity, communityBlock } from '../community.js';
 import { insurerDirectory } from '../insurers.js';
 
+// "Source: <agency> (official site)": the government agencies whose websites this item links to.
+const govSources = (it) => [...new Set((it.links || []).map(([, u]) => sourceFor(u)).filter((x) => x && x.gov && x.url))];
+const srcLine = (it) => { const g = govSources(it); if (!g.length) return '';
+  const links = g.map((x) => ext(pick(x.name), x.url)).join(' ');
+  return `<p class="small srcline">${g.length === 1 ? t('Source: {agency} (official site)', { agency: links }) : t('Sources: {agencies} (official sites)', { agencies: links })}</p>`; };
 const item = (it, id = '') => `<div class="card${it.warn ? ' warn' : ''}"${id ? ` id="${id}"` : ''}><h3>${esc(it.title)}${it.verify ? ' ' + verifyBadge(it.verify) : ''}</h3>
   ${it.body ? `<p>${esc(it.body)}</p>` : ''}${it.steps ? `<ol class="steps">${it.steps.map((s) => `<li>${esc(s)}</li>`).join('')}</ol>` : ''}
-  ${(it.phones || []).map(([l, n]) => tel(l, n)).join('')}${it.links ? `<div class="links">${it.links.map(([l, u]) => ext(l, u)).join('')}</div>` : ''}
+  ${(it.phones || []).map(([l, n]) => tel(l, n)).join('')}${it.links ? `<div class="links">${it.links.map(([l, u]) => ext(l, u)).join('')}</div>` : ''}${srcLine(it)}
   ${it.verify ? `<p class="small">${t('Not verified')}: ${esc(it.verify)}</p>` : ''}${it.honest ? `<p class="small"><b>${t('Honest take:')}</b> ${esc(it.honest)}</p>` : ''}${(it.phones?.length || it.links?.length) ? report(it.title) : ''}</div>`;
 
 const extra = () => [['cultural-food', t('Cultural food: pantries & stores'), t('Halal, kosher, Latino, Asian and more')], ['home-care', t('Home care after a fire or flood'), t('Clean, dry, stop mold, save food')], ['translation', t('Translation apps & interpreters'), t('Other languages, free interpreters')], ['counties', t('County services'), t('EM, DSS, health, Register of Deeds')], ['schools', t('School districts'), t('All NC districts by county')], ['fire', t('Fire departments'), t('Find by county, ZIP or name')], ['hotels', t('Hotels nearby'), t('Directions and call')], ['phone', t('Get a phone number'), t('Free and low-cost options')]];
@@ -22,18 +28,18 @@ async function resources(parts) {
       ${communityBlock(all.filter((r) => r.county === 'Statewide'), t('Statewide'))}${communityBlock(all.filter((r) => r.county !== 'Statewide').sort((a, b) => a.county.localeCompare(b.county)), t('By county'))}${all.length ? '' : `<div class="card"><p>${t('Nothing has been added yet.')}</p></div>`}`;
   }
   const SECTIONS = sections(); const s = SECTIONS.find((x) => x.id === parts[0]);
-  if (!s) return `<h2>${t('Resources')}</h2><p>${t('Verified North Carolina phone numbers, websites and step-by-step guides.')}</p>${esNote()}
+  if (!s) return `<h2>${t('Resources')}</h2><p>${t('Verified North Carolina phone numbers, websites and step-by-step guides.')}</p>${esNote()}${srcNote()}
     <ul class="list">${[...SECTIONS.map((x) => [`resources/${x.id}`, x.title, x.short]), ...extra(), ...(ADAPTER === 'remote' ? [['resources/community', t('Added by verified responders'), t('Checked by an administrator')]] : [])].map(([h, ti, d]) => `<li><a class="rowlink" href="#${h}"><span>${esc(ti)}<br><span class="small">${esc(d)}</span></span><span aria-hidden="true">›</span></a></li>`).join('')}</ul>`;
   const added = (await getCommunity()).filter((r) => r.category === s.id);
   let dir = null;
   if (s.id === 'insurance') dir = await insurerDirectory().catch(() => ({ html: `<div class="card"><p class="err">${t('The insurance claim phone list could not be loaded. Check your connection and try again.')}</p></div>` }));
-  const html = `<p><a href="#resources">‹ ${t('All resources')}</a></p><h2>${esc(s.title)}</h2><p>${esc(s.intro)}</p>${esNote()}${dir ? dir.html : ''}${s.items.map((it, i) => item(it, `ri-${s.id}-${i}`)).join('')}
+  const html = `<p><a href="#resources">‹ ${t('All resources')}</a></p><h2>${esc(s.title)}</h2><p>${esc(s.intro)}</p>${esNote()}${srcNote()}${dir ? dir.html : ''}${s.items.map((it, i) => item(it, `ri-${s.id}-${i}`)).join('')}
     ${communityBlock(added, t('Added by verified responders'))}
-    <p class="small">${t('Numbers and links checked {date}. Programs change: confirm details with the agency.', { date: esc(DATA_DATE) })}</p>`;
+    <p class="small srcnote">${t('Numbers and links checked {date}. Programs change: confirm details with the agency.', { date: esc(DATA_DATE) })} <a href="#sources">${t('Official sources')}</a></p>`;
   return dir?.bind ? { html, bind: dir.bind } : html;
 }
 
-const phone = () => { const PHONE = phoneInfo(); return `<h2>${t('Get a phone number')}</h2><p>${esc(PHONE.intro)}</p>${esNote()}${PHONE.options.map(item).join('')}
+const phone = () => { const PHONE = phoneInfo(); return `<h2>${t('Get a phone number')}</h2><p>${esc(PHONE.intro)}</p>${esNote()}${srcNote()}${PHONE.options.map(item).join('')}
   <div class="card"><h3>${t('Tips')}</h3><ol class="steps"><li>${t('Whatever number you get, give it to FEMA, your insurer and your caseworkers, and save it in My Notes.')}</li><li>${t('Many libraries, Disaster Recovery Centers and shelters have free Wi-Fi and phone charging.')}</li><li>${t('For a real emergency, call 911 from any phone. Any working mobile phone can call 911, even without service.')}</li></ol></div>
   ${PHONE.verify?.length ? `<p class="small">${PHONE.verify.map((v) => verifyBadge() + ' ' + esc(v)).join('<br>')}</p>` : ''}`; };
 
@@ -45,8 +51,9 @@ const about = () => `<h2>${t('About &amp; disclaimer')}</h2>
   <p class="brandline">${esc(APP_NAME)} · ${esc(t(APP_TAGLINE))}</p>
   ${isEs() ? `<div class="card" id="disclaimer-es" lang="es"><h3>Aviso legal (traducción)</h3><p>${esc(DISCLAIMER_ES).replace(esc(CONTACT_EMAIL), `<a href="mailto:${CONTACT_EMAIL}">${CONTACT_EMAIL}</a>`)}</p><p class="small">Esta es una traducción. El texto oficial en inglés está abajo.</p></div>` : ''}
   <div class="card" id="disclaimer" lang="en"><h3>${isEs() ? 'Disclaimer (official English text)' : 'Disclaimer'}</h3><p>${disclaimerHtml()}</p></div>
-  <div class="card"><h3>${t('About this app')}</h3><p>${t('{app} helps people in North Carolina recover after fires, floods and hurricanes: phone numbers and websites for every county, fire departments, school districts, hotels, cultural food pantries and stores, home care guides, step-by-step guides, and a private place to keep case numbers and notes. It is free, has no ads and does not track you. It is available in English and Spanish.', { app: esc(APP_NAME) })}</p><p>${t('It is not a government service and does not replace 911. In an emergency, call 911.')}</p></div>
+  <div class="card"><h3>${t('About this app')}</h3><p>${t('{app} helps people in North Carolina recover after fires, floods and hurricanes: phone numbers and websites for every county, fire departments, school districts, hotels, cultural food pantries and stores, home care guides, step-by-step guides, and a private place to keep case numbers and notes. It is free, has no ads and does not track you. It is available in English and Spanish.', { app: esc(APP_NAME) })}</p><p>${t('It is not a government service and does not replace 911. In an emergency, call 911.')}</p><p><a href="#sources" id="aboutsources">${t('Official sources: where the information in this app comes from')}</a></p></div>
   <div class="card" id="aboutcontact"><h3>${t('Contact')}</h3><p>${contactLine()}</p><p class="small">${t('Found a number that does not work or a broken link? Use "Report a broken link or number" under the listing, or email us.')}</p></div>
+  <a class="btn secondary" href="#sources">${t('Official sources')}</a>
   <a class="btn secondary" href="#privacy">${t('Privacy, in plain language')}</a>
   <a class="btn secondary" href="#accessibility">${t('Accessibility')}</a>
   <a class="btn secondary" href="#delete-account">${t('Delete your account and data')}</a>`;

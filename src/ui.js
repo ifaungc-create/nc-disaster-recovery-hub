@@ -24,3 +24,5 @@ export const today = () => new Date().toLocaleDateString('en-CA');
 export const b64urlEncode = (obj) => { const b = new TextEncoder().encode(JSON.stringify(obj)); let s = ''; b.forEach((x) => (s += String.fromCharCode(x))); return btoa(s).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, ''); };
 export const b64urlDecode = (str) => { const s = atob(String(str).replace(/-/g, '+').replace(/_/g, '/')); return JSON.parse(new TextDecoder().decode(Uint8Array.from(s, (c) => c.charCodeAt(0)))); };
 export function download(name, text, type = 'application/json') { const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([text], { type })); a.download = name; document.body.appendChild(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 1000); }
+// Small "Official sources" pointer shown on screens with government information (see screens/sources.js).
+export const srcNote = () => `<p class="small srcnote">${t('Where this information comes from:')} <a href="#sources">${t('Official sources')}</a></p>`;

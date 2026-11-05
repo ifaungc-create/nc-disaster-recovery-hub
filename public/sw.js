@@ -1,6 +1,6 @@
 // Offline support: precache the app shell, built assets and the public resource data (/data/*.json),
 // network-first for pages, cache-first for static files. Never caches API/function calls or account data.
-const CACHE = 'ncdrh-v9';
+const CACHE = 'ncdrh-v10';
 const SHELL = ['/', '/index.html', '/manifest.webmanifest', '/icons/mark.svg', '/icons/icon-192.png', '/icons/icon-512.png'];
 const DATA = ['counties', 'fire-departments', 'school-districts', 'county-boundaries', 'zips', 'places', 'hotels', 'insurers', 'cultural-food'].map((n) => `/data/${n}.json`);
 self.addEventListener('install', (e) => {

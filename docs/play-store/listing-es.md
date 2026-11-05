@@ -7,61 +7,55 @@
 
 **Descripción completa** (máx. 4000):
 
-NO ES UNA APP DEL GOBIERNO. NC Disaster Recovery Hub es un proyecto gratuito de C4I Veteran Services Corp., una organización sin fines de lucro 501(c)(3). No es una agencia del gobierno y no representa ni actúa en nombre de FEMA, el Estado de Carolina del Norte, ningún condado ni ninguna agencia de la lista. No recibe solicitudes de beneficios del gobierno. En una emergencia, llame al 911.
+<!-- Política de Google Play sobre afirmaciones engañosas (rechazos del 30 oct., 2 nov. y 5 nov. de 2026). Lista completa
+     en la app: /official-sources?lang=es. v3, 3768 caracteres (máx. 4000). Texto en español nuevo: necesita revisión de un hablante nativo. -->
 
-NC Disaster Recovery Hub ayuda a las personas en Carolina del Norte a encontrar ayuda después de un huracán, inundación, incendio u otro desastre, y a llevar el control de sus trámites.
+NO ES UNA APP DEL GOBIERNO. NC Disaster Recovery Hub es un proyecto gratuito de C4I Veteran Services Corp., una organización sin fines de lucro 501(c)(3). No es una agencia del gobierno y no representa ni actúa en nombre de FEMA, el Estado de Carolina del Norte, ningún condado ni ninguna agencia que aparezca en la app. No recibe solicitudes de beneficios del gobierno. En una emergencia, llame al 911.
 
-Encuentre ayuda
-• La oficina de manejo de emergencias de su condado, servicios sociales y los departamentos de bomberos cercanos, con teléfonos y enlaces
-• Ayuda con refugio y vivienda, hoteles y moteles cercanos con indicaciones
-• Ayuda legal gratis, seguros y reclamos, reemplazo de documentos perdidos, despensas de comida (también comida cultural) y cuidado de su casa después de un desastre
-• Apps de traducción gratis, la traducción que viene en su teléfono y cómo pedir un intérprete gratis
+NC Disaster Recovery Hub ayuda a las personas en Carolina del Norte a encontrar ayuda después de un huracán, inundación, incendio u otro desastre. Para solicitar ayuda o confirmar datos, use los sitios oficiales de abajo o llame a la agencia.
 
-Lleve el control
-• Guarde números de caso, de reclamo y de solicitud (FEMA, seguros y más), con a quién llamar y cuándo
-• Notas privadas y referencias, guardadas cifradas y nunca compartidas
-• Descargue sus datos o elimine su cuenta en cualquier momento
+Qué hace la app
+- Manejo de emergencias, servicios sociales, salud y bomberos de los 100 condados, con teléfonos y enlaces oficiales
+- Refugio y vivienda, hoteles cercanos, ayuda legal gratis, seguros, cómo reemplazar documentos, comida y cuidado de la casa después de un desastre
+- Notas privadas y cifradas para números de caso, reclamo y solicitud; descargue o elimine sus datos cuando quiera
+- Alertas opcionales por condado (no es un sistema de alertas de emergencia)
+- En español e inglés; WCAG 2.1 AA; sin anuncios, rastreo ni analíticas
 
-Alertas (opcionales)
-• Active notificaciones de avisos estatales o de los condados que elija; desactívelas cuando quiera
-• Este no es un sistema de alertas de emergencia: mantenga activadas las Alertas Inalámbricas de Emergencia y llame al 911 en una emergencia
+Fuentes de información del gobierno en esta app
+- Manejo de Emergencias de NC (NCDPS): https://www.ncdps.gov/our-organization/emergency-management
+- ReadyNC: https://www.readync.gov/
+- Sitios web de los condados (NC.gov): https://www.nc.gov/your-government/county-government-websites
+- Depto. de Salud y Servicios Humanos de NC: https://www.ncdhhs.gov/divisions/social-services/local-dss-directory
+- NC Medicaid: https://medicaid.ncdhhs.gov/about-nc-medicaid/contacts
+- Registros Vitales de NC: https://vitalrecords.nc.gov/order.htm
+- Depto. de Seguros de NC: https://www.ncdoi.gov/consumers/disaster
+- Jefe de Bomberos del Estado de NC: https://www.ncosfm.gov/nc-fire-department-rescue-ems-directory-including-fdid
+- DMV de NC: https://www.ncdot.gov/dmv/license-id/Pages/license-id-replacement.aspx
+- División de Seguridad del Empleo de NC: https://www.des.nc.gov/dua
+- NCWorks: https://www.ncworks.gov/vosnet/default.aspx
+- ReBuild NC: https://www.rebuild.nc.gov/
+- Depto. de Justicia de NC: https://ncdoj.gov/file-a-complaint/price-gouging/
+- Junta Electoral de NC: https://www.ncsbe.gov/
+- FEMA: https://www.fema.gov/assistance/individual
+- DisasterAssistance.gov: https://www.disasterassistance.gov/
+- Ready.gov: https://www.ready.gov/
+- FloodSmart (seguro contra inundaciones): https://www.floodsmart.gov/
+- Agencia Federal de Pequeños Negocios (SBA): https://www.sba.gov/disaster/
+- IRS: https://www.irs.gov/newsroom/tax-relief-in-disaster-situations
+- Seguro Social: https://www.ssa.gov/number-card/replace-card
+- Medicare: https://www.medicare.gov/basics/get-started-with-medicare/using-medicare/your-medicare-card
+- Comisión Federal de Comercio: https://www.identitytheft.gov/
+- Comisión Federal de Comunicaciones: https://www.fcc.gov/lifeline-consumers
+- CDC: https://www.cdc.gov/mold-health/about/clean-up.html
+- EPA: https://www.epa.gov/flooded-homes
+- Banda Oriental de Indios Cherokee: https://www.ebci.gov/department-of-operations/
 
-Hecha para todos
-• En inglés y español
-• Hecha según las pautas de accesibilidad WCAG 2.1 AA
-• Las listas de recursos funcionan sin conexión después de su primera visita
-• Sin anuncios, sin rastreo, sin analíticas
+Otras fuentes (no son del gobierno)
+NC 211, Cruz Roja Americana, Legal Aid of North Carolina, Pisgah Legal Services, NC Bar Association, Ejército de Salvación, Baptists on Mission, NC State Extension, OpenStreetMap, y bancos de alimentos, aseguradoras y hoteles locales. Algunos programas estatales y federales usan sitios que no terminan en .gov (NC Housing Finance Agency, Renew NC, Junta de Licencias de Contratistas de NC, Servicio Postal).
 
-Fuentes oficiales de la información del gobierno en esta app
-Carolina del Norte
-• NC.gov (sitios de los condados): https://www.nc.gov
-• Manejo de Emergencias / ReadyNC: https://www.readync.gov y https://www.ncdps.gov
-• Salud y Servicios Humanos, servicios sociales del condado, Medicaid y ePASS: https://www.ncdhhs.gov, https://www.ncdhhs.gov/localdss y https://epass.nc.gov
-• Registros Vitales: https://vitalrecords.nc.gov
-• Seguros y Jefe de Bomberos del Estado: https://www.ncdoi.gov y https://www.ncosfm.gov
-• Instrucción Pública (distritos escolares): https://www.dpi.nc.gov
-• Transporte / DMV: https://www.ncdot.gov
-• Seguridad de Empleo y NCWorks: https://des.nc.gov y https://www.ncworks.gov
-• ReBuild NC y Renew NC: https://rebuild.nc.gov y https://www.renewnc.org
-• Agencia de Financiamiento de Vivienda: https://www.nchfa.com y https://www.nchousingsearch.org
-• Junta de Licencias de Contratistas: https://www.nclbgc.org
-• Departamento de Justicia: https://ncdoj.gov
-• Junta Electoral: https://www.ncsbe.gov
-• Banda Oriental de los Cherokee: https://www.ebci.gov
-Federales
-• FEMA: https://www.fema.gov, https://www.disasterassistance.gov, https://www.ready.gov, https://www.floodsmart.gov y https://www.femaemergencyhotels.com
-• Seguro Social, Medicare e IRS: https://www.ssa.gov, https://www.medicare.gov y https://www.irs.gov
-• Pasaportes: https://travel.state.gov
-• Pequeñas Empresas (SBA): https://www.sba.gov
-• Correo (USPS): https://www.usps.com
-• CDC, EPA y USDA: https://www.cdc.gov, https://www.epa.gov y https://www.fsis.usda.gov
-• FCC y Lifeline: https://www.fcc.gov y https://www.lifelinesupport.org
-• FTC: https://consumer.ftc.gov, https://www.identitytheft.gov y https://www.robodeidentidad.gov
-• Protección Financiera del Consumidor: https://www.consumerfinance.gov
-• Reglamentos federales (eCFR): https://www.ecfr.gov
-Los teléfonos y enlaces de cada condado, ciudad y distrito escolar vienen de su sitio web oficial, enlazado en la app.
+Lista completa de fuentes de la app: https://disaster-resources.app/official-sources?lang=es
 
-La información puede cambiar: confírmela con la agencia antes de ir. ¿Preguntas o un número equivocado? Escriba a info@c4iveteranservices.org
+¿Preguntas, o un teléfono o enlace equivocado? Escriba a info@c4iveteranservices.org
 
 **Correo de contacto:** info@c4iveteranservices.org
 **Sitio web:** https://disaster-resources.app

@@ -6,6 +6,7 @@ import { SECTIONS as EN_S } from './content/resources.js';
 import { SECTIONS as ES_S } from './content/resources.es.js';
 import { SECTIONS as HC, DONTS } from './content/homecare.js';
 import { APPS } from './content/translation.js';
+import { TEXT as FH, CHECKLIST as FHL } from './content/firehelp.js';
 import { loadData } from './geo.js';
 import { getCommunity } from './community.js';
 import { t, tk, isEs, pick } from './i18n/index.js';
@@ -69,6 +70,7 @@ function guides() {
       out.push({ kind: 'guide', href: `#resources/${s.id}`, jump: `ri-${s.id}-${i}`, title: it.title, sub: s.title, alt: oi.title || '', text: `${flat(it)} ${flat(oi)}`, phones: it.phones?.slice(0, 1), w: 20 }); });
   });
   [...HC, DONTS].forEach((s) => out.push({ kind: 'guide', href: '#home-care', jump: `hc-${s.id}`, title: pick(s.title), sub: t('Home care after a fire or flood'), alt: `${s.title.en} ${s.title.es}`, text: s.points.map((p) => `${p.en} ${p.es}`).join(' '), w: 18 }));
+  out.push({ kind: 'guide', href: '#home-fire', title: pick(FH.title), sub: pick(FH.barSub), alt: `${FH.title.en} ${FH.title.es} house fire incendio casa quemada`, text: [...FHL.map((c) => `${(c.text || c.ins).en} ${(c.text || c.ins).es}`), ...FH.donts.map((d) => `${d.t.en} ${d.t.es}`)].join(' '), w: 30 });
   APPS.forEach((a) => out.push({ kind: 'guide', href: '#translation', title: a.name, sub: t('Translation apps & interpreters'), text: `${a.what.en} ${a.what.es} translate traducir`, w: 12 }));
   return out;
 }

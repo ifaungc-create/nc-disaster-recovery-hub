@@ -19,6 +19,7 @@ import { infoScreens } from './screens/info.js';
 import { sourcesScreens } from './screens/sources.js';
 import { searchScreens, searchForm, bindSearchForm } from './screens/search.js';
 import { adminScreens, responderNotice } from './screens/admin.js';
+import { fireHelpScreens, fireBar } from './screens/firehelp.js';
 import { can as nativeCan, lockStatus, setLock, biometryName, listenForTaps } from './native.js';
 
 const app = $('#app');
@@ -43,7 +44,7 @@ const crisisBar = () => `<nav class="crisis" aria-label="${t('Crisis and emergen
 
 function shell(route, inner) {
   const top = route.split('/')[0];
-  const navTop = { case: 'notes', share: 'notes', claim: 'notes', county: 'counties', schools: 'counties', fire: 'home', hotels: 'home', 'cultural-food': 'home', 'home-care': 'home', translation: 'home', alerts: 'settings', accessibility: 'settings', 'delete-account': 'settings', phone: 'resources', privacy: 'settings', about: 'settings', sources: 'settings', login: 'settings', signup: 'settings', admin: 'settings', submit: 'home', search: 'home' }[top] || top;
+  const navTop = { case: 'notes', share: 'notes', claim: 'notes', county: 'counties', schools: 'counties', fire: 'home', hotels: 'home', 'cultural-food': 'home', 'home-care': 'home', translation: 'home', alerts: 'settings', accessibility: 'settings', 'delete-account': 'settings', phone: 'resources', privacy: 'settings', about: 'settings', sources: 'settings', login: 'settings', signup: 'settings', admin: 'settings', submit: 'home', search: 'home' , 'home-fire': 'home' }[top] || top;
   app.innerHTML = `
   <a class="skip" href="#main">${t('Skip to content')}</a>
   <header class="top"><h1 class="brandh"><a href="#home" class="brand">${MARK}<span>${esc(APP_NAME)}<small class="tagline">${esc(t(APP_TAGLINE))}</small></span></a></h1><span class="hbtns"><a class="hbtn search" href="#search" id="hsearch">${SEARCH_ICO}<span class="sr">${t('Search the app')}</span></a>${langSwitch()}${ctx.me ? `<a class="hbtn" href="#settings">${esc(ctx.me.name.split(' ')[0])}<span class="sr"> · ${t('Account and settings')}</span></a>` : `<a class="hbtn" href="#login">${t('Sign in')}</a>`}</span></header>
@@ -70,12 +71,13 @@ function shell(route, inner) {
 }
 function focusTitle() { const h = $('main h2'); if (h) { h.tabIndex = -1; h.focus({ preventScroll: true }); } window.scrollTo(0, 0); }
 
-const screens = { ...notesScreens, ...placeScreens, ...infoScreens, ...adminScreens, ...foodScreens, ...homeCareScreens, ...translationScreens, ...alertScreens, ...legalScreens, ...sourcesScreens, ...searchScreens };
+const screens = { ...fireHelpScreens, ...notesScreens, ...placeScreens, ...infoScreens, ...adminScreens, ...foodScreens, ...homeCareScreens, ...translationScreens, ...alertScreens, ...legalScreens, ...sourcesScreens, ...searchScreens };
 
 screens.home = () => {
   const loc = getLoc(); const me = ctx.me;
   const tile = (href, b, s, cls = '') => `<a class="tile${cls}" href="#${href}"><b>${b}</b><span>${s}</span></a>`;
   return { html: `
+    ${fireBar()}
     <h2>${me ? t('Hi, {name}', { name: esc(me.name.split(' ')[0]) }) : t('Help after a disaster in North Carolina')}</h2>
     ${me ? `<p class="muted">${esc(t(ROLES[me.role]))}${me.org ? ' · ' + esc(me.org) : ''}</p>` : `<p>${t('Find shelter, phone numbers for your county, free legal help and step-by-step guides. Keep your case numbers and notes in one private place.')}</p>`}
     ${searchForm('', 'gs')}

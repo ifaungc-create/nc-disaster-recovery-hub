@@ -157,3 +157,92 @@ a.chip { display: inline-flex; align-items: center; min-height: 48px; padding: 0
 .srcjump a { display: inline-flex; align-items: center; min-height: 48px; }
 .srcnote a { display: inline-flex; align-items: center; min-height: 48px; }
 .srcline { line-height: 2; }
+/* "I just had a home fire": glowing red button on Home and the guided flow (#home-fire). The global
+   prefers-reduced-motion rule above turns every animation here off. The glow pulses slowly (2.6 s), never flashes. */
+.firebar { position: relative; display: flex; align-items: center; gap: 12px; margin: 2px 0 16px; padding: 14px 16px; min-height: 76px; border-radius: 16px; background: linear-gradient(135deg, #C81E1E 0%, #9B1C1C 100%); color: #fff; text-decoration: none; box-shadow: 0 0 0 0 rgba(220,38,38,.55), 0 6px 18px rgba(155,28,28,.35); animation: fbglow 2.6s ease-in-out infinite; transition: transform .12s ease; overflow: hidden; }
+.firebar::after { content: ""; position: absolute; inset: 0; background: linear-gradient(110deg, transparent 30%, rgba(255,255,255,.18) 45%, transparent 60%); transform: translateX(-100%); animation: fbshine 4.5s ease-in-out infinite 1s; pointer-events: none; }
+.firebar:active { transform: scale(.97); }
+.firebar:focus-visible { outline: 4px solid var(--focus); outline-offset: 3px; }
+.firebar .flame { width: 40px; height: 40px; flex: none; color: #FFB23E; filter: drop-shadow(0 0 6px rgba(255,178,62,.7)); animation: flicker 1.8s ease-in-out infinite; transform-origin: 50% 90%; }
+.fb-txt { display: flex; flex-direction: column; min-width: 0; flex: 1; }
+.fb-txt b { font-size: 21px; line-height: 1.2; letter-spacing: .2px; text-shadow: 0 1px 2px rgba(0,0,0,.25); }
+.fb-txt span { font-size: 15px; opacity: .95; }
+.fb-go { font-size: 34px; line-height: 1; font-weight: 300; animation: nudge 1.6s ease-in-out infinite; }
+@keyframes fbglow { 0%, 100% { box-shadow: 0 0 0 0 rgba(220,38,38,.55), 0 6px 18px rgba(155,28,28,.35); } 50% { box-shadow: 0 0 0 9px rgba(220,38,38,0), 0 0 26px 4px rgba(239,68,68,.55); } }
+@keyframes fbshine { 0%, 60% { transform: translateX(-100%); } 85%, 100% { transform: translateX(100%); } }
+@keyframes flicker { 0%, 100% { transform: scale(1) rotate(0); } 30% { transform: scale(1.06, .96) rotate(-2deg); } 60% { transform: scale(.97, 1.05) rotate(2deg); } }
+@keyframes nudge { 0%, 100% { transform: translateX(0); } 50% { transform: translateX(4px); } }
+
+.fflow { --fire: #B91C1C; }
+.fkicker { display: flex; align-items: center; gap: 8px; margin: 0 0 8px; color: var(--fire); font-weight: 700; font-size: 15px; text-transform: uppercase; letter-spacing: .6px; }
+.fkicker .flame { width: 22px; height: 22px; color: #E4572E; }
+.fprog { list-style: none; display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin: 0 0 16px; padding: 0; }
+.fprog li { display: flex; flex-direction: column; gap: 5px; font-size: 12.5px; color: var(--muted); text-align: center; }
+.fprog .dot { display: block; height: 6px; border-radius: 99px; background: var(--line); position: relative; overflow: hidden; }
+.fprog li.done .dot { background: var(--fire); }
+.fprog li.now .dot::after { content: ""; position: absolute; inset: 0; background: var(--fire); transform-origin: left; animation: fill .6s ease-out both; }
+.fprog li.now { color: var(--fire); font-weight: 700; }
+@keyframes fill { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+.fstep { animation: stepin .38s cubic-bezier(.2,.8,.2,1) both; }
+@keyframes stepin { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+.fstep h2 { font-size: 28px; }
+.fchoices { display: grid; gap: 12px; margin: 18px 0; }
+.fchoice { display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 72px; padding: 14px 18px; border-radius: 16px; border: 2px solid var(--brand); background: #fff; color: var(--brand); font-size: 20px; font-weight: 700; text-decoration: none; box-shadow: 0 3px 0 var(--brand); transition: transform .12s ease, box-shadow .12s ease, background .2s ease, color .2s ease, opacity .2s ease; animation: popin .42s cubic-bezier(.2,.9,.3,1.2) both; }
+.fchoice:nth-child(2) { animation-delay: .07s; } .fchoice:nth-child(3) { animation-delay: .14s; }
+.fchoice.yes { border-color: var(--ok); color: var(--ok); box-shadow: 0 3px 0 var(--ok); }
+.fchoice.no { border-color: var(--fire); color: var(--fire); box-shadow: 0 3px 0 var(--fire); }
+.fchoice .fc-arrow { font-size: 30px; font-weight: 400; transition: transform .2s ease; }
+.fchoice:hover .fc-arrow { transform: translateX(4px); }
+.fchoice:active { transform: translateY(3px); box-shadow: 0 0 0 transparent; }
+.fchoice.picked { transform: scale(1.02); color: #fff; background: var(--brand); }
+.fchoice.yes.picked { background: var(--ok); } .fchoice.no.picked { background: var(--fire); }
+.fchoices.chosen .fchoice:not(.picked) { opacity: .35; }
+@keyframes popin { from { opacity: 0; transform: translateY(10px) scale(.97); } to { opacity: 1; transform: none; } }
+.fcard { animation: stepin .4s ease both .08s; }
+.fcard + .fcard { animation-delay: .16s; }
+.fpoints { margin: 6px 0 10px; padding-left: 22px; } .fpoints li { margin-bottom: 8px; }
+.btn.fcall.rc { background: var(--fire); border-color: var(--fire); }
+.btn.fcall { flex-direction: column; gap: 2px; } .btn.fcall b { font-size: 21px; }
+.fnext { margin-top: 18px; }
+.fnext span { transition: transform .2s ease; } .fnext:hover span { transform: translateX(4px); }
+.fdont-h { font-size: 24px !important; display: flex; align-items: center; gap: 10px; color: var(--bad); }
+.nosign { width: 34px; height: 34px; flex: none; border-radius: 50%; border: 4px solid var(--bad); position: relative; }
+.nosign::after { content: ""; position: absolute; left: 50%; top: -2px; bottom: -2px; width: 4px; margin-left: -2px; background: var(--bad); transform: rotate(45deg); }
+.fdonts { list-style: none; margin: 0 0 12px; padding: 0; }
+.fdonts li { display: flex; gap: 12px; align-items: flex-start; padding: 12px 14px; margin-bottom: 10px; background: var(--badbg); border-left: 5px solid var(--bad); border-radius: 10px; animation: slidein .4s ease both; animation-delay: calc(var(--i) * 70ms); }
+.fdonts .x { flex: none; display: grid; place-items: center; width: 28px; height: 28px; border-radius: 50%; background: var(--bad); color: #fff; font-weight: 700; font-size: 15px; }
+@keyframes slidein { from { opacity: 0; transform: translateX(-12px); } to { opacity: 1; transform: none; } }
+.fmeter { height: 10px; border-radius: 99px; background: var(--line); overflow: hidden; margin: 6px 0 4px; }
+.fmeter span { display: block; height: 100%; background: linear-gradient(90deg, var(--ok), #2E9E5B); border-radius: 99px; transition: width .45s cubic-bezier(.2,.8,.2,1); }
+.fchecklist { list-style: none; margin: 10px 0 0; padding: 0; }
+.fchecklist > li { background: #fff; border: 1px solid var(--line); border-radius: 12px; margin-bottom: 10px; animation: popin .35s ease both; animation-delay: calc(var(--i) * 35ms); transition: border-color .2s ease, background .2s ease; }
+.fchecklist > li:has(input:checked) { border-color: var(--ok); background: var(--okbg); }
+.fcheck { display: flex; gap: 12px; align-items: flex-start; margin: 0; padding: 14px; font-weight: 400; cursor: pointer; }
+.fcheck input { position: absolute; opacity: 0; width: 1px; height: 1px; }
+.fcheck .box { flex: none; width: 30px; height: 30px; border: 2px solid #7A8794; border-radius: 8px; background: #fff; display: grid; place-items: center; transition: background .2s ease, border-color .2s ease, transform .15s ease; }
+.fcheck .box svg { width: 20px; height: 20px; fill: none; stroke: #fff; stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; stroke-dasharray: 24; stroke-dashoffset: 24; transition: stroke-dashoffset .3s ease .05s; }
+.fcheck input:checked + .box { background: var(--ok); border-color: var(--ok); animation: tick .3s ease; }
+.fcheck input:checked + .box svg { stroke-dashoffset: 0; }
+.fcheck input:focus-visible + .box { outline: 3px solid var(--focus); outline-offset: 2px; }
+.fchecklist > li:has(input:checked) .ftxt { color: var(--muted); }
+@keyframes tick { 50% { transform: scale(1.18); } }
+.flink { padding: 0 14px 6px 56px; }
+.flink a { min-height: 44px; display: inline-flex; align-items: center; }
+/* Red Cross page in the home fire flow */
+.rc-h { display: flex; align-items: center; gap: 12px; }
+.rcmark { width: 40px; height: 40px; flex: none; color: #B91C1C; animation: popin .5s cubic-bezier(.2,.9,.3,1.3) both; }
+.rcmark svg { width: 100%; height: 100%; }
+.ftimeline { list-style: none; counter-reset: tl; margin: 4px 0 0; padding: 0; }
+.ftimeline li { counter-increment: tl; position: relative; padding: 0 0 14px 44px; animation: slidein .4s ease both; animation-delay: calc(.15s + var(--i) * 90ms); }
+.ftimeline li::before { content: counter(tl); position: absolute; left: 0; top: 0; width: 30px; height: 30px; border-radius: 50%; background: var(--brand); color: #fff; font-weight: 700; font-size: 15px; display: grid; place-items: center; }
+.ftimeline li:not(:last-child)::after { content: ""; position: absolute; left: 14px; top: 32px; bottom: 2px; width: 2px; background: var(--line); }
+.rc-sub { margin: 18px 0 10px; font-size: 22px; }
+.rcserv { list-style: none; margin: 0 0 14px; padding: 0; display: grid; gap: 10px; }
+.rcserv li { display: flex; gap: 14px; align-items: flex-start; padding: 14px; background: #fff; border: 1px solid var(--line); border-left: 5px solid #B91C1C; border-radius: 12px; animation: popin .4s ease both; animation-delay: calc(var(--i) * 60ms); }
+.rci { flex: none; width: 40px; height: 40px; border-radius: 50%; background: #FDE8E8; color: #B91C1C; display: grid; place-items: center; }
+.rci svg { width: 22px; height: 22px; }
+.rctips { background: #EAF1F8; border-color: var(--brand-2); }
+@media (min-width: 640px) { .rcserv { grid-template-columns: 1fr 1fr; } }
+.f911 { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; padding: 12px 14px; margin: 0 0 16px; background: var(--badbg); border: 2px solid var(--bad); border-radius: 12px; animation: stepin .35s ease both; }
+.f911 p { margin: 0; flex: 1 1 200px; } .f911 b { color: var(--bad); }
+.f911 .f911btn { width: auto; flex: 0 0 auto; margin: 0; min-height: 48px; padding: 8px 22px; }

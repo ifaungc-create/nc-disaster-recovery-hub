@@ -1,5 +1,10 @@
 // Spanish (Latin American, usted). Keys are the English strings; see scripts/i18n-extract.mjs.
 export default {
+ "If 211 does not connect, call": "Si el 211 no conecta, llame al",
+ "Progress": "Progreso",
+ "Next: insurance": "Siguiente: seguro",
+ "Next: what not to do yet": "Siguiente: lo que no debe hacer todavía",
+ "Next: your checklist": "Siguiente: su lista",
  "Could not reach the server. Check your internet connection and try again. If it keeps happening, close the app completely and open it again.": "No se pudo conectar con el servidor. Revise su conexión a internet e inténtelo de nuevo. Si sigue pasando, cierre la aplicación por completo y vuelva a abrirla.",
  "Signing in does not work inside Google Translate. Open the app directly at disaster-resources.app and choose Español with the language button.": "No se puede iniciar sesión dentro de Google Translate. Abra la aplicación directamente en disaster-resources.app y elija Español con el botón de idioma.",
  "You are viewing this page through Google Translate. Signing in and accounts only work on the app itself.": "Está viendo esta página a través de Google Translate. Iniciar sesión y las cuentas solo funcionan en la aplicación misma.",

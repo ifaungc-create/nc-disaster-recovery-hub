@@ -97,6 +97,7 @@ screens.home = () => {
       ${tile('resources/legal', t('Free legal help'), t('Legal Aid NC hotline'))}
       ${tile('phone', t('Get a phone number'), t('Free options'))}
       ${tile('resources', t('All resources'), t('Jobs, relocating, relief'))}
+      ${tile('sources', t('Government resources'), t('By county and type of help'))}
     </div>
     ${responderNotice(me)}
     ${me?.isAdmin ? `<a class="btn" href="#admin" id="adminlink">${t('Admin: review responders and records')}</a>` : ''}

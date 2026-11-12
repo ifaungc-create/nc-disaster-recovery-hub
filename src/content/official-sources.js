@@ -43,7 +43,7 @@ export const OFFICIAL_SOURCES = [
     { en: 'Job search and career centers', es: 'Búsqueda de empleo y centros de carreras' }),
   S('nc', 'NC Office of Recovery and Resiliency: ReBuild NC', 'Oficina de Recuperación y Resiliencia de NC: ReBuild NC', 'https://www.rebuild.nc.gov/', ['rebuild.nc.gov'],
     { en: 'State home repair and rebuilding programs', es: 'Programas estatales de reparación y reconstrucción de viviendas' }),
-  S('nc', 'Renew NC (NC Office of Recovery and Resiliency; not a .gov website)', 'Renew NC (Oficina de Recuperación y Resiliencia de NC; no es un sitio .gov)', 'https://renewnc.org/', ['renewnc.org'],
+  S('nc', 'Renew NC (NC Department of Commerce, Division of Community Revitalization; not a .gov website)', 'Renew NC (Departamento de Comercio de NC, División de Revitalización Comunitaria; no es un sitio .gov)', 'https://www.renewnc.org/', ['renewnc.org'],
     { en: 'Helene home repair program', es: 'Programa de reparación de viviendas por Helene' }),
   S('nc', 'NC Department of Justice (Attorney General)', 'Departamento de Justicia de NC (Fiscal General)', 'https://ncdoj.gov/file-a-complaint/price-gouging/', ['ncdoj.gov'],
     { en: 'Reporting price gouging and scams', es: 'Denunciar precios abusivos y estafas' }),
@@ -126,6 +126,41 @@ export const OFFICIAL_SOURCES = [
   S('other', 'OpenStreetMap contributors', 'Colaboradores de OpenStreetMap', 'https://www.openstreetmap.org/', ['openstreetmap.org'],
     { en: 'Hotel and motel list', es: 'Lista de hoteles y moteles' }),
 ];
+
+// Types of help, for the "Find a government resource" search on the Official sources page.
+// [id, English label, Spanish label]. An agency can have several types.
+export const RESOURCE_TYPES = [
+  ['emergency', 'Emergency and disaster help', 'Emergencias y ayuda por desastre'],
+  ['benefits', 'Food, benefits and social services', 'Alimentos, beneficios y servicios sociales'],
+  ['health', 'Health, Medicaid and Medicare', 'Salud, Medicaid y Medicare'],
+  ['housing', 'Housing and home repair', 'Vivienda y reparación de la casa'],
+  ['documents', 'Replace documents and ID', 'Reemplazar documentos e identificación'],
+  ['insurance', 'Insurance', 'Seguros'],
+  ['jobs', 'Jobs and unemployment', 'Empleo y desempleo'],
+  ['money', 'Money, taxes and loans', 'Dinero, impuestos y préstamos'],
+  ['consumer', 'Scams, contractors and consumer protection', 'Estafas, contratistas y protección al consumidor'],
+  ['cleanup', 'Cleanup, mold and food safety', 'Limpieza, moho y seguridad de los alimentos'],
+  ['fire', 'Fire departments and fire reports', 'Bomberos e informes de incendio'],
+  ['schools', 'Schools', 'Escuelas'],
+  ['services', 'Phone, mail and voting', 'Teléfono, correo y votación'],
+  ['county', 'County government', 'Gobierno del condado'],
+];
+// Types for each government source, keyed by its first host.
+const TYPES_BY_HOST = {
+  'ncdps.gov': ['emergency'], 'readync.gov': ['emergency'], 'nc.gov': ['county'], 'ncdhhs.gov': ['benefits'],
+  'dph.ncdhhs.gov': ['health'], 'medicaid.ncdhhs.gov': ['health', 'documents'], 'vitalrecords.nc.gov': ['documents'],
+  'ncdoi.gov': ['insurance'], 'ncosfm.gov': ['fire'], 'dpi.nc.gov': ['schools'], 'ncdot.gov': ['documents'],
+  'des.nc.gov': ['jobs'], 'ncworks.gov': ['jobs'], 'rebuild.nc.gov': ['housing'], 'renewnc.org': ['housing'],
+  'ncdoj.gov': ['consumer'], 'ncsbe.gov': ['services'], 'nchfa.com': ['housing'], 'nclbgc.org': ['consumer', 'housing'],
+  'fema.gov': ['emergency', 'housing', 'insurance'], 'sba.gov': ['money', 'housing'], 'irs.gov': ['money'],
+  'ssa.gov': ['documents'], 'medicare.gov': ['health', 'documents'], 'state.gov': ['documents'], 'usps.com': ['services'],
+  'ftc.gov': ['consumer'], 'consumerfinance.gov': ['consumer', 'money'], 'fcc.gov': ['services'],
+  'cdc.gov': ['cleanup', 'health'], 'epa.gov': ['cleanup'], 'usda.gov': ['cleanup'], 'ecfr.gov': ['health'],
+  'ebci.gov': ['emergency'],
+};
+export const typesOf = (s) => (s.gov ? TYPES_BY_HOST[s.hosts[0]] || [] : []);
+// Counties served by Eastern Band of Cherokee Indians emergency management.
+export const EBCI_COUNTIES = ['Cherokee', 'Graham', 'Haywood', 'Jackson', 'Swain'];
 
 // The source for a link (by website host), or null. Subdomains match: es.medicare.gov -> medicare.gov.
 export function sourceFor(url) {

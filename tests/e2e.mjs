@@ -453,7 +453,7 @@ try {
     // Red Cross notice before any Red Cross call
     await go('home'); await page.click('.crisis a.rc'); await page.waitForSelector('#rcnote');
     const rc = await page.textContent('#rcnote');
-    assert.match(rc, /The Red Cross is a disaster relief agency\. Assistance is given to people involved in a verifiable disaster\./);
+    assert.match(rc, /The Red Cross is a disaster relief agency\. Assistance is given to people involved in a qualified and verifiable disaster\./);
     assert.match(rc, /does not provide assistance with housing, bills, non-disaster emergencies, or landlord issues such as burst pipes or downed, neglected trees\./);
     assert.equal(await page.getAttribute('#rc_call', 'href'), 'tel:+18007332767'); assert.equal(await page.getAttribute('#rc_211', 'href'), 'tel:211');
     assert.equal(await page.evaluate(() => document.querySelector('main').inert), true); assert.equal(await page.evaluate(() => document.activeElement.id), 'rc_call');

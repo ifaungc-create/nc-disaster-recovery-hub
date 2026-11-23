@@ -9,7 +9,7 @@ export const isRedCrossTel = (href = '') => /^tel:/i.test(href) && digits(href).
 
 const html = (href) => `<div class="langpick rcnote" id="rcnote" role="dialog" aria-modal="true" aria-labelledby="rc_h" aria-describedby="rc_p"><div class="card">
   <h2 id="rc_h">${t('Before you call the Red Cross')}</h2>
-  <div id="rc_p"><p>${t('The Red Cross is a disaster relief agency. Assistance is given to people involved in a verifiable disaster.')}</p>
+  <div id="rc_p"><p>${t('The Red Cross is a disaster relief agency. Assistance is given to people involved in a qualified and verifiable disaster.')}</p>
   <p>${t('The Red Cross does not provide assistance with housing, bills, non-disaster emergencies, or landlord issues such as burst pipes or downed, neglected trees.')}</p></div>
   <a class="btn" id="rc_call" href="${href}" data-rc-ok="1">${t('Call the Red Cross')}</a>
   <p class="small">${t('For other needs, NC 211 can point you to local help.')}</p>

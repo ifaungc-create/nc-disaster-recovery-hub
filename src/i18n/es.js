@@ -1143,7 +1143,7 @@ export default {
  "See who the county says owns it": "Vea quién es el dueño según el condado",
  "Street address of the rental": "Dirección del alquiler",
  "The Red Cross does not provide assistance with housing, bills, non-disaster emergencies, or landlord issues such as burst pipes or downed, neglected trees.": "La Cruz Roja no da asistencia con vivienda, cuentas, emergencias que no son desastres ni problemas con el arrendador, como tuberías rotas o árboles caídos por falta de mantenimiento.",
- "The Red Cross is a disaster relief agency. Assistance is given to people involved in a verifiable disaster.": "La Cruz Roja es una agencia de ayuda en casos de desastre. La asistencia se da a personas afectadas por un desastre que se pueda verificar.",
+ "The Red Cross is a disaster relief agency. Assistance is given to people involved in a qualified and verifiable disaster.": "La Cruz Roja es una agencia de ayuda en casos de desastre. La asistencia se da a personas afectadas por un desastre que califique y se pueda verificar.",
  "The address and county you type go from your phone straight to the State of North Carolina's parcel records (NC OneMap). They are not sent to us and are not saved.": "La dirección y el condado que usted escribe van de su teléfono directamente a los registros de parcelas del Estado de Carolina del Norte (NC OneMap). No se nos envían y no se guardan.",
  "The state parcel records did not answer. Check your connection and try again in a minute.": "Los registros de parcelas del estado no respondieron. Revise su conexión e inténtelo de nuevo en un minuto.",
  "Think it is a scam? Free legal help and where to report it": "¿Cree que es una estafa? Ayuda legal gratuita y dónde reportarla",

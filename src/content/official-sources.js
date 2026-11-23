@@ -49,6 +49,8 @@ export const OFFICIAL_SOURCES = [
     { en: 'Reporting price gouging and scams', es: 'Denunciar precios abusivos y estafas' }),
   S('nc', 'NC State Board of Elections', 'Junta Electoral del Estado de NC', 'https://www.ncsbe.gov/', ['ncsbe.gov'],
     { en: 'Voting after you have moved because of a disaster', es: 'Votar después de mudarse por un desastre' }),
+  S('nc', 'NC OneMap (NC Center for Geographic Information and Analysis)', 'NC OneMap (Centro de Información y Análisis Geográfico de NC)', 'https://www.nconemap.gov/pages/parcels', ['nconemap.gov'],
+    { en: 'Property owner on the county tax parcel record, for checking a rental listing (all 100 counties)', es: 'Dueño de la propiedad según el registro de parcelas del condado, para revisar un anuncio de alquiler (los 100 condados)' }),
   S('nc', 'NC Housing Finance Agency (state agency; not a .gov website)', 'Agencia de Financiamiento de Vivienda de NC (agencia estatal; no es un sitio .gov)', 'https://www.nchfa.com/renters/searching-rental-housing', ['nchfa.com', 'nchousingsearch.org'],
     { en: 'Finding rental housing (including NCHousingSearch.org)', es: 'Buscar vivienda de alquiler (incluido NCHousingSearch.org)' },
     { more: [[{ en: 'NCHousingSearch.org', es: 'NCHousingSearch.org' }, 'https://www.nchousingsearch.org/']] }),
@@ -125,6 +127,8 @@ export const OFFICIAL_SOURCES = [
     { en: 'Cleaning after a flood', es: 'Limpieza después de una inundación' }),
   S('other', 'OpenStreetMap contributors', 'Colaboradores de OpenStreetMap', 'https://www.openstreetmap.org/', ['openstreetmap.org'],
     { en: 'Hotel and motel list', es: 'Lista de hoteles y moteles' }),
+  S('other', 'Zillow (business website)', 'Zillow (sitio web de una empresa)', 'https://www.zillow.com/', ['zillow.com'],
+    { en: 'Rental listings, opened on Zillow\'s own website', es: 'Anuncios de alquiler, que se abren en el sitio web de Zillow' }),
 ];
 
 // Types of help, for the "Find a government resource" search on the Official sources page.
@@ -151,7 +155,7 @@ const TYPES_BY_HOST = {
   'dph.ncdhhs.gov': ['health'], 'medicaid.ncdhhs.gov': ['health', 'documents'], 'vitalrecords.nc.gov': ['documents'],
   'ncdoi.gov': ['insurance'], 'ncosfm.gov': ['fire'], 'dpi.nc.gov': ['schools'], 'ncdot.gov': ['documents'],
   'des.nc.gov': ['jobs'], 'ncworks.gov': ['jobs'], 'rebuild.nc.gov': ['housing'], 'renewnc.org': ['housing'],
-  'ncdoj.gov': ['consumer'], 'ncsbe.gov': ['services'], 'nchfa.com': ['housing'], 'nclbgc.org': ['consumer', 'housing'],
+  'ncdoj.gov': ['consumer'], 'ncsbe.gov': ['services'], 'nchfa.com': ['housing'], 'nconemap.gov': ['housing', 'consumer'], 'nclbgc.org': ['consumer', 'housing'],
   'fema.gov': ['emergency', 'housing', 'insurance'], 'sba.gov': ['money', 'housing'], 'irs.gov': ['money'],
   'ssa.gov': ['documents'], 'medicare.gov': ['health', 'documents'], 'state.gov': ['documents'], 'usps.com': ['services'],
   'ftc.gov': ['consumer'], 'consumerfinance.gov': ['consumer', 'money'], 'fcc.gov': ['services'],

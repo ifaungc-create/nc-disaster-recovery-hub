@@ -246,3 +246,13 @@ a.chip { display: inline-flex; align-items: center; min-height: 48px; padding: 0
 .f911 { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; padding: 12px 14px; margin: 0 0 16px; background: var(--badbg); border: 2px solid var(--bad); border-radius: 12px; animation: stepin .35s ease both; }
 .f911 p { margin: 0; flex: 1 1 200px; } .f911 b { color: var(--bad); }
 .f911 .f911btn { width: auto; flex: 0 0 auto; margin: 0; min-height: 48px; padding: 8px 22px; }
+
+/* Home: six need tiles with an icon; All help groups; Housing quick jumps; owner check; Red Cross notice. */
+.tile.need { border: 2px solid var(--brand); min-height: 112px; }
+.tile.need svg { color: var(--brand); flex: none; }
+.hgroup h3 { margin: 18px 0 8px; color: var(--brand); }
+.chips.jumps { margin: 0 0 14px; }
+button.chip { display: inline-flex; align-items: center; min-height: 48px; padding: 0 16px; background: #EAF1F8; border: 1px solid var(--brand); border-radius: 999px; color: var(--brand); font: inherit; font-weight: 600; cursor: pointer; }
+.ocowner b { font-size: 20px; color: var(--brand); overflow-wrap: anywhere; }
+.rcnote .btn { font-size: inherit; }
+.rcnote .card { max-height: calc(100vh - 32px); overflow-y: auto; }

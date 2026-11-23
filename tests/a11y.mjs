@@ -38,7 +38,7 @@ const axe = async (page, label) => {
   if (wide > 1) problems.push(`${label}: page scrolls sideways by ${wide}px`);
 };
 const go = async (page, hash) => { await page.goto(BASE + '/#' + hash); await page.waitForSelector('main h2'); await page.waitForTimeout(250); };
-const hashes = ['home', 'login', 'signup', 'reset', 'resources', ...PUBLIC_PAGES.map((p) => p.route).filter((r) => r && r !== 'resources'), 'county/Wake', 'county/New Hanover', 'phone'];
+const hashes = ['home', 'login', 'signup', 'reset', 'resources', ...PUBLIC_PAGES.map((p) => p.route).filter((r) => r && r !== 'resources'), 'county/Wake', 'county/New Hanover', 'phone', 'owner-check', 'resources/g-legal', 'resources/g-county'];
 const uniq = [...new Set(hashes)];
 const signedIn = ['home', 'settings', 'notes/cases', 'notes/cases/new', 'notes/referrals', 'notes/referrals/new', 'share', 'submit', 'alerts', 'admin', 'delete-account'];
 

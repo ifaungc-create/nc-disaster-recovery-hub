@@ -227,7 +227,7 @@ try {
     await go('admin/audit'); const log = await page.textContent('#audit');
     assert.match(log, /submission\.reject[\s\S]*submission\.approve\.edited[\s\S]*responder\.approve/); assert.match(log, new RegExp(ADMIN)); assert.doesNotMatch(log, /jordan|Riverside|828-555/i);
     await shot('18-admin-log'); step('admin actions logged (who, what, when), no client or record details');
-    await go('admin/published'); assert.match(await page.textContent('main'), /Published records \(1\)[\s\S]*Riverside Family Shelter/);
+    await go('admin/published'); await page.waitForSelector('main :text("Published records")'); assert.match(await page.textContent('main'), /Published records \(1\)[\s\S]*Riverside Family Shelter/);
     const ef = page.locator('form[data-edit]').first(); await page.locator('details:has(form[data-edit]) summary').first().click();
     await ef.locator('[name=description]').fill('Overnight beds for families. Pets welcome.'); await ef.locator('[name=_reason]').fill('Pet policy confirmed'); await shotAt('31-admin-edit-published', 'form[data-edit]');
     await ef.locator('button[type=submit]').click(); await page.waitForSelector('text=Saved. The public record is updated.');
@@ -403,7 +403,7 @@ try {
 
   // ---- new tiles (English): cultural food + home care
   await go('home');
-  assert.ok(await page.locator('.tile.new[href="#cultural-food"]').count() && await page.locator('.tile.new[href="#home-care"]').count());
+  assert.ok(await page.locator('.tile.need[href="#cultural-food"]').count());
   await page.click('.tile[href="#cultural-food"]'); await page.waitForSelector('#cfout li.food');
   const allN = Number((await page.textContent('#cfsum')).match(/\d+/)[0]); assert.ok(allN >= 50, 'cultural food count ' + allN);
   const cfHeads = await page.$$eval('#cfout > h3', (hs) => hs.map((h) => h.id)); assert.deepEqual(cfHeads, ['cf-free', 'cf-banks', 'cf-stores'], 'free first, then food banks, then stores');
@@ -418,7 +418,7 @@ try {
   await page.fill('#cfq', 'zzzz-no-such-place'); assert.match(await page.textContent('#cfout'), /No free food places match/);
   await page.fill('#cfq', ''); await page.selectOption('#cft', 'halal'); await shotAt('live-19-cultural-food-halal-filter', '#cff');
   step(`cultural food: ${allN} places; free food, then 7 food banks, then stores by region; type / free-or-store / text filters work`);
-  await go('home'); await page.click('.tile[href="#home-care"]'); await page.waitForSelector('#hc-donts, .hc.donts');
+  await go('resources'); await page.click('a.rowlink[href="#home-care"]'); await page.waitForSelector('#hc-donts, .hc.donts');
   const hcIds = await page.$$eval('section.hc', (ss) => ss.map((x) => x.id)); assert.ok(hcIds.length >= 8, 'home care sections ' + hcIds.join());
   for (const id of hcIds) assert.ok(await page.locator(`#${id} .sources a[href^="https://"]`).count(), 'sources in ' + id);
   assert.ok(await page.locator('main a[href="#resources/insurance"]').count() && await page.locator('main a[href="#resources/boardup"]').count());
@@ -432,6 +432,75 @@ try {
   }
   step('both new screens load at real paths with canonical links');
 
+
+  // ---- redesigned Home, All help groups, Red Cross notice, Zillow rentals, owner check (November 2026)
+  {
+    const X = process.env.EXTRA_SHOTS || '';
+    const xs = async (name) => { if (X) await page.screenshot({ path: X + name + '.png', fullPage: true }); };
+    await page.evaluate(() => localStorage.removeItem('ncdrh.location')); await go('home');
+    assert.deepEqual(await page.$$eval('#needtiles .tile.need', (as) => as.map((a) => a.getAttribute('href'))), ['#resources/housing', '#cultural-food', '#resources/g-money', '#resources/g-documents', '#resources/g-legal', '#counties']);
+    assert.equal(await page.locator('main .tile').count(), 6); assert.equal(await page.getAttribute('#allhelp', 'href'), '#resources');
+    assert.deepEqual(await page.$$eval('nav.bottom a', (as) => as.map((a) => a.textContent.trim())), ['Home', 'My Notes', 'All help', 'My county', 'Settings']);
+    await xs('home-en'); step('Home: six need tiles, "See all help", bottom tabs "All help" and "My county"');
+    await go('resources'); assert.equal(await page.textContent('main h2'), 'All help');
+    assert.deepEqual(await page.$$eval('section.hgroup h3', (hs) => hs.map((h) => h.textContent)), ['Housing & shelter', 'Food & home', 'Money & jobs', 'Documents & insurance', 'Legal & scams', 'My county', 'More help']);
+    const hrefs = await page.$$eval('section.hgroup a.rowlink', (as) => as.map((a) => a.getAttribute('href')));
+    for (const h of ['#resources/housing', '#hotels', '#owner-check', '#resources/relocating', '#cultural-food', '#home-care', '#resources/jobs', '#resources/relief', '#phone', '#resources/documents', '#resources/insurance', '#resources/fire-report', '#resources/legal', '#resources/boardup', '#counties', '#fire', '#schools', '#sources', '#translation', '#alerts']) assert.ok(hrefs.includes(h), 'All help lists ' + h);
+    await xs('all-help-en');
+    await go('resources/g-legal'); assert.equal(await page.textContent('main h2'), 'Legal & scams'); assert.deepEqual(await page.$$eval('main a.rowlink', (as) => as.map((a) => a.getAttribute('href'))), ['#resources/legal', '#owner-check', '#resources/boardup']);
+    step('All help: seven groups hold every guide and tool; Home tiles open the same groups');
+
+    // Red Cross notice before any Red Cross call
+    await go('home'); await page.click('.crisis a.rc'); await page.waitForSelector('#rcnote');
+    const rc = await page.textContent('#rcnote');
+    assert.match(rc, /The Red Cross is a disaster relief agency\. Assistance is given to people involved in a verifiable disaster\./);
+    assert.match(rc, /does not provide assistance with housing, bills, non-disaster emergencies, or landlord issues such as burst pipes or downed, neglected trees\./);
+    assert.equal(await page.getAttribute('#rc_call', 'href'), 'tel:+18007332767'); assert.equal(await page.getAttribute('#rc_211', 'href'), 'tel:211');
+    assert.equal(await page.evaluate(() => document.querySelector('main').inert), true); assert.equal(await page.evaluate(() => document.activeElement.id), 'rc_call');
+    await xs('red-cross-notice-en');
+    await page.keyboard.press('Escape'); assert.equal(await page.locator('#rcnote').count(), 0); assert.equal(await page.evaluate(() => document.querySelector('main').inert), false);
+    assert.equal(await page.evaluate(() => document.activeElement.classList.contains('rc')), true);
+    await go('resources/housing'); await page.click('#ri-housing-0 a.tel[href="tel:+18007332767"]'); await page.waitForSelector('#rcnote'); await page.click('#rc_close'); assert.equal(await page.locator('#rcnote').count(), 0);
+    await go('resources/relief'); await page.click('main a.tel[href="tel:+18007332767"]'); await page.waitForSelector('#rcnote'); await page.click('#rc_close');
+    await go('home-fire'); const fhRc = await page.locator('main a[href="tel:+18007332767"]').count();
+    await go('home'); await page.evaluate(() => { window.__nav = 0; document.querySelector('.crisis a.n211').addEventListener('click', (e) => { window.__nav++; e.preventDefault(); }); }); await page.click('.crisis a.n211'); assert.equal(await page.locator('#rcnote').count(), 0); assert.equal(await page.evaluate(() => window.__nav), 1);
+    step(`Red Cross notice opens before every Red Cross call (crisis bar, Housing, Relief; ${fhRc} link(s) on the home-fire start screen use the same number), closes with Escape or "Go back", and other numbers dial directly`);
+
+    // Housing & shelter: jumps, hotels, Zillow, owner check
+    await go('resources/housing');
+    assert.deepEqual(await page.$$eval('#hjumps button', (bs) => bs.map((b) => b.textContent)), ['Tonight', 'Find a rental', 'Check a listing', 'FEMA']);
+    assert.ok(await page.locator('#ri-housing-0 a[href="#hotels"]').count());
+    assert.equal(await page.getAttribute('#zillowlink', 'href'), 'https://www.zillow.com/nc/rentals/'); assert.match(await page.textContent('#hrent'), /outside business website, not a government agency/);
+    await page.click('#hjumps button:has-text("Check a listing")'); assert.equal(await page.evaluate(() => document.activeElement.id), 'hcheck');
+    await page.evaluate(() => localStorage.setItem('ncdrh.location', JSON.stringify({ county: 'New Hanover', la: null, lo: null })));
+    await page.reload(); await page.waitForSelector('#zillowlink'); assert.equal(await page.getAttribute('#zillowlink', 'href'), 'https://www.zillow.com/new-hanover-county-nc/rentals/'); assert.equal(await page.inputValue('#hcc'), 'New Hanover');
+    await xs('housing-en'); step('Housing & shelter: quick jumps, hotels link, Zillow rentals for the saved county (statewide when none), labelled as an outside business');
+
+    let parcelReq = [], parcelMode = 'hit';
+    await page.route('https://services.nconemap.gov/**', async (route) => { parcelReq.push(route.request());
+      if (parcelMode === 'fail') return route.fulfill({ status: 500, body: 'x' });
+      await route.fulfill({ status: 200, contentType: 'application/json', headers: { 'access-control-allow-origin': '*' }, body: JSON.stringify({ features: parcelMode === 'none' ? [] : [{ attributes: { ownname: 'EXAMPLE HOMES LLC (mock)', ownname2: '', siteadd: '112 BROADWAY ST', sunit: '', scity: 'WILMINGTON', cntyname: 'New Hanover', mcity: 'BEND', mstate: 'OR', transfdate: 1778648400000 } }] }) }); });
+    await page.fill('#hca', 'Broadway'); await page.click('#hcf button[type=submit]'); assert.match(await page.textContent('#hcerr'), /house number and street name/); assert.equal(parcelReq.length, 0);
+    await page.fill('#hca', '112 Broadway St., Wilmington'); await page.selectOption('#hcc', ''); await page.click('#hcf button[type=submit]'); assert.match(await page.textContent('#hcerr'), /Choose the county/); assert.equal(parcelReq.length, 0);
+    await page.selectOption('#hcc', 'New Hanover'); await page.click('#hcf button[type=submit]'); await page.waitForSelector('#oclist');
+    const pu = new URL(parcelReq[0].url()); assert.equal(pu.searchParams.get('where'), "cntyname='New Hanover' AND UPPER(siteadd) LIKE '112 BROADWAY%'"); assert.equal(parcelReq.length, 1);
+    const ph = parcelReq[0].headers(); assert.equal(ph.cookie, undefined); assert.equal(ph.referer, undefined);
+    const oc = await page.textContent('main'); assert.match(oc, /Who owns this property\?/); assert.match(oc, /EXAMPLE HOMES LLC \(mock\)/); assert.match(oc, /Owner's mail goes to: BEND, OR/); assert.match(oc, /Record as of May 1[23], 2026/); assert.match(oc, /If it does not match, ask why/);
+    assert.ok(await page.locator('main a[href="#county/New%20Hanover"]').count()); assert.ok(await page.locator('main a[href="#resources/legal"]').count()); assert.equal(await page.getAttribute('.srcline a', 'href'), 'https://www.nconemap.gov/pages/parcels');
+    await xs('owner-check-result-en');
+    parcelMode = 'none'; await page.fill('#oca', '9 Nowhere Ln'); await page.click('#ocf button[type=submit]'); await page.waitForSelector('#ocnone'); assert.match(await page.textContent('#ocnone'), /does not mean the listing is fake/);
+    parcelMode = 'fail'; await page.fill('#oca', '9 Nowhere Ln'); await page.click('#ocf button[type=submit]'); await page.waitForSelector('#ocfail'); assert.match(await page.textContent('#ocfail'), /did not answer/);
+    await page.unroute('https://services.nconemap.gov/**'); assert.equal(parcelReq.length, 3);
+    assert.deepEqual(foreign.filter((u) => !u.startsWith('https://services.nconemap.gov/')), [], 'only the state parcel service is contacted'); foreign.length = 0;
+    step('owner check: validates the address and county first, asks only the state parcel service (no cookies, no referrer), shows the county record owner, what to do with it, "no record" and "did not answer" states');
+    await page.evaluate(() => localStorage.setItem('ncdrh.lang', 'es')); await go('resources/housing'); await page.reload(); await page.waitForSelector('#hcheck');
+    assert.match(await page.textContent('#hcheck'), /Revise un anuncio antes de pagar/); await page.click('#ri-housing-0 a.tel[href="tel:+18007332767"]'); await page.waitForSelector('#rcnote');
+    assert.match(await page.textContent('#rcnote'), /La Cruz Roja es una agencia de ayuda en casos de desastre/); assert.equal(await page.getAttribute('html', 'lang'), 'es'); await xs('red-cross-notice-es'); await page.click('#rc_close');
+    await go('home'); assert.match(await page.textContent('#needtiles'), /Vivienda y refugio[\s\S]*Comida[\s\S]*Dinero y empleo[\s\S]*Documentos y seguros[\s\S]*Ayuda legal y estafas[\s\S]*Mi condado/); await xs('home-es');
+    await page.evaluate(() => { localStorage.setItem('ncdrh.lang', 'en'); localStorage.removeItem('ncdrh.location'); }); await page.reload(); await page.waitForSelector('#needtiles');
+    step('new Home, owner check and Red Cross notice in Spanish');
+  }
+
   // ---- English / Spanish: picker on first open, switch, persistence, <html lang>
   {
     const ctx3 = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true });
@@ -443,7 +512,7 @@ try {
     await p3.screenshot({ path: SHOTS + 'live-23-language-picker.png' });
     await p3.click('#langpick [data-pick="es"]'); await p3.waitForSelector('#langpick', { state: 'detached' });
     assert.equal(await p3.getAttribute('html', 'lang'), 'es'); assert.equal(await p3.evaluate(() => localStorage.getItem('ncdrh.lang')), 'es');
-    const homeEs = await p3.textContent('main'); assert.match(homeEs, /Cuidado del hogar después de un incendio o inundación/); assert.match(homeEs, /Comida cultural|Alimentos culturales|comida cultural/i);
+    const homeEs = await p3.textContent('main'); assert.match(homeEs, /Vivienda y refugio/); assert.match(homeEs, /Documentos y seguros/); assert.match(homeEs, /Ver toda la ayuda/);
     assert.equal((await p3.textContent('#langsw')).trim(), 'English');
     assert.match(await p3.textContent('footer'), /C4I Veteran Services Corp\./);
     await p3.screenshot({ path: SHOTS + 'live-24-home-es.png' }); step('first open shows the English/Español picker; Español sets <html lang="es">, saves the choice and translates the home screen');
@@ -469,7 +538,7 @@ try {
   }
 
   // ---- translation tile (EN), then Spanish in its own profile
-  await go('home'); assert.ok(await page.locator('.tile.new[href="#translation"]').count()); await page.click('.tile[href="#translation"]'); await page.waitForSelector('#gtlang');
+  await go('resources'); assert.ok(await page.locator('a.rowlink[href="#translation"]').count()); await page.click('a.rowlink[href="#translation"]'); await page.waitForSelector('#gtlang');
   for (const id of ['gt', 'ms', 'apple']) assert.ok(await page.locator(`#tr-app-${id} a[href^="https://"]`).count(), 'store links for ' + id);
   assert.ok(await page.locator('main a[href="https://play.google.com/store/apps/details?id=com.google.android.apps.translate"]').count());
   assert.ok(await page.locator('main a[href^="https://apps.apple.com/us/app/google-translate/id414706506"]').count());
@@ -481,7 +550,7 @@ try {
   await shot('live-30-translation-en'); step('translation tile: free apps with store links, phone how-tos, interpreter help (FEMA, NC 211), Google Translate only on tap');
   { const cES = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true }); await cES.addInitScript(() => localStorage.setItem('ncdrh.lang', 'es'));
     const pES = await cES.newPage(); const fES = []; pES.on('request', (r) => { if (!r.url().startsWith(BASE) && !r.url().startsWith('data:')) fES.push(r.url()); });
-    await pES.goto(BASE + '/#home'); await pES.waitForSelector('.tile[href="#translation"]'); await pES.click('.tile[href="#translation"]'); await pES.waitForSelector('#gtlang');
+    await pES.goto(BASE + '/#resources'); await pES.waitForSelector('a.rowlink[href="#translation"]'); await pES.click('a.rowlink[href="#translation"]'); await pES.waitForSelector('#gtlang');
     assert.equal(await pES.getAttribute('html', 'lang'), 'es'); const tES = await pES.textContent('main'); assert.match(tES, /intérprete/i); assert.match(tES, /1-800-621-3362/); assert.doesNotMatch(tES, /Not verified\b/);
     await pES.screenshot({ path: SHOTS + 'live-31-translation-es.png' });
     await pES.goto(BASE + '/translation'); await pES.waitForSelector('#gtlang'); assert.match(await pES.title(), /traducción/i);
@@ -515,7 +584,7 @@ try {
         localStorage.setItem(KEY, JSON.stringify(j)); return make(j); };
     }, PUSH_ORIGIN);
     const pp = await cP.newPage(); const fP = []; pp.on('request', (r) => { if (!r.url().startsWith(BASE) && !r.url().startsWith('data:')) fP.push(r.url()); }); const eP = []; pp.on('pageerror', (e) => eP.push(e.message));
-    await pp.goto(BASE + '/#home'); await pp.click('.tile[href="#alerts"]'); await pp.waitForSelector('#pf');
+    await pp.goto(BASE + '/#resources'); await pp.click('a.rowlink[href="#alerts"]'); await pp.waitForSelector('#pf');
     assert.equal(await pp.evaluate(() => window.__subscribeCalls), 0, 'nothing is requested before a tap');
     assert.match(await pp.textContent('#pstate-note'), /always included/); assert.equal(await pp.locator('#pstate').count(), 0); await pp.selectOption('#pcounty', 'Wake'); await pp.click('#padd'); await pp.waitForSelector('#pcounties li');
     await pp.screenshot({ path: SHOTS + 'live-32-alerts-choose.png' });

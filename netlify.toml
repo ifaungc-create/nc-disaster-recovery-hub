@@ -68,8 +68,10 @@
     Referrer-Policy = "strict-origin-when-cross-origin"
     X-Frame-Options = "DENY"
     Permissions-Policy = "geolocation=(self), camera=(), microphone=(), interest-cohort=()"
-    # Everything is self-hosted: no third-party scripts, fonts, CDNs or analytics.
-    Content-Security-Policy = "default-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline'; script-src 'self'; connect-src 'self'; frame-ancestors 'none'; base-uri 'self'; form-action 'self'"
+    # Everything is self-hosted: no third-party scripts, fonts, CDNs or analytics. One outside host is allowed
+    # for requests: services.nconemap.gov, the State of North Carolina's parcel records, used only when a
+    # person asks who owns a rental address (src/owner.js).
+    Content-Security-Policy = "default-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline'; script-src 'self'; connect-src 'self' https://services.nconemap.gov; frame-ancestors 'none'; base-uri 'self'; form-action 'self'"
 
 # www -> apex (canonical: https://disaster-resources.app)
 [[redirects]]

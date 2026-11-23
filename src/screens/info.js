@@ -7,6 +7,9 @@ import { esc, tel, ext, verifyBadge, report, contactLine, srcNote } from '../ui.
 import { sourceFor } from '../content/official-sources.js';
 import { getCommunity, communityBlock } from '../community.js';
 import { insurerDirectory } from '../insurers.js';
+import { getLoc, loadData } from '../geo.js';
+import { zillowRentalsUrl } from '../owner.js';
+import { ownerForm, bindOwnerForm } from './owner.js';
 
 // "Source: <agency> (official site)": the government agencies whose websites this item links to.
 const govSources = (it) => [...new Set((it.links || []).map(([, u]) => sourceFor(u)).filter((x) => x && x.gov && x.url))];
@@ -18,24 +21,51 @@ const item = (it, id = '') => `<div class="card${it.warn ? ' warn' : ''}"${id ? 
   ${(it.phones || []).map(([l, n]) => tel(l, n)).join('')}${it.links ? `<div class="links">${it.links.map(([l, u]) => ext(l, u)).join('')}</div>` : ''}${srcLine(it)}
   ${it.verify ? `<p class="small">${t('Not verified')}: ${esc(it.verify)}</p>` : ''}${it.honest ? `<p class="small"><b>${t('Honest take:')}</b> ${esc(it.honest)}</p>` : ''}${(it.phones?.length || it.links?.length) ? report(it.title) : ''}</div>`;
 
-const extra = () => [['cultural-food', t('Cultural food: pantries & stores'), t('Halal, kosher, Latino, Asian and more')], ['home-care', t('Home care after a fire or flood'), t('Clean, dry, stop mold, save food')], ['translation', t('Translation apps & interpreters'), t('Other languages, free interpreters')], ['counties', t('County services'), t('EM, DSS, health, Register of Deeds')], ['schools', t('School districts'), t('All NC districts by county')], ['fire', t('Fire departments'), t('Find by county, ZIP or name')], ['hotels', t('Hotels nearby'), t('Directions and call')], ['phone', t('Get a phone number'), t('Free and low-cost options')]];
+// The All help screen: every guide and tool, grouped by need. The Home tiles open these same groups
+// (#resources/g-money and so on), so each thing has one name and one place.
+const GROUPS = () => { const S = Object.fromEntries(sections().map((x) => [x.id, [`resources/${x.id}`, x.title, x.short]]));
+  return [
+    { id: 'housing', title: t('Housing & shelter'), rows: [S.housing, ['hotels', t('Hotels nearby'), t('Directions and call')], ['owner-check', t('Check a rental listing'), t('See who the county says owns it')], S.relocating] },
+    { id: 'food', title: t('Food &amp; home'), rows: [['cultural-food', t('Cultural food: pantries & stores'), t('Halal, kosher, Latino, Asian and more')], ['home-care', t('Home care after a fire or flood'), t('Clean, dry, stop mold, save food')]] },
+    { id: 'money', title: t('Money &amp; jobs'), rows: [S.jobs, S.relief, ['phone', t('Get a phone number'), t('Free and low-cost options')]] },
+    { id: 'documents', title: t('Documents &amp; insurance'), rows: [S.documents, S.insurance, S['fire-report']] },
+    { id: 'legal', title: t('Legal &amp; scams'), rows: [S.legal, ['owner-check', t('Check a rental listing'), t('See who the county says owns it')], S.boardup] },
+    { id: 'county', title: t('My county'), rows: [['counties', t('County services'), t('EM, DSS, health, Register of Deeds')], ['fire', t('Fire departments'), t('Find by county, ZIP or name')], ['schools', t('School districts'), t('All NC districts by county')], ['sources', t('Official sources'), t('Government resources by county and type of help')]] },
+    { id: 'more', title: t('More help'), rows: [['translation', t('Translation apps & interpreters'), t('Other languages, free interpreters')], ['alerts', t('Alerts'), t('Recovery news for NC or your county')], ...(ADAPTER === 'remote' ? [['resources/community', t('Added by verified responders'), t('Checked by an administrator')]] : [])] },
+  ]; };
+// Section titles from the content files are plain text; t() titles carry &amp;. Both are safe to print as is after this.
+const rowTitle = (x) => (/&amp;/.test(x) ? x : esc(x));
+const groupList = (g) => `<ul class="list">${g.rows.filter(Boolean).map(([h, ti, d]) => `<li><a class="rowlink" href="#${h}"><span>${rowTitle(ti)}<br><span class="small">${rowTitle(d)}</span></span><span aria-hidden="true">›</span></a></li>`).join('')}</ul>`;
+// Housing & shelter extras: quick jumps, Zillow rentals for the person's county and the owner check.
+const housingJumps = () => `<div class="chips jumps" id="hjumps">${[['ri-housing-0', t('Tonight')], ['hrent', t('Find a rental')], ['hcheck', t('Check a listing')], ['ri-housing-1', t('FEMA')]].map(([id, l]) => `<button type="button" class="chip" data-jumpto="${id}">${l}</button>`).join('')}</div>`;
+const rentalCard = (county) => `<div class="card" id="hrent"><h3>${t('More rental listings')}</h3>
+  <p>${county ? t('Houses and apartments for rent in {name} County on Zillow.', { name: esc(county) }) : t('Houses and apartments for rent in North Carolina on Zillow. Choose your county to see listings near you.')}</p>
+  <div class="links"><a href="${esc(zillowRentalsUrl(county))}" target="_blank" rel="noopener noreferrer" id="zillowlink">${county ? esc(t('Zillow rentals in {name} County', { name: county })) : t('Zillow rentals in North Carolina')} <span aria-hidden="true">↗</span><span class="sr"> ${t('(opens a new tab)')}</span></a>${county ? '' : `<a href="#counties">${t('Choose your county')}</a>`}</div>
+  <p class="small">${t('Zillow is an outside business website, not a government agency, and is not affiliated with this app.')}</p></div>`;
+const checkCard = (counties, county) => `<div class="card okc" id="hcheck"><h3>${t('Check a listing before you pay')}</h3>
+  <p>${t('Found a place to rent on Facebook Marketplace or another website? See who the county says owns it before you pay.')}</p>${ownerForm(counties, { county, id: 'hc' })}</div>`;
 // In Spanish, a short note: many official sites are only in English.
 const esNote = () => (isEs() ? `<p class="small esnote">${t('Many official websites are only in English. Links marked "(en inglés)" open an English page. Names of agencies and programs are left in English so you can find them.')}</p>` : '');
 async function resources(parts) {
   if (parts[0] === 'community') {
     const all = await getCommunity();
-    return `<p><a href="#resources">‹ ${t('All resources')}</a></p><h2>${t('Added by verified responders')}</h2><p>${t('Organizations, services and numbers sent in by approved responders and checked by an administrator.')}</p>
+    return `<p><a href="#resources">‹ ${t('All help')}</a></p><h2>${t('Added by verified responders')}</h2><p>${t('Organizations, services and numbers sent in by approved responders and checked by an administrator.')}</p>
       ${communityBlock(all.filter((r) => r.county === 'Statewide'), t('Statewide'))}${communityBlock(all.filter((r) => r.county !== 'Statewide').sort((a, b) => a.county.localeCompare(b.county)), t('By county'))}${all.length ? '' : `<div class="card"><p>${t('Nothing has been added yet.')}</p></div>`}`;
   }
   const SECTIONS = sections(); const s = SECTIONS.find((x) => x.id === parts[0]);
-  if (!s) return `<h2>${t('Resources')}</h2><p>${t('Verified North Carolina phone numbers, websites and step-by-step guides.')}</p>${esNote()}${srcNote()}
-    <ul class="list">${[...SECTIONS.map((x) => [`resources/${x.id}`, x.title, x.short]), ...extra(), ...(ADAPTER === 'remote' ? [['resources/community', t('Added by verified responders'), t('Checked by an administrator')]] : [])].map(([h, ti, d]) => `<li><a class="rowlink" href="#${h}"><span>${esc(ti)}<br><span class="small">${esc(d)}</span></span><span aria-hidden="true">›</span></a></li>`).join('')}</ul>`;
+  const gm = /^g-([a-z]+)$/.exec(parts[0] || ''); const grp = gm && GROUPS().find((g) => g.id === gm[1]);
+  if (grp) return `<p><a href="#resources">‹ ${t('All help')}</a></p><h2>${grp.title}</h2>${esNote()}${groupList(grp)}`;
+  if (!s) return `<h2>${t('All help')}</h2><p>${t('Verified North Carolina phone numbers, websites and step-by-step guides.')}</p>${esNote()}${srcNote()}
+    ${GROUPS().map((g) => `<section class="hgroup" aria-labelledby="hg-${g.id}"><h3 id="hg-${g.id}">${g.title}</h3>${groupList(g)}</section>`).join('')}`;
   const added = (await getCommunity()).filter((r) => r.category === s.id);
   let dir = null;
   if (s.id === 'insurance') dir = await insurerDirectory().catch(() => ({ html: `<div class="card"><p class="err">${t('The insurance claim phone list could not be loaded. Check your connection and try again.')}</p></div>` }));
-  const html = `<p><a href="#resources">‹ ${t('All resources')}</a></p><h2>${esc(s.title)}</h2><p>${esc(s.intro)}</p>${esNote()}${srcNote()}${dir ? dir.html : ''}${s.items.map((it, i) => item(it, `ri-${s.id}-${i}`)).join('')}
+  const housing = s.id === 'housing'; const county = housing ? getLoc()?.county || '' : ''; const counties = housing ? await loadData('counties') : [];
+  const cards = s.items.map((it, i) => item(it, `ri-${s.id}-${i}`) + (housing && i === 2 ? rentalCard(county) + checkCard(counties, county) : '')).join('');
+  const html = `<p><a href="#resources">‹ ${t('All help')}</a></p><h2>${esc(s.title)}</h2><p>${esc(s.intro)}</p>${housing ? housingJumps() : ''}${esNote()}${srcNote()}${dir ? dir.html : ''}${cards}
     ${communityBlock(added, t('Added by verified responders'))}
     <p class="small srcnote">${t('Numbers and links checked {date}. Programs change: confirm details with the agency.', { date: esc(DATA_DATE) })} <a href="#sources">${t('Official sources')}</a></p>`;
+  if (housing) return { html, bind() { bindOwnerForm('hc'); document.querySelectorAll('[data-jumpto]').forEach((b) => (b.onclick = () => { const el = document.getElementById(b.dataset.jumpto); if (el) { el.tabIndex = -1; el.scrollIntoView({ block: 'start' }); el.focus({ preventScroll: true }); } })); } };
   return dir?.bind ? { html, bind: dir.bind } : html;
 }
 
@@ -67,6 +97,7 @@ const privacy = () => `<h2>${t('Privacy, in plain language')}</h2>
     <li>${t('You can download all your data or delete your account at any time in Settings.')} <a href="#delete-account">${t('How to delete your account')}</a></li></ol></div>
   <div class="card"><h3>${t('Where your information is kept')}</h3><p>${ADAPTER === 'local' ? t('In this prototype, your account and notes are stored only on this device, in this browser. They are not sent to any server. If you clear your browser data or lose the device, they are gone, so download a copy from Settings.') : t('Your account and notes are stored on our server (Netlify, in the United States), encrypted with a key that is unique to your account. Only you can read them through the app. Responders and agencies cannot see them, and we do not look at them. If you delete your account, everything is erased from our storage right away.')}</p><p>${t('Your password is never stored in readable form. We never store your IP address; to stop password-guessing we keep a short-lived, scrambled counter that cannot be turned back into your address.')}</p></div>
   <div class="card"><h3>${t('Location')}</h3><ol class="steps"><li>${t('<b>Finding your county:</b> your phone\'s position is matched to a county map that is part of the app, on your device. Only the county name and a rough position (about 100 m) are remembered on this device, so the app can show your county first. "Forget my location" in Settings erases it.')}</li>
+    <li>${t('<b>Checking who owns a rental:</b> the street address and county you type go from your phone straight to the State of North Carolina\'s parcel records (NC OneMap) to find the owner. They are not sent to us and are not saved in the app. This is the only time the app contacts a server that is not its own.')}</li>
     <li>${t('<b>Hotel search:</b> runs on your phone against a list of North Carolina hotels and motels. Your location is not sent anywhere.')}</li>
     <li>${t('<b>Directions:</b> tapping "Directions" opens your maps app (Apple Maps, Google Maps or OpenStreetMap). That app has its own privacy policy.')}</li></ol></div>
   <div class="card"><h3>${t('Responders and share cards')}</h3><p>${t('A responder can give you a card with their own contact information. You choose whether to save it. Saving it copies their information into your notes; it does not give the responder any access to your account or notes, and they are not told who saved it (they see only a count).')}</p><p>${ADAPTER === 'remote' ? t('Responder accounts are approved by an administrator before they can make share cards. Approval is not a background check: only trust a card from someone you met through an agency you know.') : t('Responder accounts are not verified in this on-device version. Only trust a card from someone you met through an agency you know.')}</p></div>
@@ -79,7 +110,7 @@ const privacy = () => `<h2>${t('Privacy, in plain language')}</h2>
     <li>${t('<b>Alerts:</b> if you turn them on, Apple gives us a push address (device token) for your phone. We store and delete it exactly as described under Alerts above.')}</li>
     <li>${t('<b>Widget and Siri:</b> the Home Screen widget and Siri shortcuts only open the app or call a phone number. They do not collect anything.')}</li></ol></div>
   <div class="card"><h3>${t('Cookies and storage')}</h3><p>${t('We do not set cookies. The app stores your sign-in on this device (until you close the app, unless you chose "keep me signed in"), your language choice, your saved county, and offline copies of the public resource lists.')} ${t('If you turned on alerts, it also keeps this device\'s push address so the alert settings can be updated.')}</p></div>
-  <div class="card"><h3>${t('Links to other websites')}</h3><p>${t('Links to agencies and companies open their websites, which have their own privacy policies. {app} uses no third-party scripts, fonts or services inside the app.', { app: esc(APP_NAME) })}</p></div>
+  <div class="card"><h3>${t('Links to other websites')}</h3><p>${t('Links to agencies and companies open their websites, which have their own privacy policies. {app} uses no third-party scripts, fonts or advertising inside the app. The one outside service it contacts is the state parcel record lookup described above, and only when you use it.', { app: esc(APP_NAME) })}</p></div>
   <div class="card"><h3>${t('Important')}</h3><p>${t('This app is not a government agency and is not an emergency service. In an emergency, call 911. The information here was collected {date} from official sources and may change.', { date: esc(DATA_DATE) })} <a href="#about">${t('Read the full disclaimer')}</a>.</p><p>${contactLine()}</p></div>`;
 
 export const infoScreens = { resources, phone, privacy, about };

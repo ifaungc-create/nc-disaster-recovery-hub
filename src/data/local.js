@@ -80,5 +80,6 @@ export const local = {
   pushKey: serverOnly, pushSubscribe: serverOnly, pushStatus: serverOnly, pushUnsubscribe: serverOnly, adminPushCount: serverOnly, adminPushSend: serverOnly, adminPushLog: serverOnly, adminPushTest: serverOnly,
   adminEditPublished: serverOnly, adminFindUser: serverOnly, adminDeleteUser: serverOnly, adminIssueReset: serverOnly, adminIssueClaim: serverOnly,
   adminInvite: serverOnly, adminListAdmins: serverOnly, adminRevokeAdmin: serverOnly, adminNewTempPassword: serverOnly, changePassword: serverOnly,
+  rideConfig: async () => ({ enabled: false }), myRides: async () => [], rideRequest: serverOnly, cancelRide: serverOnly, adminRides: serverOnly, adminUpdateRide: serverOnly, adminSetRides: serverOnly,
   resetPassword: serverOnly, requestAdminCode: serverOnly, adminClaimStart: serverOnly, adminClaimFinish: serverOnly,
 };

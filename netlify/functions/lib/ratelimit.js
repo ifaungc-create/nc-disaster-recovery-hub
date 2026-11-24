@@ -12,6 +12,7 @@ export const LIMITS = {
   reset: { max: 10, windowS: 3600 },     // 10 password-reset or recovery-code tries / hour
   password: { max: 10, windowS: 900 },   // 10 password changes / 15 min
   invite: { max: 30, windowS: 3600 },    // 30 administrator invites or new temporary passwords / hour
+  ride: { max: 6, windowS: 3600 },      // 6 ride requests / hour
 };
 export const clientIp = (req, context) => context?.ip || req.headers.get('x-nf-client-connection-ip') || 'unknown';
 export async function limit(group, req, context) {

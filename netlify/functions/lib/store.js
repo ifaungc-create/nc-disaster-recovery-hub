@@ -8,6 +8,8 @@
 //   community/approved  PUBLIC, plaintext: approved community records shown to everyone
 //   audit/<ts>-<rand>   admin action log: who (admin email), what, target id, when. No client data.
 //   rl/<group>/<bucket>/<ip-hash>  rate-limit counters (no raw IPs)
+//   ride/<uid>/<id>     sealed (admin key) ride request to C4I staff, metadata { exp } (deleted 30 days after it was sent)
+//   settings/rides      sealed (admin key) { enabled, by, at }: ride requests are off until an administrator turns them on
 //   code/<uid>          one-time code for password reset / admin confirmation: keyed hash only, expiry, tries (lib/codes.js)
 // All read-modify-write updates use ETag conditional writes (onlyIfMatch / onlyIfNew) with retry.
 import { getStore } from '@netlify/blobs';
@@ -114,3 +116,18 @@ export const audit = {
   async log(entry) { const at = new Date().toISOString(); await store().setJSON(`audit/${at}-${randomBytes(3).toString('hex')}`, { at, ...entry }); },
   async recent(limit = 100) { const keys = []; for await (const p of store().list({ prefix: 'audit/', paginate: true })) for (const b of p.blobs) keys.push(b.key); keys.sort().reverse(); const out = []; for (const k of keys.slice(0, limit)) out.push(await store().get(k, { type: 'json' })); return out; },
 };
+// Ride requests: staff (administrators) read them, so they are sealed with the admin key, one blob each.
+// The cleanup function deletes each one 30 days after it was sent (metadata exp), without decrypting it.
+export const RIDE_KEEP_DAYS = 30;
+export const rides = {
+  async create(uid, rec) { return writeSealed(`ride/${uid}/${rec.id}`, adminKey(), rec, null, { exp: new Date(Date.parse(rec.createdAt) + RIDE_KEEP_DAYS * 864e5).toISOString() }); },
+  async get(uid, id) { return (await readSealed(`ride/${uid}/${id}`, adminKey())).value; },
+  mutate: (uid, id, fn) => mutate(`ride/${uid}/${id}`, adminKey(), null, fn, (v) => ({ exp: new Date(Date.parse(v.createdAt) + RIDE_KEEP_DAYS * 864e5).toISOString() })),
+  async list(uid = '') { const out = []; for await (const p of store().list({ prefix: 'ride/' + (uid ? uid + '/' : ''), paginate: true })) for (const b of p.blobs) { const v = (await readSealed(b.key, adminKey())).value; if (v) out.push(v); } return out; },
+  async removeAllFor(uid) { for await (const p of store().list({ prefix: `ride/${uid}/`, paginate: true })) for (const b of p.blobs) await store().delete(b.key); },
+};
+export const settings = {
+  async rides() { return (await readSealed('settings/rides', adminKey())).value || { enabled: false }; },
+  setRides: (v) => mutate('settings/rides', adminKey(), () => ({ enabled: false }), () => v),
+};
+

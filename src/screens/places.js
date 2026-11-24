@@ -7,6 +7,9 @@ import { loadData, getLoc, setLoc, locateMe, lookupPlace, geolocate, haversineMi
 import { findHotels, findHotelsLive, hotelData, directionsUrl, googlePlaceUrl, applePlaceUrl, areaSearchUrls } from '../hotels.js';
 import { getCommunity, communityBlock } from '../community.js';
 import { t, isEs } from '../i18n/index.js';
+import { uberUrl } from '../rides.js';
+// "Ride with Uber": opens Uber with this place as the drop-off. The rider books and pays in Uber; this app sends Uber nothing.
+const uberLink = (p) => `<a class="uber" href="${esc(uberUrl(p))}" target="_blank" rel="noopener noreferrer" data-uber>${t('Ride with Uber (you pay)')} <span aria-hidden="true">↗</span><span class="sr"> ${t('(opens a new tab)')}</span></a>`;
 
 const chk = (o) => (o?.check === 'to-verify' ? ' ' + verifyBadge(t('This link did not load when checked on {date}', { date: DATA_DATE })) : '');
 const locBtn = (label = t('Use my location')) => `<button class="btn secondary" id="locme">${label}</button><p class="err" role="alert" id="locerr"></p>`;
@@ -24,7 +27,7 @@ async function counties() {
 
 const office = (title, o, extra = '', county = '') => !o ? '' : `<div class="card"><h3>${esc(title)}</h3>${o.name && o.name !== title ? `<p>${esc(o.name)}</p>` : ''}
   ${tel(t('Call'), o.phone)}${o.afterHours ? tel(t('After hours / emergencies'), o.afterHours) : ''}${o.address ? `<p class="small">${esc(o.address)}</p>` : ''}
-  <div class="links">${o.url ? ext(t('Website'), o.url) + chk(o) : ''}${extra}</div><p class="small srcnote">${t('Source:')} ${esc(o.source || '')} · <a href="#sources">${t('Official sources')}</a></p>${report((county ? county + ' County ' : '') + title)}</div>`;
+  <div class="links">${o.url ? ext(t('Website'), o.url) + chk(o) : ''}${extra}${o.address ? uberLink({ name: o.name || title, addr: o.address }) : ''}</div><p class="small srcnote">${t('Source:')} ${esc(o.source || '')} · <a href="#sources">${t('Official sources')}</a></p>${report((county ? county + ' County ' : '') + title)}</div>`;
 
 async function county(parts) {
   const name = parts[0]; const all = await loadData('counties'); const c = all.find((x) => x.name.toLowerCase() === String(name).toLowerCase());
@@ -68,7 +71,7 @@ async function schools() {
 const fireItem = (f) => `<li class="fd"><span class="dist">${f.mi != null && f.mi < 1e8 ? f.mi.toFixed(1) + ' mi' : ''}</span><h3>${esc(f.n)}</h3>
   <p class="small">${f.st ? `${t('Station')} ${esc(f.st)} · ` : ''}${esc(f.t === 'unknown' ? t('Type not listed') : t(f.t))} · ${t('{name} County', { name: esc(f.co) })}${f.v === 0 ? ' ' + verifyBadge(t('Not in the October 2026 State Fire Marshal directory')) : ''}</p>${f.x ? `<p class="small note">${esc(f.x)}</p>` : ''}
   <p>${esc([f.a, f.c, f.z].filter(Boolean).join(', ')) || `<span class="small">${t('Address not listed')}</span>`}${f.hq ? ` <span class="small">${t('(department headquarters)')}</span>` : ''}</p>
-  ${f.p ? tel(t('Non-emergency'), f.p) : `<p class="small">${t('No phone listed. Call the county emergency management office.')}</p>`}${f.la != null ? `<div class="links">${ext(t('Directions'), directionsUrl(f.la, f.lo, f.n))}</div>` : ''}${report(f.n + (f.st ? ' Station ' + f.st : ''))}</li>`;
+  ${f.p ? tel(t('Non-emergency'), f.p) : `<p class="small">${t('No phone listed. Call the county emergency management office.')}</p>`}${f.la != null ? `<div class="links">${ext(t('Directions'), directionsUrl(f.la, f.lo, f.n))}${uberLink({ la: f.la, lo: f.lo, name: f.n, addr: [f.a, f.c, f.z].filter(Boolean).join(', ') })}</div>` : ''}${report(f.n + (f.st ? ' Station ' + f.st : ''))}</li>`;
 
 async function fire(parts) {
   const [all, counties] = await Promise.all([loadData('fire-departments'), loadData('counties')]);
@@ -111,7 +114,7 @@ async function fire(parts) {
 const mapBtn = (label, url, cls = 'btn secondary') => `<a class="${cls}" href="${esc(safeUrl(url))}" target="_blank" rel="noopener noreferrer">${esc(label)}</a>`;
 const hotelItem = (h, isNew) => `<li class="hotel"${isNew ? ' data-live' : ''}><span class="dist">${h.mi.toFixed(1)} mi</span><h3>${esc(h.name)}</h3><p class="small">${esc(h.kind === 'motel' ? t('Motel') : t('Hotel'))}${h.addr ? ' · ' + esc(h.addr) : ''}${isNew ? ` · <b>${t('new on the live map')}</b>` : ''}</p>
   <p class="small callahead"><b>${t('Call ahead to confirm availability and price.')}</b>${h.phone ? '' : ' ' + t('No phone in our list: tap Google Maps or Apple Maps to see the current phone, website and hours.')}</p>
-  <div class="actions">${h.phone ? `<a class="btn" href="tel:${esc(h.phone.split(/[;,]/)[0].replace(/[^\d+]/g, ''))}">${t('Call')}</a>` : ''}${mapBtn(t('Check on Google Maps'), googlePlaceUrl(h), 'btn secondary gmaps')}${mapBtn('Apple Maps', applePlaceUrl(h), 'btn secondary amaps')}<a class="btn secondary" href="${esc(directionsUrl(h.la, h.lo, h.name))}" target="_blank" rel="noopener noreferrer">${t('Directions')}</a></div>
+  <div class="actions">${h.phone ? `<a class="btn" href="tel:${esc(h.phone.split(/[;,]/)[0].replace(/[^\d+]/g, ''))}">${t('Call')}</a>` : ''}${mapBtn(t('Check on Google Maps'), googlePlaceUrl(h), 'btn secondary gmaps')}${mapBtn('Apple Maps', applePlaceUrl(h), 'btn secondary amaps')}<a class="btn secondary" href="${esc(directionsUrl(h.la, h.lo, h.name))}" target="_blank" rel="noopener noreferrer">${t('Directions')}</a><a class="btn secondary uberbtn" href="${esc(uberUrl({ la: h.la, lo: h.lo, name: h.name, addr: h.addr }))}" target="_blank" rel="noopener noreferrer" data-uber>${t('Ride with Uber (you pay)')}</a></div>
   ${h.website && /^https:/i.test(h.website) ? `<div class="links">${ext(t('Website'), h.website)}</div>` : h.brandSite && /^https:/i.test(h.brandSite) ? `<div class="links">${ext(t('Chain website'), h.brandSite)} <span class="small">${t("(the chain's main site, not this hotel's own page)")}</span></div>` : ''}${h.email ? `<div class="links"><a href="mailto:${esc(h.email)}">${t('Email')}</a></div>` : ''}</li>`;
 const tsaNote = () => `<div class="card" id="tsa"><h3>${t('Disaster hotel help')}</h3>
   <p>${t('FEMA <b>Transitional Sheltering Assistance (TSA)</b> pays for a short stay in a participating hotel for eligible disaster survivors, but only when it is turned on for a disaster. You cannot request it: apply for FEMA assistance and FEMA will tell you if you are eligible. Then look up participating hotels with your 9-digit FEMA registration number, and call the hotel before you go.')}</p>

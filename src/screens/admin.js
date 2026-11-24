@@ -2,7 +2,8 @@
 // these screens only hide what a person cannot use. Admins never see client notes: no API returns them.
 import { ctx } from '../ctx.js';
 import { api, ADAPTER } from '../data/index.js';
-import { NC_COUNTIES, SUB_KINDS, SUB_CATEGORIES, RESPONDER_STATUS } from '../data/shared.js';
+import { NC_COUNTIES, SUB_KINDS, SUB_CATEGORIES, RESPONDER_STATUS, RIDE_STATUS, RIDE_PURPOSES, RIDE_OPEN } from '../data/shared.js';
+import { clearRideCache } from '../rides.js';
 import { $, $$, esc, fmtDate } from '../ui.js';
 import { clearCommunityCache } from '../community.js';
 import { t, tk, getLang, locale } from '../i18n/index.js';
@@ -54,7 +55,7 @@ async function submit() {
   } };
 }
 
-const TABS = [['responders', tk('Responders')], ['submissions', tk('Submissions')], ['published', tk('Published')], ['alerts', tk('Alerts')], ['accounts', tk('Accounts')], ['admins', tk('Administrators')], ['audit', tk('Log')]];
+const TABS = [['responders', tk('Responders')], ['submissions', tk('Submissions')], ['rides', tk('Rides')], ['published', tk('Published')], ['alerts', tk('Alerts')], ['accounts', tk('Accounts')], ['admins', tk('Administrators')], ['audit', tk('Log')]];
 const tabs = (cur) => `<nav class="tabs" style="grid-template-columns:repeat(auto-fit,minmax(96px,1fr))" aria-label="${esc(t('Admin sections'))}">${TABS.map(([id, l]) => `<a href="#admin/${id}" ${id === cur ? 'aria-current="page"' : ''}>${esc(t(l))}</a>`).join('')}</nav>`;
 // Names of logged admin actions (the log stores the code; this shows it in words).
 const ACTION = {
@@ -66,6 +67,8 @@ const ACTION = {
   'account.password_reset': tk('Password reset with a code'),
   'admin.invite': tk('Added an administrator (new account)'), 'admin.invite_existing': tk('Made an existing account an administrator'),
   'admin.temp_password': tk('Made a new temporary password for an administrator'), 'admin.revoke': tk('Removed administrator rights'),
+  'ride.new': tk('Ride request set back to new'), 'ride.contacted': tk('Ride request: rider contacted'), 'ride.booked': tk('Ride request: ride booked'), 'ride.declined': tk('Ride request: could not give the ride'), 'ride.done': tk('Ride request: done'),
+  'rides.on': tk('Turned ride requests on'), 'rides.off': tk('Turned ride requests off'),
   'admin.password_set': tk('New administrator set their own password'), 'account.password_set': tk('Temporary password replaced by the account owner'),
 };
 
@@ -126,6 +129,7 @@ async function admin(parts) {
     } };
   }
 
+  if (tab === 'rides') return ridesAdmin(head, parts[1] === 'all');
   if (tab === 'alerts') return pushAdmin(head);
   if (tab === 'accounts') return accountsAdmin(head);
   if (tab === 'admins') return adminsAdmin(head);
@@ -347,3 +351,43 @@ async function adminsAdmin(head) {
     bindRows();
   } };
 }
+
+// ---------- ride requests (staff call or text the person, then book by hand with a ride company)
+async function ridesAdmin(head, all) {
+  const { enabled, rides } = await api.adminRides(all ? 'all' : 'open');
+  const mapLink = (g) => `https://www.google.com/maps/search/?api=1&query=${g.la},${g.lo}`;
+  const when = (r) => (r.when === 'later' ? `${fmtDate(r.date)} ${esc(r.time)}` : esc(t('As soon as possible')));
+  const row = (x) => { const r = x.ride; return `<li data-ride="${esc(x.id)}" data-owner="${esc(x.uid)}"><p><span class="badge ${x.status === 'new' ? 's-waiting' : RIDE_OPEN.includes(x.status) ? 's-contacted' : 's-not_started'}">${esc(t(RIDE_STATUS[x.status] || x.status))}</span> <span class="small">${esc(t('sent {date}', { date: fmtDate(x.createdAt) }))}</span></p>
+    <dl class="kv"><dt>${t('Rider')}</dt><dd>${esc(x.who?.name || '')}<br><span class="small">${esc(x.who?.email || '')}</span></dd><dt>${t('Phone')}</dt><dd><a href="tel:${esc(r.phone.replace(/[^\d+]/g, ''))}">${esc(r.phone)}</a></dd>
+      <dt>${t('From:')}</dt><dd>${esc(r.from || '')}${r.gps ? `${r.from ? '<br>' : ''}<a href="${esc(mapLink(r.gps))}" target="_blank" rel="noopener noreferrer">${t('Phone location on a map')}</a> <span class="small">(${esc(t('about {m} m', { m: r.gps.acc || '?' }))})</span>` : ''}</dd>
+      <dt>${t('To:')}</dt><dd>${esc(r.to)}</dd><dt>${t('When?')}</dt><dd>${when(r)}</dd><dt>${t('For')}</dt><dd>${esc(t(RIDE_PURPOSES[r.purpose] || ''))}</dd>
+      <dt>${t('Riders')}</dt><dd>${r.riders}${r.minors ? ' · ' + esc(t('someone under 18, with an adult')) : ''}</dd>${r.notes ? `<dt>${t('Notes')}</dt><dd style="white-space:pre-wrap">${esc(r.notes)}</dd>` : ''}</dl>
+    <label for="rs_${esc(x.id)}">${t('Status')}</label><select id="rs_${esc(x.id)}" data-rstatus>${Object.entries(RIDE_STATUS).filter(([k]) => k !== 'cancelled' || x.status === 'cancelled').map(([k, l]) => `<option value="${k}" ${k === x.status ? 'selected' : ''}>${esc(t(l))}</option>`).join('')}</select>
+    <label for="rn_${esc(x.id)}">${t('Staff note (the rider does not see it)')}</label><textarea id="rn_${esc(x.id)}" data-rnote rows="2" maxlength="600">${esc(x.staffNote || '')}</textarea>
+    <p class="small">${t('Do not paste driver, car or trip details from Lyft or Uber here. Write only what C4I did, for example "Called 2 pm, booked for 4 pm".')}</p>
+    <p class="err" role="alert"></p>${x.status === 'cancelled' ? '' : `<button class="btn" type="button" data-rsave>${t('Save')}</button>`}</li>`; };
+  return { html: `${head}
+    <div class="card ${enabled ? '' : 'warn'}" id="ridesswitch"><h3>${enabled ? t('Ride requests are ON') : t('Ride requests are OFF')}</h3>
+      <p>${enabled ? t('Signed-in people can ask C4I for a ride. Check this list at least once a day.') : t('People cannot ask C4I for a ride yet. The "Ride with Uber" links on listings work either way (the rider pays Uber).')}</p>
+      ${enabled ? `<button class="btn danger" type="button" id="ridesoff">${t('Turn ride requests off')}</button>` : `<p><b>${t('Before you turn this on:')}</b></p><ul>
+        <li>${t('The board has approved a ride policy and a budget, and the ride company account (for example Lyft Business with Concierge) is ready.')}</li>
+        <li>${t('Your insurance agent has confirmed C4I is covered when it arranges rides for clients.')}</li>
+        <li>${t('A staff member checks this list every day and calls or texts each person.')}</li>
+        <li>${t('The Google Play Data safety form and the App Store privacy details now list location, phone number and name as collected for this feature.')}</li></ul>
+        <label class="opt"><input type="checkbox" id="ridesconfirm"><span>${t('All four are done.')}</span></label><p class="err" role="alert" id="rideserr"></p>
+        <button class="btn" type="button" id="rideson">${t('Turn ride requests on')}</button>`}</div>
+    <p><a href="#admin/rides${all ? '' : '/all'}">${all ? t('Show open requests only') : t('Show closed requests too')}</a></p>
+    <h3>${esc(all ? t('All ride requests ({n})', { n: rides.length }) : t('Open ride requests ({n})', { n: rides.length }))}</h3>
+    <p class="small">${t('Requests are deleted automatically 30 days after they were sent.')}</p>
+    ${rides.length ? `<ul class="list" id="ridelist">${rides.map(row).join('')}</ul>` : `<p class="small">${t('No requests.')}</p>`}`,
+  bind() {
+    const on = $('#rideson'), off = $('#ridesoff');
+    if (on) on.onclick = async () => { if (!$('#ridesconfirm').checked) { $('#rideserr').textContent = t('Check the box to confirm all four are done.'); return; }
+      try { await api.adminSetRides(true, true); clearRideCache(); ctx.flash = esc(t('Ride requests are on.')); ctx.render(); } catch (x) { $('#rideserr').textContent = t(x.message); } };
+    if (off) off.onclick = async () => { if (!confirm(t('Turn ride requests off? People will not be able to send new requests.'))) return;
+      try { await api.adminSetRides(false, true); clearRideCache(); ctx.flash = esc(t('Ride requests are off.')); ctx.render(); } catch (x) { ctx.flash = esc(t(x.message)); ctx.render(); } };
+    $$('[data-rsave]').forEach((b) => (b.onclick = async () => { const li = b.closest('[data-ride]');
+      try { await api.adminUpdateRide(li.dataset.owner, li.dataset.ride, li.querySelector('[data-rstatus]').value, li.querySelector('[data-rnote]').value); ctx.flash = esc(t('Saved.')); ctx.render(); } catch (x) { li.querySelector('.err').textContent = t(x.message); } }));
+  } };
+}
+

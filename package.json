@@ -38,6 +38,8 @@
     "@capacitor/splash-screen": "^8.0.2",
     "@capacitor/status-bar": "^8.0.4",
     "@ebarooni/capacitor-calendar": "^8.10.0",
+    "@fontsource/atkinson-hyperlegible": "5.3.0",
+    "@fontsource/overpass": "5.3.0",
     "@netlify/blobs": "^11.1.6",
     "qrcode-generator": "^1.4.4",
     "web-push": "^3.6.7"

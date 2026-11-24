@@ -69,7 +69,8 @@ async function listScreen(kind) {
     <a class="btn" href="#notes/${kind}/new">+ ${t(k.add)}</a>
     ${kind === 'referrals' && rows.length ? `<p>${t('{open} open, {done} done', { open, done: rows.length - open })}</p>` : ''}
     ${rows.length ? `<ul class="list" id="items">${rows.map((r) => itemHtml(kind, r)).join('')}</ul>` : `<div class="card"><p>${t(k.empty)}</p></div>`}
-    ${kind === 'notes' ? `<a class="btn secondary" href="#claim">${t("Save a responder's share code")}</a>` : ''}`,
+    ${kind === 'notes' ? `<a class="btn secondary" href="#claim">${t("Save a responder's share code")}</a>` : ''}
+    <a class="btn secondary" href="#binder" id="notesbinder">${t('Put it all in one PDF: My Recovery Binder')}</a>`,
   bind() {
     const byId = (id) => rows.find((x) => x.id === id);
     const say = (id, m) => { const el = $('#nmsg_' + id); if (el) el.textContent = m; };

@@ -19,3 +19,8 @@ logo are not licensed for use in your own app; please use your own name and bran
 - Other phone numbers and links come from the public websites of the organizations
   and agencies listed. None of them are affiliated with this app or with C4I Veteran
   Services Corp.
+
+## Fonts
+- **Overpass** (headings), © 2021 The Overpass Project Authors, and **Atkinson Hyperlegible** (text), © 2020 Braille Institute
+  of America, Inc. Both are under the SIL Open Font License 1.1 (https://openfontlicense.org) and are bundled
+  with the app from the @fontsource npm packages (no font service is contacted).

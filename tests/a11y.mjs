@@ -38,9 +38,9 @@ const axe = async (page, label) => {
   if (wide > 1) problems.push(`${label}: page scrolls sideways by ${wide}px`);
 };
 const go = async (page, hash) => { await page.goto(BASE + '/#' + hash); await page.waitForSelector('main h2'); await page.waitForTimeout(250); };
-const hashes = ['home', 'login', 'signup', 'reset', 'resources', ...PUBLIC_PAGES.map((p) => p.route).filter((r) => r && r !== 'resources'), 'county/Wake', 'county/New Hanover', 'phone', 'owner-check', 'resources/g-legal', 'resources/g-county'];
+const hashes = ['home', 'login', 'signup', 'reset', 'resources', ...PUBLIC_PAGES.map((p) => p.route).filter((r) => r && r !== 'resources'), 'county/Wake', 'county/New Hanover', 'phone', 'owner-check', 'resources/g-legal', 'resources/g-county', 'calm', 'binder', 'binder/people', 'binder/docs', 'binder/photos'];
 const uniq = [...new Set(hashes)];
-const signedIn = ['home', 'settings', 'notes/cases', 'notes/cases/new', 'notes/referrals', 'notes/referrals/new', 'share', 'submit', 'alerts', 'admin', 'delete-account'];
+const signedIn = ['home', 'settings', 'notes/cases', 'notes/cases/new', 'notes/referrals', 'notes/referrals/new', 'share', 'submit', 'alerts', 'admin', 'delete-account', 'ride', 'binder/cases'];
 
 try {
   // a second account for the admin Accounts screen
@@ -75,8 +75,13 @@ try {
     else { await go(p, 'login'); await p.fill('#le', ADMIN); await p.fill('#lp', 'correct-horse-9'); await p.click('button[type=submit]'); await p.waitForTimeout(1200); }
     await go(p, 'admin'); await p.waitForSelector('nav.tabs'); await go(p, 'alerts'); await p.waitForSelector('#pf');
     for (const h of signedIn) await (go(p, h).then(() => axe(p, `${lang} #${h} (signed in)`)));
-    const tabs = ['responders', 'submissions', 'published', 'alerts', 'accounts', 'admins', 'audit'];
+    const tabs = ['responders', 'submissions', 'rides', 'published', 'alerts', 'accounts', 'admins', 'audit'];
     for (const tb of tabs) { await go(p, 'admin/' + tb); await p.waitForTimeout(400); await axe(p, `${lang} #admin/${tb}`); }
+    // ride requests turned on: the request form, its errors, and the admin list with a request
+    await go(p, 'admin/rides'); if (await p.locator('#rideson').count()) { await p.check('#ridesconfirm'); await p.click('#rideson'); await p.waitForSelector('#ridesoff'); } await axe(p, `${lang} #admin/rides (on)`);
+    await go(p, 'ride'); await p.waitForSelector('#rf'); await axe(p, `${lang} #ride (form)`); await p.click('#rf button[type=submit]'); await p.waitForFunction(() => document.querySelector('#rerr').textContent.length > 0); await axe(p, `${lang} #ride (error)`);
+    await p.fill('#r_from', '1 Main St'); await p.fill('#r_to', 'County DSS'); await p.check('#r_adult'); await p.fill('#r_phone', '919-555-0100'); await p.check('#r_consent'); await p.click('#rf button[type=submit]'); await p.waitForSelector('#myrides'); await axe(p, `${lang} #ride (sent, my requests)`);
+    await go(p, 'admin/rides'); await p.waitForSelector('#ridelist'); await axe(p, `${lang} #admin/rides (a request)`);
     await go(p, 'admin/alerts'); await p.click('#pa button[type=submit]'); await p.waitForTimeout(300); await axe(p, `${lang} #admin/alerts (empty submit)`);
     await p.fill('#pa_title', 'Test'); await p.fill('#pa_body', 'Body'); await p.fill('#pa_titleEs', 'Prueba'); await p.fill('#pa_bodyEs', 'Texto'); await p.click('#pa button[type=submit]'); await p.waitForSelector('#pa_send', { state: 'visible' }); await axe(p, `${lang} #admin/alerts (confirm step)`);
     // alerts: several counties, no Spanish (warning shown in the confirm step)
@@ -99,7 +104,7 @@ try {
     ok(`${lang.toUpperCase()}: ${signedIn.length} signed-in screens + ${tabs.length} admin tabs audited`);
     // reflow at 320px and 200% text
     await p.setViewportSize({ width: 320, height: 640 });
-    for (const h of ['home', 'hotels', 'translation', 'alerts', 'settings', 'resources/housing']) { await go(p, h); const w = await p.evaluate(() => document.documentElement.scrollWidth - innerWidth); if (w > 1) problems.push(`${lang} #${h} @320px: sideways scroll ${w}px`); }
+    for (const h of ['home', 'hotels', 'translation', 'alerts', 'settings', 'resources/housing', 'calm', 'binder', 'ride', 'admin/rides']) { await go(p, h); const w = await p.evaluate(() => document.documentElement.scrollWidth - innerWidth); if (w > 1) problems.push(`${lang} #${h} @320px: sideways scroll ${w}px`); }
     await p.setViewportSize({ width: 640, height: 900 });
     for (const h of ['home', 'hotels', 'translation', 'alerts', 'settings', 'accessibility']) { await go(p, h); await p.evaluate(() => { document.documentElement.style.fontSize = '200%'; }); await p.waitForTimeout(100); const w = await p.evaluate(() => document.documentElement.scrollWidth - innerWidth); if (w > 1) problems.push(`${lang} #${h} text 200%: sideways scroll ${w}px`); }
     ok(`${lang.toUpperCase()}: reflow at 320px and text at 200% checked`);

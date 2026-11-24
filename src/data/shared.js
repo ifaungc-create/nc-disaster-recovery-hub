@@ -72,3 +72,24 @@ export function cleanSubmission(o = {}) {
   if (!r.phone && !r.url && !r.description) throw err('Add a phone number, a link or a description.');
   return r;
 }
+
+// ---------- ride requests to C4I (server only; off until an administrator turns them on)
+// A request is a message to C4I staff, not a booking: staff call or text the person, then book with a ride
+// company (for example Lyft Concierge) by hand. Nothing from the ride company is stored here.
+export const RIDE_PURPOSES = { shelter: 'Shelter or a place to stay', office: 'Disaster office, FEMA or the county', medical: 'Doctor, clinic or pharmacy', food: 'Food or supplies', work: 'Work or school', other: 'Something else' };
+export const RIDE_STATUS = { new: 'Sent to C4I', contacted: 'C4I contacted you', booked: 'Ride booked', declined: 'C4I could not give this ride', done: 'Done', cancelled: 'Cancelled' };
+export const RIDE_OPEN = ['new', 'contacted', 'booked'];
+const coord = (v, lo, hi) => (typeof v === 'number' && Number.isFinite(v) && v >= lo && v <= hi ? Math.round(v * 1e5) / 1e5 : null);
+export function cleanRide(o = {}) {
+  const gps = o.gps && typeof o.gps === 'object' ? { la: coord(o.gps.la, 33, 37.5), lo: coord(o.gps.lo, -85, -75), acc: Math.min(9999, Math.max(0, Math.round(Number(o.gps.acc) || 0))) } : null;
+  const r = { from: str(o.from, 300), gps: gps && gps.la != null && gps.lo != null ? gps : null, to: str(o.to, 300), purpose: RIDE_PURPOSES[o.purpose] ? o.purpose : 'other',
+    when: o.when === 'later' ? 'later' : 'now', date: o.when === 'later' ? date(o.date) : '', time: o.when === 'later' && /^\d{2}:\d{2}$/.test(String(o.time || '')) ? o.time : '',
+    riders: Math.min(6, Math.max(1, parseInt(o.riders, 10) || 1)), minors: o.minors === true, phone: str(o.phone, 40), notes: str(o.notes, 600) };
+  if (!r.from && !r.gps) throw err('Enter where to pick you up, or tap "Use my location".');
+  if (!r.to) throw err('Enter where you need to go.');
+  if (!r.phone || !/^[0-9()+.\-\s]{7,40}$/.test(r.phone)) throw err('Enter a phone number where C4I can call or text you.');
+  if (r.when === 'later' && (!r.date || !r.time)) throw err('Choose the day and time you need the ride.');
+  if (o.adult !== true) throw err('A person 18 or older must ride. Ride companies do not take children alone.');
+  if (o.consent !== true) throw err('Please agree to how C4I uses this information before you send it.');
+  return r;
+}

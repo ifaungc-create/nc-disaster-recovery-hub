@@ -35,7 +35,7 @@
 	<key>NSCalendarsUsageDescription</key>
 	<string>NC Disaster Recovery Hub adds the follow-up dates and appointments you choose to your calendar.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>NC Disaster Recovery Hub uses your location only when you tap Use my location, to find your county and nearby help. Your location stays on this phone.</string>
+	<string>NC Disaster Recovery Hub uses your location only when you tap Use my location, to find your county and nearby help. It stays on this phone, unless you tap Use my location on a ride request to C4I: then it is sent with that request.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>NC Disaster Recovery Hub lets you pick a photo of damage or a document to keep on this phone for your claims.</string>
 	<key>NSPhotoLibraryAddUsageDescription</key>

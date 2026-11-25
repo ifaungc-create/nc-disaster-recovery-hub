@@ -8,6 +8,8 @@ import { mkdirSync, mkdtempSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import assert from 'node:assert/strict';
+import { createRequire } from 'node:module';
+const require_ = createRequire(import.meta.url);
 
 const ROOT = new URL('..', import.meta.url).pathname;
 const BASE = 'http://localhost:4174';
@@ -624,6 +626,73 @@ try {
     await page.click('#pa button[type=submit]'); await page.waitForSelector('#pa_confirm'); assert.match(await page.textContent('#pa_confirm'), /\b0 devices/); await page.click('#pa_cancel');
     assert.deepEqual(fP, [], 'no third-party requests from the alerts screen'); assert.deepEqual(eP, []); await cP.close(); await logout();
     step('alerts: "Turn off alerts" removes the subscription (admin now sees 0 devices)');
+  }
+
+  // ---- I'm overwhelmed: three general steps, 988, back to the whole app (English and Spanish)
+  await go('home'); assert.equal(await page.locator('main > .calmbtn').count(), 1); await page.click('#calmbtn'); await page.waitForSelector('#calm h2:has-text("Take a breath.")');
+  assert.deepEqual(await page.$$eval('#calm .calmstep h3', (h) => h.map((x) => x.textContent)), ['Make sure everyone is safe.', 'Find a place to sleep tonight.', 'Write down one name and number.']);
+  assert.equal(await page.getAttribute('#calm911', 'href'), 'tel:911'); assert.equal(await page.getAttribute('#calmsleep', 'href'), '#resources/housing'); assert.equal(await page.getAttribute('#calm988', 'href'), 'tel:988'); assert.equal(await page.getAttribute('#calm988t', 'href'), 'sms:988');
+  await shot('40-overwhelmed'); await page.click('#calmback'); await page.waitForSelector('#calmbtn');
+  await page.evaluate(() => localStorage.setItem('ncdrh.lang', 'es')); await page.goto(BASE + '/#calm'); await page.reload(); await page.waitForSelector('#calm h2:has-text("Respire hondo.")');
+  assert.match(await page.textContent('#calm'), /Asegúrese de que todos estén a salvo[\s\S]*Mostrar toda la aplicación otra vez/); await page.evaluate(() => localStorage.setItem('ncdrh.lang', 'en')); await page.reload(); await page.waitForSelector('#calm h2:has-text("Take a breath.")');
+  step('"I\'m overwhelmed" on home opens three general steps (911, a place to sleep, one name and number), 988 call/text and a way back; Spanish too');
+
+  // ---- Recovery Binder: works signed out, saved on this device only, PDF made on the device
+  const apiCalls = []; const onReq = (r) => { if (r.url().includes('/.netlify/functions/api')) apiCalls.push(r.postData()); }; page.on('request', onReq);
+  await page.click('#calmwrite'); await page.waitForSelector('#sec-people[open]');
+  await page.fill('#bp_who', 'Ms. Lee, Red Cross'); await page.fill('#bp_phone', '828-555-0110'); await page.fill('#bp_next', 'Call FEMA and register'); await page.click('#bpf button[type=submit]'); await page.waitForSelector('#bpeople li:has-text("Ms. Lee, Red Cross")');
+  await go('binder/household'); await page.fill('#bh_names', 'Jordan Smith\nAlex Smith'); await page.fill('#bh_address', '12 Oak St, Asheville, NC 28801'); await page.fill('#bh_phone', '828-555-0123'); await page.fill('#bh_what', 'House fire'); await page.waitForSelector('#bsaved:has-text("Saved on this phone.")');
+  await go('binder/cases'); await page.fill('#bc_agency', 'FEMA'); await page.fill('#bc_number', 'FEMA-123456789'); await page.click('#bcf button[type=submit]'); await page.waitForSelector('#bcases li:has-text("FEMA-123456789")');
+  await go('binder/docs'); await page.check('input[name=doc_id][value=lost]'); await page.waitForSelector('#sec-docs .breplace a[href="#resources/g-documents"]'); await page.check('input[name=doc_birth][value=kept]');
+  await go('binder/notes'); await page.fill('#bn_notes', 'We are staying with family on Elm St.'); await page.waitForSelector('#bsaved:has-text("Saved on this phone.")');
+  await page.reload(); await page.waitForSelector('#bn_notes'); assert.equal(await page.inputValue('#bn_notes'), 'We are staying with family on Elm St.'); assert.match(await page.textContent('#bcount'), /6 started|5 of 6 started/);
+  await go('binder/photos'); await page.setInputFiles('#bpick', SHOTS + '01-home.png'); await page.waitForSelector('#bpicked:has-text("1 photos will go into the PDF.")');
+  await page.click('#bmake'); await page.waitForSelector('#bpdfout:not(.hide)'); assert.match(await page.textContent('#bpdfmsg'), /Your PDF is ready \(\d+ KB\)/);
+  const [pdfDl] = await Promise.all([page.waitForEvent('download'), page.click('#bdl')]); assert.match(pdfDl.suggestedFilename(), /^recovery-binder-\d{4}-\d{2}-\d{2}\.pdf$/);
+  const pdfPath = BLOBS + '/binder.pdf'; await pdfDl.saveAs(pdfPath); await shotAt('41-binder', '#bpdf');
+  execSync(`qpdf --check "${pdfPath}"`, { stdio: 'ignore' }); const pdfText = execSync(`pdftotext -layout "${pdfPath}" -`).toString();
+  for (const x of ['Recovery Binder', 'Prepared', 'for Jordan Smith', '12 Oak St, Asheville', 'FEMA-123456789', 'Ms. Lee, Red Cross', 'Call FEMA and register', 'Photo ID or driver license', 'Lost', 'Birth certificates', 'Elm St.', 'Photos of damage', 'Made with NC Disaster Recovery Hub · disaster-resources.app', 'A free project of C4I Veteran Services Corp.', 'Page 1 of 2']) assert.ok(pdfText.includes(x), 'PDF has ' + x);
+  assert.ok(require_('fs').readFileSync(pdfPath).includes('/DCTDecode'), 'PDF has the photo');
+  await page.selectOption('#bp_lang', 'es'); await page.click('#bmake'); await page.waitForSelector('#bpdfmsg:has-text("Your PDF is ready")');
+  const [pdfEs] = await Promise.all([page.waitForEvent('download'), page.click('#bdl')]); await pdfEs.saveAs(BLOBS + '/binder-es.pdf'); const esText = execSync(`pdftotext -layout "${BLOBS}/binder-es.pdf" -`).toString();
+  for (const x of ['Carpeta de recuperación', 'Números de caso', 'Con quién he hablado', 'Identificación con foto o licencia de conducir', 'Perdido', 'Un proyecto gratuito de C4I Veteran Services Corp.', 'Página 1 de']) assert.ok(esText.includes(x), 'Spanish PDF has ' + x);
+  assert.equal(await page.getAttribute('html', 'lang'), 'en'); assert.match(await page.textContent('main h2'), /My Recovery Binder/);
+  page.off('request', onReq); assert.deepEqual(apiCalls, [], 'the binder sends nothing to the server');
+  assert.ok(await page.evaluate(() => JSON.parse(localStorage.getItem('ncdrh.binder.v1')).cases[0].number === 'FEMA-123456789'));
+  await page.click('#berase summary'); await page.click('#beraseb'); await page.waitForSelector('text=The binder was erased from this phone.'); assert.equal(await page.evaluate(() => localStorage.getItem('ncdrh.binder.v1')), null); assert.equal(await page.inputValue('#bh_names'), '');
+  step('Recovery Binder (signed out): household, case numbers, people, documents (lost → how to replace), notes and photos saved on the device only; a valid PDF in English or Spanish, nothing sent to the server; erase works');
+
+  // ---- "Ride with Uber" on hotel, county office and fire department listings (a plain link; the app sends Uber nothing)
+  await go('hotels'); await page.fill('#hq', '28801'); await page.click('#hf button[type=submit]'); await page.waitForSelector('li.hotel');
+  const ub = await page.getAttribute('li.hotel .uberbtn', 'href'); assert.match(ub, /^https:\/\/m\.uber\.com\/ul\/\?action=setPickup&pickup=my_location&dropoff\[latitude\]=3\d\.\d{5}&dropoff\[longitude\]=-\d{2}\.\d{5}&dropoff\[nickname\]=/); assert.equal(await page.getAttribute('li.hotel .uberbtn', 'target'), '_blank');
+  await go('county/Wake'); const ubc = await page.getAttribute('a.uber', 'href'); assert.match(ubc, /dropoff\[formatted_address\]=/);
+  await go('fire/county/Buncombe'); await page.waitForSelector('#fl li.fd a.uber'); assert.match(await page.getAttribute('#fl li.fd a.uber', 'href'), /dropoff\[latitude\]=/);
+  await go('privacy'); assert.match(await page.textContent('main'), /Ride with Uber:[\s\S]*We send Uber nothing/); assert.match(await page.textContent('#privrides'), /deleted automatically 30 days/); assert.match(await page.textContent('#privbinder'), /never uploaded/);
+  step('"Ride with Uber (you pay)" links on hotels, county offices and fire departments open Uber with the drop-off filled in; privacy page explains Uber, the binder and ride requests');
+
+  // ---- Ask C4I for a ride: off until an admin turns it on; staff see and update requests; the rider can cancel
+  if (ADAPTER === 'remote') {
+    // The rider uses the main page; staff use a second browser (one sign-in, to stay under the sign-in rate limit).
+    const ac = await browser.newContext({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true }); await ac.addInitScript(EN_FIRST); const ap = await ac.newPage(); ap.on('dialog', (d) => d.accept());
+    const ago = async (h) => { const same = ap.url().endsWith('#' + h); await ap.goto(BASE + '/#' + h); if (same) await ap.reload(); await ap.waitForSelector('main h2'); };
+    await ago('login'); await ap.fill('#le', ADMIN); await ap.fill('#lp', 'correct-horse-9'); await ap.click('button[type=submit]'); await ap.waitForSelector('text=Hi,');
+    await signUp('affected', 'Ria Rider', 'rider-e2e@example.org'); await page.reload(); await page.waitForSelector('main h2'); assert.equal(await page.locator('#ridelink').count(), 0);
+    await go('ride'); await page.waitForSelector('#ridesoff'); assert.match(await page.textContent('#ridesoff'), /not open right now[\s\S]*Ride with Uber/);
+    await ago('admin/rides'); assert.match(await ap.textContent('#ridesswitch'), /Ride requests are OFF[\s\S]*insurance[\s\S]*Data safety/);
+    await ap.click('#rideson'); await ap.waitForSelector('#rideserr:has-text("Check the box")'); await ap.check('#ridesconfirm'); await ap.click('#rideson'); await ap.waitForSelector('#ridesoff');
+    await ap.evaluate(() => { const el = document.querySelector('#ridesswitch'); window.scrollTo(0, el.getBoundingClientRect().top - 150); }); await ap.screenshot({ path: SHOTS + '42-admin-rides-on.png' });
+    await go('home'); await page.reload(); await page.waitForSelector('#ridelink'); await page.click('#ridelink'); await page.waitForSelector('#rf');
+    await page.click('#rf button[type=submit]'); await page.waitForSelector('#rerr:has-text("pick you up")');
+    await page.click('#r_gps'); await page.waitForSelector('#r_gpsmsg:has-text("accurate to about")'); await page.fill('#r_to', 'Buncombe County DSS, 40 Coxe Ave'); await page.selectOption('#r_purpose', 'office');
+    await page.selectOption('#r_riders', '2'); await page.check('#r_minors'); await page.fill('#r_phone', '828-555-0144'); await page.check('#r_consent');
+    await page.click('#rf button[type=submit]'); await page.waitForSelector('#rerr:has-text("18 or older")'); await page.check('#r_adult'); await shot('43-ride-request');
+    await page.click('#rf button[type=submit]'); await page.waitForSelector('text=Your ride request was sent'); assert.match(await page.textContent('#myrides'), /Sent to C4I[\s\S]*My location[\s\S]*Buncombe County DSS/);
+    await ago('admin/rides'); await ap.waitForSelector('#ridelist'); const rli = ap.locator('#ridelist li', { hasText: 'Ria Rider' }); assert.match(await rli.textContent(), /828-555-0144[\s\S]*Buncombe County DSS[\s\S]*someone under 18, with an adult/);
+    assert.match(await rli.locator('a[target=_blank]').getAttribute('href'), /query=35\.5951,-82\.5515/); await rli.locator('[data-rstatus]').selectOption('booked'); await rli.locator('[data-rnote]').fill('Booked 4 pm STAFF-NOTE'); await rli.locator('[data-rsave]').click(); await ap.waitForSelector('text=Saved.');
+    await ago('admin/audit'); await ap.waitForSelector('nav.tabs a[aria-current=page][href="#admin/audit"]'); assert.match(await ap.textContent('main'), /Ride request: ride booked[\s\S]*Turned ride requests on/); assert.doesNotMatch(await ap.textContent('main'), /828-555-0144|STAFF-NOTE/); await ac.close();
+    await go('ride'); await page.reload(); await page.waitForSelector('#myrides'); assert.match(await page.textContent('#myrides'), /Ride booked/); assert.doesNotMatch(await page.textContent('main'), /STAFF-NOTE/);
+    await page.click('[data-cancelride]'); await page.waitForSelector('text=Your ride request was cancelled'); assert.match(await page.textContent('#myrides'), /Cancelled/); await logout();
+    step('ride requests: off by default (rider sees other options); admin must confirm the 4 checks to turn on; rider sends from/to with GPS (an adult must ride); staff see phone and map, set "booked" with a private note; log has no rider details; rider sees status and cancels');
   }
 
   // ---- crawlable paths + sitemap/robots (hash links keep working)

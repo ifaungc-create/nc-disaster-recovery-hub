@@ -1,4 +1,4 @@
-/* Calm, high-contrast, mobile-first. System fonts only (no web fonts, no CDNs). */
+/* Calm, high-contrast, mobile-first. No CDNs or third-party requests. The "Emergency Signage" look (end of file) adds two self-hosted fonts. */
 :root { --ink:#0F1A24; --muted:#3D4B59; --bg:#F6F8FA; --card:#FFFFFF; --line:#C9D2DB; --brand:#12355B; --brand-2:#1F5C99; --ok:#155E33; --okbg:#E3F4E8; --warn:#6B4500; --warnbg:#FFF3D1; --bad:#9B1C1C; --badbg:#FDE8E8; --focus:#FFB000; --radius:12px; --tap:52px; }
 * { box-sizing: border-box; }
 html { -webkit-text-size-adjust: 100%; }
@@ -256,3 +256,85 @@ button.chip { display: inline-flex; align-items: center; min-height: 48px; paddi
 .ocowner b { font-size: 20px; color: var(--brand); overflow-wrap: anywhere; }
 .rcnote .btn { font-size: inherit; }
 .rcnote .card { max-height: calc(100vh - 32px); overflow-y: auto; }
+/* I'm overwhelmed: a calm, low-contrast-noise screen with three steps (screens/calm.js) */
+.calmbtn { display: flex; align-items: center; gap: 12px; margin: 2px 0 12px; padding: 14px; min-height: 76px; border-radius: 14px; border: 2px solid #2E7D6E; background: #E6F4F1; color: #13423A; text-decoration: none; }
+.calmbtn svg { flex: none; color: #2E7D6E; }
+.calmbtn b { display: block; font-size: 19px; } .calmbtn span span { font-size: 16px; line-height: 1.35; }
+.calmbtn:focus-visible { outline: 4px solid var(--focus); outline-offset: 3px; }
+.calm { background: #EEF5F3; border-radius: 16px; padding: 18px 16px; margin: 0 -4px; animation: calmIn .45s ease both; }
+@keyframes calmIn { from { transform: translateY(8px); } to { transform: none; } }
+.calm h2 { color: #13423A; font-size: 28px; margin-top: 0; }
+.calmlead { font-size: 19px; line-height: 1.45; color: #1F3A35; }
+.calmsteps { list-style: none; padding: 0; margin: 14px 0; display: grid; gap: 12px; }
+.calmstep { display: flex; gap: 12px; padding: 14px; border-radius: 14px; background: #fff; border: 2px solid #CFE3DE; }
+.calmstep h3 { margin: 4px 0; font-size: 20px; } .calmstep p { margin: 0 0 6px; font-size: 17px; line-height: 1.4; color: var(--muted); }
+.calmstep .btn { width: auto; display: inline-flex; padding-left: 18px; padding-right: 18px; }
+.calmnum { flex: none; width: 42px; height: 42px; border-radius: 50%; background: #2E7D6E; color: #fff; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 21px; }
+.calmtalk { background: #fff; border: 2px solid var(--bad); border-radius: 14px; padding: 12px 14px; margin: 12px 0; }
+.btn.crisis { background: var(--bad); border-color: var(--bad); color: #fff; }
+/* Recovery Binder (screens/binder.js) */
+.bprog { height: 10px; border-radius: 5px; background: #DDE4EB; overflow: hidden; margin: 10px 0 4px; } .bprog span { display: block; height: 10px; background: #F97316; }
+.bsec { background: #fff; border: 2px solid var(--line); border-radius: 14px; margin: 10px 0; }
+.bsec[open] { border-color: var(--brand); }
+.bsec summary { display: flex; align-items: center; gap: 12px; padding: 12px; min-height: 64px; cursor: pointer; list-style: none; }
+.bsec summary::-webkit-details-marker { display: none; }
+.bsec summary::after { content: "›"; margin-left: auto; font-size: 26px; color: var(--muted); transition: transform .2s; }
+.bsec[open] summary::after { transform: rotate(90deg); }
+.bsec summary:focus-visible { outline: 4px solid var(--focus); outline-offset: 2px; border-radius: 12px; }
+.bico { flex: none; width: 40px; height: 40px; border-radius: 10px; background: #E7EDF4; color: var(--brand); display: flex; align-items: center; justify-content: center; }
+.bsec[open] .bico { background: var(--brand); color: #fff; }
+.btitle b { display: block; font-size: 18px; } .btitle .small { display: block; }
+.bbody { padding: 0 14px 14px; }
+.bform { border-top: 1px solid var(--line); margin-top: 10px; padding-top: 6px; } .bform h3 { font-size: 17px; }
+.bdoc { border: 1px solid var(--line); margin: 8px 0; } .bdocopts { display: flex; flex-wrap: wrap; gap: 0 16px; }
+.bthumbs { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+.bthumb { display: flex; flex-direction: column; gap: 4px; font-weight: 400; margin: 0; } .bthumb img { width: 100%; aspect-ratio: 1; object-fit: cover; border-radius: 8px; } .bthumb input { width: 24px; height: 24px; }
+/* "Ride with Uber" link on listings (rides.js) */
+a.uber { display: inline-flex; align-items: center; min-height: 48px; }
+
+/* ===== Emergency Signage look (November 2026) =====
+   Road-sign lettering (Overpass) for headings and buttons, Atkinson Hyperlegible for reading, a warm paper
+   background, a hazard stripe under the header, signs with an inner white border, and an orange pill that
+   slides to the open tab. Every animation here stops under prefers-reduced-motion (rule near the top). */
+:root { --bg:#F5F3EE; --line:#D9D2C3; --sign:#C2410C; --amber:#F97316; --navy-d:#0B2340; --head: "Overpass", "Atkinson Hyperlegible", system-ui, sans-serif; }
+body { font-family: "Atkinson Hyperlegible", system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif; }
+h1, h2, h3, .brand, .btn, button.btn, .tabs a, .tile b, .crisis a b, .fb-txt b, .calmbtn b, .btitle b, .signhead, nav.bottom a { font-family: var(--head); }
+h2 { font-weight: 900; letter-spacing: -.2px; } h3 { font-weight: 800; }
+.btn, button.btn { font-weight: 800; letter-spacing: .1px; }
+header.top { position: relative; padding-bottom: 20px; }
+header.top::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 10px; background: repeating-linear-gradient(-55deg, var(--amber) 0 10px, var(--brand) 10px 20px); }
+.brand { font-weight: 900; font-size: 18px; } .brand small.tagline { font-family: "Atkinson Hyperlegible", system-ui, sans-serif; font-weight: 400; }
+.brand svg { width: 40px; height: 40px; }
+.hbtn { border-radius: 10px; border-color: #fff; font-weight: 700; }
+/* Crisis numbers as four sign chips */
+.crisis { gap: 6px; padding: 8px 10px; background: var(--bg); border-bottom: 1px solid var(--line); }
+.crisis a { background: #fff; border: 2px solid var(--brand); border-radius: 10px; min-height: 56px; }
+.crisis a:last-child { border-right: 2px solid var(--brand); }
+.crisis a:first-child { border-color: #B42318; } .crisis a:first-child b { color: #B42318; }
+.crisis a b { font-weight: 900; font-size: 19px; line-height: 1; margin-bottom: 2px; }
+.crisis a.rc b { font-size: 14px; }
+/* Home fire: a red sign with an inner white border (steady, no glow) */
+.firebar { background: #B42318; animation: none; box-shadow: inset 0 0 0 6px #B42318, inset 0 0 0 8px rgba(255,255,255,.9), 0 6px 16px rgba(180,35,24,.3); border-radius: 14px; padding: 18px 18px; }
+.firebar::after { display: none; }
+.fb-txt b { font-weight: 900; font-size: 22px; text-shadow: none; line-height: 1.1; }
+.fb-go { font-weight: 700; }
+/* "What do you need?" sign heading and need tiles */
+.signhead { display: flex; align-items: center; gap: 10px; margin: 18px 0 10px; font-size: 15px; font-weight: 900; letter-spacing: .08em; text-transform: uppercase; color: var(--sign); }
+.signhead::after { content: ""; flex: 1; height: 2px; background: var(--line); }
+.tile.need { border: 2px solid var(--line); border-radius: 12px; min-height: 128px; gap: 8px; transition: transform .15s ease, border-color .15s ease; }
+.tile.need:hover { border-color: var(--brand); } .tile.need:active { transform: scale(.98); }
+.tile.need .tico { width: 44px; height: 44px; flex: none; border-radius: 10px; background: var(--brand); color: #fff; display: flex; align-items: center; justify-content: center; box-shadow: inset 0 0 0 2px #fff, 0 0 0 2px var(--brand); font-size: inherit; margin: 2px; }
+.tile.need .tico svg { color: #fff; }
+.tile.need b { font-weight: 800; font-size: 18px; line-height: 1.1; color: var(--ink); }
+.tile.need > span:last-child { font-size: 15px; color: #3B4A5A; }
+.card, .list > li { border-color: var(--line); }
+/* Bottom navigation: navy bar, orange top edge, sliding orange pill behind the open tab */
+nav.bottom { background: var(--brand); border-top: 4px solid var(--amber); }
+nav.bottom a { position: relative; z-index: 1; color: #fff; font-weight: 700; min-height: 66px; }
+nav.bottom a[aria-current="page"] { color: var(--navy-d); font-weight: 800; }
+.navpill { position: absolute; z-index: 0; top: 6px; left: 0; width: calc(20% - 8px); height: calc(100% - 12px - env(safe-area-inset-bottom)); margin-left: 4px; border-radius: 14px; background: var(--amber); transform: translateX(calc(var(--i, 0) * (100% + 8px))); transition: transform .4s cubic-bezier(.34, 1.4, .64, 1); }
+nav.bottom a:focus-visible { outline: 3px solid #fff; outline-offset: -4px; }
+/* Each screen rises in gently (movement only: text is never faded, so contrast stays full) */
+main { animation: rise .32s cubic-bezier(.22, 1, .36, 1) both; }
+@keyframes rise { from { transform: translateY(12px); } to { transform: none; } }
+.tabs a[aria-current="page"] { box-shadow: inset 0 -4px 0 var(--amber); }

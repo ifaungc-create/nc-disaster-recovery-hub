@@ -126,3 +126,12 @@ const lockPlugin = () => cap()?.Plugins?.AppLock;
 export const lockStatus = () => lockPlugin().status();               // { enabled, available, biometry }
 export const setLock = (enabled) => lockPlugin().setEnabled({ enabled });
 export const biometryName = (b) => ({ faceID: 'Face ID', touchID: 'Touch ID' }[b] || '');
+
+// ---------- Recovery Binder PDF: save it in the app's cache folder and open the share sheet ----------
+export async function sharePdf(name, bytes, title) {
+  let s = ''; for (let i = 0; i < bytes.length; i += 0x8000) s += String.fromCharCode.apply(null, bytes.subarray(i, i + 0x8000));
+  const { Filesystem, Directory } = await fsmod();
+  const { uri } = await Filesystem.writeFile({ path: name, data: btoa(s), directory: Directory.Cache });
+  const { Share } = await import('@capacitor/share');
+  await Share.share({ title, files: [uri], dialogTitle: title });
+}

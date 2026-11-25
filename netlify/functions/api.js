@@ -8,14 +8,14 @@
 // temporary password (hash only, 72 h) and must set their own before any other action works.
 // Password reset uses one-time codes too; no email service is used.
 import { createHmac, randomInt, randomUUID, timingSafeEqual } from 'node:crypto';
-import { users, data, cards, responders, submissions, community, audit, admins } from './lib/store.js';
+import { users, data, cards, responders, submissions, community, audit, admins, rides, settings } from './lib/store.js';
 import * as codes from './lib/codes.js';
 import { hashPassword, verifyPassword, emailIndex, tempPassword } from './lib/crypto.js';
 import { sessionSecret, ConfigError, isAdminEmail } from './lib/env.js';
 import { limit } from './lib/ratelimit.js';
 import * as push from './lib/push.js';
 import { apnsHealth } from './lib/apns.js';
-import { KINDS, validateSignup, cleanItem, cleanCard, cardToNote, newCode, normCode, err, cleanSubmission } from '../../src/data/shared.js';
+import { KINDS, validateSignup, cleanItem, cleanCard, cardToNote, newCode, normCode, err, cleanSubmission, cleanRide, RIDE_STATUS, RIDE_OPEN } from '../../src/data/shared.js';
 
 export const SHARE_CARD_DAYS = 30;
 const MAX_BODY = 64 * 1024, MAX_ITEMS = 1000, MAX_CARDS = 300, TOKEN_H = 12;
@@ -67,7 +67,7 @@ async function tempGrant() {
 async function deleteUserData(u) {
   const d = await data.get(u.id);
   for (const code of d.myCards || []) await cards.remove(code);
-  await submissions.removeAllFor(u.id); await responders.remove(u.id); await codes.remove(u.id); await admins.remove(u.id);
+  await submissions.removeAllFor(u.id); await rides.removeAllFor(u.id); await responders.remove(u.id); await codes.remove(u.id); await admins.remove(u.id);
   await data.remove(u.id); await users.remove(u.id, emailIndex(u.email));
 }
 
@@ -175,7 +175,8 @@ export default async (req, context) => {
         const id = await need(); const d = await data.get(id);
         const mine = []; for (const code of d.myCards || []) { const c = await cards.get(code); if (c) mine.push(strip(c)); }
         const subs = me.role === 'responder' ? (await submissions.list(id)).map(({ uid, ...x }) => x) : undefined;
-        result = { exportedAt: now(), account: await profile(me), cases: d.cases, notes: d.notes, referrals: d.referrals, shareCardsICreated: mine, ...(subs ? { recordsISubmitted: subs } : {}) }; break;
+        const myRides = (await rides.list(id)).map(({ uid, staffNote, ...x }) => x);
+        result = { exportedAt: now(), account: await profile(me), cases: d.cases, notes: d.notes, referrals: d.referrals, shareCardsICreated: mine, ...(subs ? { recordsISubmitted: subs } : {}), ...(myRides.length ? { rideRequests: myRides } : {}) }; break;
       }
       case 'list': { const id = await need(); const k = kind(a[0]); result = [...(await data.get(id))[k]].sort((x, y) => (y.updatedAt || '').localeCompare(x.updatedAt || '')); break; }
       case 'create': {
@@ -255,6 +256,36 @@ export default async (req, context) => {
         await audit.log({ admin: me.email, action: 'push.send', target: 'push:' + push.targetLabel(msg.target) }); result = entry; break;
       }
       case 'adminPushLog': { await needAdmin(); result = await push.sendLog(50); break; }
+      // ---------- ride requests to C4I staff (off until an administrator turns them on)
+      case 'rideConfig': { result = { enabled: (await settings.rides()).enabled === true }; break; } // public
+      case 'rideRequest': {
+        const id = await need(); if ((await settings.rides()).enabled !== true) throw err('Ride requests are not open right now.', 403);
+        await limit('ride', req, context); const ride = cleanRide(a[0] || {});
+        const open = (await rides.list(id)).filter((x) => RIDE_OPEN.includes(x.status)); if (open.length >= 3) throw err('You already have 3 open ride requests. Cancel one or wait for C4I to call you.', 429);
+        const rec = { id: randomUUID(), uid: id, who: { name: me.name, email: me.email }, status: 'new', ride, createdAt: now(), updatedAt: now() };
+        await rides.create(id, rec); const { uid, ...out } = rec; result = out; break;
+      }
+      case 'myRides': { const id = await need(); result = (await rides.list(id)).map(({ uid, staffNote, ...x }) => x).sort((x, y) => y.createdAt.localeCompare(x.createdAt)); break; }
+      case 'cancelRide': {
+        const id = await need(); const next = await rides.mutate(id, String(a[0] || ''), (x) => { if (!RIDE_OPEN.includes(x.status)) throw err('This request is already closed.', 409); return { ...x, status: 'cancelled', updatedAt: now() }; });
+        const { uid, staffNote, ...out } = next; result = out; break;
+      }
+      case 'adminRides': {
+        await needAdmin(); const all = (await rides.list()).sort((x, y) => y.createdAt.localeCompare(x.createdAt));
+        result = { enabled: (await settings.rides()).enabled === true, rides: a[0] === 'all' ? all : all.filter((x) => RIDE_OPEN.includes(x.status)) }; break;
+      }
+      case 'adminUpdateRide': {
+        await needAdmin(); const [owner, rid, status] = [String(a[0] || ''), String(a[1] || ''), String(a[2] || '')];
+        if (!RIDE_STATUS[status] || status === 'cancelled') throw err('Unknown status.');
+        const note = typeof a[3] === 'string' ? a[3].trim().slice(0, 600) : undefined;
+        const next = await rides.mutate(owner, rid, (x) => ({ ...x, status, ...(note !== undefined ? { staffNote: note } : {}), updatedAt: now(), updatedBy: me.email }));
+        await audit.log({ admin: me.email, action: 'ride.' + status, target: 'ride:' + rid }); result = next; break;
+      }
+      case 'adminSetRides': {
+        await needAdmin(); if (a[1] !== true) throw err('Please confirm before you change this.');
+        const enabled = a[0] === true; await settings.setRides({ enabled, by: me.email, at: now() });
+        await audit.log({ admin: me.email, action: enabled ? 'rides.on' : 'rides.off', target: 'settings:rides' }); result = { enabled }; break;
+      }
       // ---------- admin
       case 'adminListResponders': { await needAdmin(); result = (await responders.list()).sort((x, y) => (x.requestedAt || '').localeCompare(y.requestedAt || '')); break; }
       case 'adminDecideResponder': {

@@ -59,6 +59,14 @@ export const remote = {
   requestAdminCode: (email) => rpc('requestAdminCode', email),
   adminClaimStart: () => rpc('adminClaimStart'),
   adminClaimFinish: (code) => rpc('adminClaimFinish', code),
+  // Ride requests to C4I staff (off until an administrator turns them on)
+  rideConfig: () => rpc('rideConfig'),
+  rideRequest: (r) => rpc('rideRequest', r),
+  myRides: () => rpc('myRides'),
+  cancelRide: (id) => rpc('cancelRide', id),
+  adminRides: (which) => rpc('adminRides', which || 'open'),
+  adminUpdateRide: (owner, id, status, note) => rpc('adminUpdateRide', owner, id, status, note),
+  adminSetRides: (enabled, confirmed) => rpc('adminSetRides', enabled === true, confirmed === true),
   // Push alerts (per device)
   pushKey: () => rpc('pushKey'),
   pushSubscribe: (sub, topics, lang) => rpc('pushSubscribe', sub, topics, lang),

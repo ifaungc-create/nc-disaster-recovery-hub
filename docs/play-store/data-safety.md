@@ -36,3 +36,21 @@ the public resource lists work without an account or alerts.
 - Password: stored only as a salted hash; Play has no separate "password" type — covered by account management.
 - Anti-abuse rate-limit counters are scrambled, short-lived and not linked to a person (not collected user data).
 - If analytics, crash reporting, maps or any SDK is ever added, this form must be updated first.
+
+## Changes needed BEFORE "Ask C4I for a ride" is turned on (added 2026-11-24)
+
+Ride requests ship switched off (Admin > Rides). While they are off, nothing above changes. The Recovery Binder
+stays on the device (not collected) and the "Ride with Uber" link is a plain link (nothing sent). Before an
+administrator turns ride requests on, update this form in Play Console (and the App Store privacy details):
+
+| Category → type | Collected | Shared | Optional? | Purpose |
+|---|---|---|---|---|
+| Location → **Precise location** | Yes | **Yes** (ride company, to book the ride) | Optional (only if the person taps "Use my location" on a ride request) | App functionality |
+| Personal info → **Phone number** | Yes | **Yes** (ride company) | Optional (ride requests only) | App functionality |
+| Personal info → **Name** | already Yes | **Yes** (first name to the ride company) | Optional | App functionality |
+| Personal info → **Address** (typed pickup and drop-off) | Yes | **Yes** (ride company) | Optional | App functionality |
+
+Overview answer "Shared with third parties?" becomes **Yes** (only with the person's consent, only to book a ride).
+Ride requests are deleted 30 days after they are sent. The iPhone app's location message
+(NSLocationWhenInUseUsageDescription) was updated in the repo; the current App Store build still says the location
+stays on the phone, so the iPhone app does not offer "Use my location" on ride requests until a new build ships.

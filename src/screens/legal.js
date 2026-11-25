@@ -35,6 +35,7 @@ const deleteAccount = () => ({ html: `<h2>${t('Delete your account and data')}</
   <div class="card"><h3>${t('What is deleted')}</h3><ul>
     <li>${t('Your account: name, email, password, account type and organization.')}</li>
     <li>${t('Your notes, case numbers and referrals.')}</li>
+    <li>${t('Your ride requests to C4I, if you sent any.')}</li>
     <li>${t('For responders: your share cards (the codes stop working) and records you sent that were not yet approved.')}</li></ul></div>
   <div class="card"><h3>${t('What is kept')}</h3><ul>
     <li>${t('Resource records that an administrator already approved and published stay public, because they are public information. They do not show who sent them.')}</li>

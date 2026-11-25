@@ -242,6 +242,33 @@ try {
   const dRaw = JSON.stringify(dl); for (const x of ['qa-delete@example.org', 'Delete Me', 'QA Org', 'VICTIM-NOTE-77']) assert.ok(!dRaw.includes(x), x); ok('deletion is logged (who, when, account id, reason) without the deleted person\'s name, email or data');
   assert.equal((await call('adminFindUser', ['qa-delete@example.org'], tAdm)).result.found, false); assert.equal((await call('createUser', [{ email: 'qa-delete@example.org', password: 'longenough9', name: 'Again', role: 'affected', termsAccepted: true }], null, freshIp())).status, 200); ok('the email is free again after deletion');
 
+  // ---------- ride requests to C4I (off by default; admin turns on; sealed; deleted after 30 days and with the account)
+  const rider = (await call('createUser', [{ email: 'rider@example.org', password: 'longenough7', name: 'Ria', role: 'affected', termsAccepted: true }], null, freshIp())).result;
+  const good = { from: '12 Oak St, Asheville', gps: { la: 35.5951, lo: -82.5515, acc: 30 }, to: 'Buncombe County DSS', purpose: 'office', when: 'now', riders: 2, minors: true, adult: true, phone: '828-555-0199', notes: 'RIDE-NOTE-55', consent: true };
+  assert.deepEqual((await call('rideConfig')).result, { enabled: false }); assert.equal((await call('rideRequest', [good], rider.token, freshIp())).status, 403); ok('rides: off by default; a request is refused while off');
+  assert.equal((await call('adminSetRides', [true, true], rider.token)).status, 403); assert.equal((await call('adminSetRides', [true, false], tAdm)).status, 400);
+  assert.equal((await call('adminSetRides', [true, true], tAdm)).result.enabled, true); assert.equal((await call('rideConfig')).result.enabled, true); ok('rides: only a confirmed admin can turn them on, and must confirm');
+  for (const [bad, why] of [[{ ...good, to: '' }, /where you need to go/], [{ ...good, adult: false }, /18 or older/], [{ ...good, consent: false }, /agree/], [{ ...good, from: '', gps: { la: 40.7, lo: -74 } }, /pick you up/], [{ ...good, phone: 'call me' }, /phone number/], [{ ...good, when: 'later', date: '', time: '' }, /day and time/]]) {
+    const r = await call('rideRequest', [bad], rider.token, freshIp()); assert.equal(r.status, 400); assert.match(r.error, why);
+  }
+  ok('rides: validation (destination, an adult rides, consent, pickup in NC or typed, phone, day and time for later)');
+  const rq = await call('rideRequest', [good], rider.token, freshIp()); assert.equal(rq.status, 200, rq.error); assert.equal(rq.result.status, 'new'); assert.equal(rq.result.uid, undefined); assert.equal(rq.result.ride.riders, 2); assert.equal(rq.result.ride.gps.la, 35.5951);
+  const rideBlob = (await allBlobs()).find((b) => b.key === `ride/${rider.id}/${rq.result.id}`); assert.ok(rideBlob && !rideBlob.raw.includes('555-0199') && !rideBlob.raw.includes('RIDE-NOTE') && !rideBlob.raw.includes('Oak St')); ok('rides: a valid request is stored sealed (no phone, address or notes in plain text)');
+  assert.equal((await call('myRides', [], rider.token)).result.length, 1); assert.equal((await call('myRides', [], tA)).result.length, 0); assert.equal((await call('adminRides', [], rider.token)).status, 403); ok('rides: a person sees only their own requests; only admins see the staff list');
+  const al = (await call('adminRides', [], tAdm)).result; const mine1 = al.rides.find((x) => x.id === rq.result.id); assert.equal(mine1.who.name, 'Ria'); assert.equal(mine1.ride.phone, '828-555-0199');
+  assert.equal((await call('adminUpdateRide', [rider.id, rq.result.id, 'booked', 'Booked 4 pm STAFF-ONLY'], tAdm)).result.status, 'booked'); assert.equal((await call('adminUpdateRide', [rider.id, rq.result.id, 'cancelled'], tAdm)).status, 400);
+  const seen = (await call('myRides', [], rider.token)).result[0]; assert.equal(seen.status, 'booked'); assert.equal(seen.staffNote, undefined); ok('rides: admin sees who and the phone, updates the status; the staff note is never shown to the rider');
+  const rideLog = JSON.stringify((await call('adminAudit', [], tAdm)).result.filter((l) => /^ride/.test(l.action))); assert.ok(rideLog.includes('ride.booked') && rideLog.includes('rides.on') && !rideLog.includes('555-0199') && !rideLog.includes('STAFF-ONLY') && !rideLog.includes('Oak')); ok('rides: status changes and on/off are logged, without the rider\'s details');
+  assert.equal((await call('cancelRide', [rq.result.id], rider.token)).result.status, 'cancelled'); assert.equal((await call('cancelRide', [rq.result.id], rider.token)).status, 409); ok('rides: the rider can cancel an open request once');
+  for (let i = 0; i < 3; i++) assert.equal((await call('rideRequest', [good], rider.token, freshIp())).status, 200);
+  assert.equal((await call('rideRequest', [good], rider.token, freshIp())).status, 429); ok('rides: at most 3 open requests per person');
+  const ipRide = freshIp(); let lastRide; for (let i = 0; i < 7; i++) lastRide = (await call('rideRequest', [{ ...good, to: '' }], rider.token, ipRide)).status; assert.equal(lastRide, 429); ok('rides: rate limited per IP hash');
+  assert.equal((await call('exportData', [], rider.token)).result.rideRequests.length, 4); ok('rides: included in "Download my data" (without staff notes)');
+  const rideKeys = async () => { const k = []; for await (const p of store().list({ prefix: 'ride/', paginate: true })) for (const b of p.blobs) k.push(b.key); return k; };
+  assert.equal((await rideKeys()).length, 4); await cleanup(Date.now() + 29 * 864e5); assert.equal((await rideKeys()).length, 4); await cleanup(Date.now() + 31 * 864e5); assert.equal((await rideKeys()).length, 0); ok('rides: cleanup deletes requests 30 days after they were sent (not before)');
+  await call('rideRequest', [good], rider.token, freshIp()); assert.equal((await rideKeys()).length, 1); assert.equal((await call('deleteAccount', [], rider.token)).status, 200); assert.equal((await rideKeys()).length, 0); ok('rides: deleting the account deletes its ride requests');
+  assert.equal((await call('adminSetRides', [false, true], tAdm)).result.enabled, false); assert.equal((await call('rideConfig')).result.enabled, false); ok('rides: admin can turn them off again');
+
   // ---------- fail closed
   delete process.env.NCDRH_DEV_INSECURE_SECRETS;
   const fc = await call('verifyLogin', ['pat@example.org', 'longenough1'], null, freshIp()); assert.equal(fc.status, 503);

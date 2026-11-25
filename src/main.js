@@ -1,3 +1,9 @@
+// Emergency Signage look (November 2026): two self-hosted open-licence fonts (SIL OFL 1.1), Latin only.
+// Overpass is based on the U.S. highway sign lettering; Atkinson Hyperlegible was made for low-vision readers.
+import '@fontsource/overpass/latin-800.css';
+import '@fontsource/overpass/latin-900.css';
+import '@fontsource/atkinson-hyperlegible/latin-400.css';
+import '@fontsource/atkinson-hyperlegible/latin-700.css';
 import './styles.css';
 import { APP_NAME, APP_TAGLINE, APP_DESCRIPTION, DATA_DATE, CONTACT_EMAIL } from './config.js';
 import { api, ADAPTER } from './data/index.js';
@@ -21,6 +27,10 @@ import { searchScreens, searchForm, bindSearchForm } from './screens/search.js';
 import { adminScreens, responderNotice } from './screens/admin.js';
 import { fireHelpScreens, fireBar } from './screens/firehelp.js';
 import { ownerScreens } from './screens/owner.js';
+import { calmScreens, calmButton } from './screens/calm.js';
+import { binderScreens } from './screens/binder.js';
+import { rideScreens } from './screens/ride.js';
+import { ridesOpen } from './rides.js';
 import { watchRedCrossCalls } from './rcnotice.js';
 import { can as nativeCan, lockStatus, setLock, biometryName, listenForTaps } from './native.js';
 
@@ -28,13 +38,13 @@ const app = $('#app');
 import { ctx } from './ctx.js';
 import { routeFromPath } from './paths.js';
 import { onTranslateProxy } from './proxy.js';
-const PRIVATE = ['notes', 'share', 'submit', 'admin'];
+const PRIVATE = ['notes', 'share', 'submit', 'admin', 'ride'];
 // While a temporary password is in use, only these screens open (the server blocks everything else too).
 const MUST_CHANGE_OK = ['set-password', 'privacy', 'about', 'accessibility', 'sources'];
 const go = (r) => { if (location.hash === '#' + r) render(); else location.hash = r; };
 ctx.go = go;
 
-const MARK = '<svg viewBox="0 0 64 64" aria-hidden="true"><rect width="64" height="64" rx="14" fill="#fff"/><path d="M32 12 10 31h6v19h32V31h6z" fill="#12355B"/><path d="M32 46s-10-6.3-10-12.4A5.6 5.6 0 0 1 32 30a5.6 5.6 0 0 1 10 3.6C42 39.7 32 46 32 46z" fill="#fff"/></svg>';
+const MARK = '<svg viewBox="0 0 64 64" aria-hidden="true"><rect width="64" height="64" rx="14" fill="#fff"/><path d="M32 12 10 31h6v19h32V31h6z" fill="#12355B"/><path d="M32 46s-10-6.3-10-12.4A5.6 5.6 0 0 1 32 30a5.6 5.6 0 0 1 10 3.6C42 39.7 32 46 32 46z" fill="#F97316"/></svg>';
 const SEARCH_ICO = '<svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor" aria-hidden="true"><path d="M10 3a7 7 0 015.6 11.2l5.1 5.1-1.4 1.4-5.1-5.1A7 7 0 1110 3zm0 2a5 5 0 100 10 5 5 0 000-10z"/></svg>';
 const ico = { home: 'M12 3l9 8h-3v9h-5v-6h-2v6H6v-9H3z', notes: 'M6 2h9l5 5v15H6zm8 1v5h5M9 12h8M9 16h8', help: 'M4 5h16v3H4zm0 5h16v3H4zm0 5h10v3H4z', county: 'M12 2a7 7 0 00-7 7c0 5 7 13 7 13s7-8 7-13a7 7 0 00-7-7zm0 9.5A2.5 2.5 0 1112 6.5a2.5 2.5 0 010 5z', me: 'M12 12a4 4 0 100-8 4 4 0 000 8zm-8 9a8 8 0 0116 0z' };
 const NAV = () => [['home', t('Home'), ico.home], ['notes', t('My Notes'), ico.notes], ['resources', t('All help'), ico.help], ['counties', t('My county'), ico.county], ['settings', t('Settings'), ico.me]];
@@ -44,16 +54,20 @@ const langSwitch = () => getLang() === 'es' ? '<button class="hbtn lang" id="lan
 const langPicker = () => `<div class="langpick" id="langpick" role="dialog" aria-modal="true" aria-labelledby="lp_h"><div class="card"><h2 id="lp_h" lang="en">Choose your language</h2><p lang="es" class="muted">Elija su idioma</p><button class="btn" data-pick="en" lang="en">English</button><button class="btn" data-pick="es" lang="es">Español</button><p class="small" lang="en">You can change this any time with the button at the top of the screen.</p><p class="small" lang="es">Puede cambiarlo en cualquier momento con el botón en la parte de arriba de la pantalla.</p></div></div>`;
 const crisisBar = () => `<nav class="crisis" aria-label="${t('Crisis and emergency numbers')}">${CRISIS.map((c) => `<a class="${c.cls || ''}" href="tel:${c.tel}"><b>${esc(t(c.top))}</b> ${esc(t(c.sub))}<span class="sr">. ${esc(t(c.aria))}</span></a>`).join('')}</nav>`;
 
+let lastNav = 0;
 function shell(route, inner) {
   const top = route.split('/')[0];
-  const navTop = { case: 'notes', share: 'notes', claim: 'notes', county: 'counties', schools: 'counties', fire: 'home', hotels: 'home', 'cultural-food': 'home', 'home-care': 'home', translation: 'home', alerts: 'settings', accessibility: 'settings', 'delete-account': 'settings', phone: 'resources', privacy: 'settings', about: 'settings', sources: 'settings', login: 'settings', signup: 'settings', admin: 'settings', submit: 'home', search: 'home' , 'home-fire': 'home', 'owner-check': 'resources' }[top] || top;
+  const navTop = { case: 'notes', share: 'notes', claim: 'notes', county: 'counties', schools: 'counties', fire: 'home', hotels: 'home', 'cultural-food': 'home', 'home-care': 'home', translation: 'home', alerts: 'settings', accessibility: 'settings', 'delete-account': 'settings', phone: 'resources', privacy: 'settings', about: 'settings', sources: 'settings', login: 'settings', signup: 'settings', admin: 'settings', submit: 'home', search: 'home' , 'home-fire': 'home', 'owner-check': 'resources', calm: 'home', binder: 'notes', ride: 'home' }[top] || top;
   app.innerHTML = `
   <a class="skip" href="#main">${t('Skip to content')}</a>
   <header class="top"><h1 class="brandh"><a href="#home" class="brand">${MARK}<span>${esc(APP_NAME)}<small class="tagline">${esc(t(APP_TAGLINE))}</small></span></a></h1><span class="hbtns"><a class="hbtn search" href="#search" id="hsearch">${SEARCH_ICO}<span class="sr">${t('Search the app')}</span></a>${langSwitch()}${ctx.me ? `<a class="hbtn" href="#settings">${esc(ctx.me.name.split(' ')[0])}<span class="sr"> · ${t('Account and settings')}</span></a>` : `<a class="hbtn" href="#login">${t('Sign in')}</a>`}</span></header>
   ${crisisBar()}
   <main id="main" tabindex="-1">${ctx.flash ? `<div class="note" role="status">${ctx.flash}</div>` : ''}${inner}</main>
   <footer class="disc"><p><b>${esc(APP_NAME)}</b> · ${esc(t(APP_TAGLINE))}</p><p>${t('This app shares public information and keeps your notes private. It is not a government service and does not replace 911. Listed agencies and organizations are not affiliated with this app. Information collected {date}; always confirm with the agency.', { date: esc(DATA_DATE) })}</p><p id="footcontact">${contactLine()}</p><p><a href="#about">${t('About &amp; disclaimer')}</a> · <a href="#sources">${t('Official sources')}</a> · <a href="#privacy">${t('Privacy')}</a> · <a href="#accessibility">${t('Accessibility')}</a> · <a href="#delete-account">${t('Delete your account')}</a></p></footer>
-  <nav class="bottom" aria-label="${t('Main')}">${NAV().map(([id, l, d]) => `<a href="#${id}" ${navTop === id ? 'aria-current="page"' : ''}><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="${d}"/></svg>${l}</a>`).join('')}</nav>`;
+  <nav class="bottom" aria-label="${t('Main')}"><span class="navpill" aria-hidden="true" style="--i:${lastNav}"></span>${NAV().map(([id, l, d]) => `<a href="#${id}" ${navTop === id ? 'aria-current="page"' : ''}><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="${d}"/></svg>${l}</a>`).join('')}</nav>`;
+  // The orange pill behind the open tab slides from the last tab to this one (no motion if the device asks for less).
+  { const i = NAV().findIndex(([id]) => id === navTop); const pill = app.querySelector('.navpill');
+    if (i < 0) pill.hidden = true; else if (i !== lastNav) requestAnimationFrame(() => { pill.style.setProperty('--i', i); }); lastNav = i < 0 ? lastNav : i; }
   ctx.flash = '';
   $('#langsw').onclick = (e) => { setLang(e.currentTarget.dataset.lang); render(); };
   // Skip link: move focus to the main content without changing the route (the app uses # routes).
@@ -73,19 +87,21 @@ function shell(route, inner) {
 }
 function focusTitle() { const h = $('main h2'); if (h) { h.tabIndex = -1; h.focus({ preventScroll: true }); } window.scrollTo(0, 0); }
 
-const screens = { ...fireHelpScreens, ...notesScreens, ...placeScreens, ...infoScreens, ...adminScreens, ...foodScreens, ...homeCareScreens, ...translationScreens, ...alertScreens, ...legalScreens, ...sourcesScreens, ...searchScreens, ...ownerScreens };
+const screens = { ...fireHelpScreens, ...notesScreens, ...placeScreens, ...infoScreens, ...adminScreens, ...foodScreens, ...homeCareScreens, ...translationScreens, ...alertScreens, ...legalScreens, ...sourcesScreens, ...searchScreens, ...ownerScreens, ...calmScreens, ...binderScreens, ...rideScreens };
 
-screens.home = () => {
-  const loc = getLoc(); const me = ctx.me;
+screens.home = async () => {
+  const loc = getLoc(); const me = ctx.me; const rideOn = me ? await ridesOpen() : false;
   // Six need-based tiles; everything else is one tap away under "See all help" (same groups as the All help screen).
   const TICO = { housing: 'M3 11l9-7 9 7M5 10v10h14V10M10 20v-6h4v6', food: 'M4 10h16l-1.5 9h-13zM8 10l2-6M16 10l-2-6', money: 'M3 7h18v13H3zM9 7V5a2 2 0 012-2h2a2 2 0 012 2v2M3 13h18', docs: 'M7 3h7l4 4v14H7zM14 3v4h4M10 12h5M10 16h5', legal: 'M12 3l8 3v6c0 4.5-3.2 7.8-8 9-4.8-1.2-8-4.5-8-9V6zM9 12l2 2 4-4', county: 'M12 21s7-6.2 7-11a7 7 0 00-14 0c0 4.8 7 11 7 11zM12 12.5a2.5 2.5 0 100-5 2.5 2.5 0 000 5z' };
-  const tile = (href, icon, b, s) => `<a class="tile need" href="#${href}"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="${TICO[icon]}"/></svg><b>${b}</b><span>${s}</span></a>`;
+  const tile = (href, icon, b, s) => `<a class="tile need" href="#${href}"><span class="tico" aria-hidden="true"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="${TICO[icon]}"/></svg></span><b>${b}</b><span>${s}</span></a>`;
   return { html: `
+    ${calmButton()}
     ${fireBar()}
     <h2>${me ? t('Hi, {name}', { name: esc(me.name.split(' ')[0]) }) : t('Help after a disaster in North Carolina')}</h2>
     ${me ? `<p class="muted">${esc(t(ROLES[me.role]))}${me.org ? ' · ' + esc(me.org) : ''}</p>` : ''}
     ${searchForm('', 'gs')}
     <div class="card loc"><div>${loc?.county ? `<b>${t('Your county: {county}', { county: esc(loc.county) })}</b><br><span class="small">${t('Saved on this device only')}</span>` : `<b>${t('Find your county')}</b><br><span class="small">${t("Shows your county's offices and nearby fire departments first.")}</span>`}</div>${loc?.county ? `<a class="btn small" href="#county/${encodeURIComponent(loc.county)}">${t('Open')}</a>` : `<a class="btn small" href="#counties">${t('Choose')}</a>`}</div>
+    <h3 class="signhead" id="needhead">${t('What do you need?')}</h3>
     <div class="tiles" id="needtiles">
       ${tile('resources/housing', 'housing', t('Housing & shelter'), t('Tonight, hotels, rentals, FEMA'))}
       ${tile('cultural-food', 'food', t('Food'), t('Pantries and stores: halal, kosher, Latino, Asian'))}
@@ -95,6 +111,8 @@ screens.home = () => {
       ${tile(loc?.county ? 'county/' + encodeURIComponent(loc.county) : 'counties', 'county', t('My county'), t('Offices, fire departments, schools'))}
     </div>
     <a class="btn secondary" href="#resources" id="allhelp">${t('See all help')}</a>
+    <a class="btn secondary" href="#binder" id="binderlink">${t('My Recovery Binder: everything agencies ask for, and a PDF')}</a>
+    ${rideOn ? `<a class="btn" href="#ride" id="ridelink">${t('Ask C4I for a ride')}</a>` : ''}
     ${me ? `<a class="btn secondary" href="#notes" id="mynoteslink">${t('My case numbers, notes and referrals')}</a>` : ''}
     ${responderNotice(me)}
     ${me?.isAdmin ? `<a class="btn" href="#admin" id="adminlink">${t('Admin: review responders and records')}</a>` : ''}

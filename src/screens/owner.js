@@ -5,7 +5,7 @@ import { t } from '../i18n/index.js';
 import { getLoc, loadData } from '../geo.js';
 import { lookupOwner, PARCEL_INFO_URL } from '../owner.js';
 
-// The form, used on the Housing & shelter page and on the result screen.
+// The owner lookup form, used on this page (first visit and after a result).
 export const ownerForm = (counties, { address = '', county = '', id = 'oc' } = {}) => `<form id="${id}f" novalidate>
   <label for="${id}a">${t('Street address of the rental')}</label><input id="${id}a" name="address" autocomplete="off" inputmode="text" value="${esc(address)}" placeholder="${t('e.g. 123 Main St')}">
   <label for="${id}c">${t('County')}</label><select id="${id}c" name="county"><option value="">${t('Choose…')}</option>${counties.map((c) => `<option${c.name === county ? ' selected' : ''}>${esc(c.name)}</option>`).join('')}</select>
@@ -28,12 +28,23 @@ const steps = () => `<div class="card" id="ocsteps"><h3>${t('What to do with thi
   <li>${t('See the inside before you pay anything, and pay in a way that leaves a record.')}</li></ol></div>`;
 const more = (county) => `${county ? `<a class="btn secondary" href="#county/${encodeURIComponent(county)}">${esc(t('{name} County offices (Register of Deeds)', { name: county }))}</a>` : ''}
   <a class="btn secondary" href="#resources/legal">${t('Think it is a scam? Free legal help and where to report it')}</a>`;
+// How to spot a rental scam (Donnell's wording, November 24, 2026).
+const tips = () => `<div class="card okc" id="scamtips"><h3>${t('How to spot a rental scam')}</h3>
+  <p>${t('If you find a place on Facebook Marketplace, Craigslist or another website, make sure the ad is real before you pay anything.')}</p><ol class="steps">
+  <li>${t('Search the owner. Use the lookup on this page to see who the county says owns the home.')}</li>
+  <li>${t('Look for the same home on regular real estate websites like Zillow or NCHousingSearch.org. If the price, photos or contact information are different, be careful.')}</li>
+  <li>${t('Make sure the contact information matches. If the name, phone number or email does not match the ad or the county record, stop.')}</li>
+  <li>${t('If it sounds too good to be true, it is usually a scam.')}</li>
+  <li>${t('Never send money to anyone to reserve an apartment or house.')}</li>
+  <li>${t('Just because someone gave you a code to get into the home does not mean they own it.')}</li></ol>
+  <p><b>${t('Verify, verify, verify before you pay money to anyone. It is better to keep searching.')}</b></p></div>`;
 const srcLine = () => `<p class="small srcline">${t('Source: {agency} (official site)', { agency: ext(t('NC OneMap parcel records (State of North Carolina, from county tax offices)'), PARCEL_INFO_URL) })}</p>`;
 
 async function ownerCheck() {
   const counties = await loadData('counties'); const q = ctx.ownerQuery; const loc = getLoc();
-  const head = `<p><a href="#resources/housing">‹ ${esc(t('Housing & shelter'))}</a></p><h2>${t('Who owns this property?')}</h2>`;
-  if (!q) return { html: `${head}<p>${t('Found a place to rent on Facebook Marketplace or another website? See who the county says owns it before you pay.')}</p><div class="card">${ownerForm(counties, { county: loc?.county || '' })}</div>${srcLine()}`, bind: () => bindOwnerForm() };
+  const head = `<p><a href="#resources/housing">‹ ${esc(t('Housing & shelter'))}</a></p><h2>${t('Check a listing before you pay')}</h2>`;
+  const who = `<h3 id="ochead">${t('Who owns this property?')}</h3>`;
+  if (!q) return { html: `${head}${tips()}${who}<p>${t('Found a place to rent on Facebook Marketplace or another website? See who the county says owns it before you pay.')}</p><div class="card">${ownerForm(counties, { county: loc?.county || '' })}</div>${srcLine()}`, bind: () => bindOwnerForm() };
   let res = null, err = '';
   try { res = await lookupOwner(q.address, q.county); }
   catch (x) { err = x.code === 'address' ? t('Type the house number and street name, like 123 Main St.') : t('The state parcel records did not answer. Check your connection and try again in a minute.'); }
@@ -45,8 +56,8 @@ async function ownerCheck() {
         <p class="ocowner"><span class="small">${t('Owner on the county record')}</span><br><b>${esc(r.owner)}</b>${r.owner2 ? `<br><b>${esc(r.owner2)}</b>` : ''}</p>
         ${r.mailTo ? `<p class="small">${t('Owner\'s mail goes to: {place}', { place: esc(r.mailTo) })}</p>` : ''}
         ${r.asOf ? `<p class="small">${t('Record as of {date}. A recent sale may not show yet.', { date: esc(fmtDate(r.asOf)) })}</p>` : ''}</li>`).join('')}</ul>`;
-  return { html: `${head}${result}${rows.length ? steps() : ''}${more(q.county)}
-    <div class="card"><h3>${t('Check another address')}</h3>${ownerForm(counties, q)}</div>${srcLine()}`, bind: () => bindOwnerForm() };
+  return { html: `${head}${who}${result}${rows.length ? steps() : ''}${more(q.county)}
+    <div class="card"><h3>${t('Check another address')}</h3>${ownerForm(counties, q)}</div>${tips()}${srcLine()}`, bind: () => bindOwnerForm() };
 }
 
 export const ownerScreens = { 'owner-check': ownerCheck };

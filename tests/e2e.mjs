@@ -470,21 +470,31 @@ try {
 
     // Housing & shelter: jumps, hotels, Zillow, owner check
     await go('resources/housing');
-    assert.deepEqual(await page.$$eval('#hjumps button', (bs) => bs.map((b) => b.textContent)), ['Tonight', 'Find a rental', 'Check a listing', 'FEMA']);
-    assert.ok(await page.locator('#ri-housing-0 a[href="#hotels"]').count());
-    assert.equal(await page.getAttribute('#zillowlink', 'href'), 'https://www.zillow.com/nc/rentals/'); assert.match(await page.textContent('#hrent'), /outside business website, not a government agency/);
-    await page.click('#hjumps button:has-text("Check a listing")'); assert.equal(await page.evaluate(() => document.activeElement.id), 'hcheck');
+    assert.deepEqual(await page.$$eval('#hjumps .chip', (bs) => bs.map((b) => b.textContent)), ['Tonight', 'Find a rental', 'Check a listing', 'FEMA']);
+    assert.equal(await page.getAttribute('#hjumps a.chip:has-text("Tonight")', 'href'), '#hotels'); assert.equal(await page.getAttribute('#hjumps a.chip:has-text("Check a listing")', 'href'), '#owner-check');
+    assert.ok(await page.locator('#ri-housing-0 a[href="#hotels"]').count()); assert.equal(await page.locator('#hcf').count(), 0);
+    assert.equal(await page.getAttribute('#zillowlink', 'href'), 'https://www.zillow.com/nc/rentals/'); assert.equal(await page.getAttribute('#airbnblink', 'href'), 'https://www.airbnb.com/s/North-Carolina/homes');
+    assert.ok(await page.locator('#hrent a[href="https://www.nchousingsearch.org/"]').count()); assert.ok(await page.locator('#hrent a.tel').count());
+    assert.match(await page.textContent('#hrent'), /Zillow and Airbnb are outside business websites, not government agencies/);
+    await page.click('#hjumps button:has-text("Find a rental")'); assert.equal(await page.evaluate(() => document.activeElement.id), 'hrent');
     await page.evaluate(() => localStorage.setItem('ncdrh.location', JSON.stringify({ county: 'New Hanover', la: null, lo: null })));
-    await page.reload(); await page.waitForSelector('#zillowlink'); assert.equal(await page.getAttribute('#zillowlink', 'href'), 'https://www.zillow.com/new-hanover-county-nc/rentals/'); assert.equal(await page.inputValue('#hcc'), 'New Hanover');
-    await xs('housing-en'); step('Housing & shelter: quick jumps, hotels link, Zillow rentals for the saved county (statewide when none), labelled as an outside business');
+    await page.reload(); await page.waitForSelector('#zillowlink'); assert.equal(await page.getAttribute('#zillowlink', 'href'), 'https://www.zillow.com/new-hanover-county-nc/rentals/'); assert.equal(await page.getAttribute('#airbnblink', 'href'), 'https://www.airbnb.com/s/New-Hanover-County--NC/homes');
+    await xs('housing-en');
+    await page.click('#hjumps a.chip:has-text("Tonight")'); await page.waitForSelector('#hloc'); assert.match(await page.textContent('main h2'), /Hotels & motels nearby/);
+    step('Housing & shelter: "Tonight" opens hotels by location, "Find a rental" has Zillow, NCHousingSearch.org and Airbnb for the saved county (statewide when none), "Check a listing" goes to its own page');
+
+    await go('resources/housing'); await page.click('#hjumps a.chip:has-text("Check a listing")'); await page.waitForSelector('#scamtips');
+    assert.equal(await page.textContent('main h2'), 'Check a listing before you pay'); const tipsTxt = await page.textContent('#scamtips');
+    for (const x of ['Facebook Marketplace, Craigslist', 'Search the owner', 'regular real estate websites', 'contact information matches', 'too good to be true', 'Never send money to anyone to reserve', 'code to get into the home', 'Verify, verify, verify']) assert.ok(tipsTxt.includes(x), 'scam tips have ' + x);
+    assert.equal(await page.inputValue('#occ'), 'New Hanover'); await xs('owner-check-en');
 
     let parcelReq = [], parcelMode = 'hit';
     await page.route('https://services.nconemap.gov/**', async (route) => { parcelReq.push(route.request());
       if (parcelMode === 'fail') return route.fulfill({ status: 500, body: 'x' });
       await route.fulfill({ status: 200, contentType: 'application/json', headers: { 'access-control-allow-origin': '*' }, body: JSON.stringify({ features: parcelMode === 'none' ? [] : [{ attributes: { ownname: 'EXAMPLE HOMES LLC (mock)', ownname2: '', siteadd: '112 BROADWAY ST', sunit: '', scity: 'WILMINGTON', cntyname: 'New Hanover', mcity: 'BEND', mstate: 'OR', transfdate: 1778648400000 } }] }) }); });
-    await page.fill('#hca', 'Broadway'); await page.click('#hcf button[type=submit]'); assert.match(await page.textContent('#hcerr'), /house number and street name/); assert.equal(parcelReq.length, 0);
-    await page.fill('#hca', '112 Broadway St., Wilmington'); await page.selectOption('#hcc', ''); await page.click('#hcf button[type=submit]'); assert.match(await page.textContent('#hcerr'), /Choose the county/); assert.equal(parcelReq.length, 0);
-    await page.selectOption('#hcc', 'New Hanover'); await page.click('#hcf button[type=submit]'); await page.waitForSelector('#oclist');
+    await page.fill('#oca', 'Broadway'); await page.click('#ocf button[type=submit]'); assert.match(await page.textContent('#ocerr'), /house number and street name/); assert.equal(parcelReq.length, 0);
+    await page.fill('#oca', '112 Broadway St., Wilmington'); await page.selectOption('#occ', ''); await page.click('#ocf button[type=submit]'); assert.match(await page.textContent('#ocerr'), /Choose the county/); assert.equal(parcelReq.length, 0);
+    await page.selectOption('#occ', 'New Hanover'); await page.click('#ocf button[type=submit]'); await page.waitForSelector('#oclist');
     const pu = new URL(parcelReq[0].url()); assert.equal(pu.searchParams.get('where'), "cntyname='New Hanover' AND UPPER(siteadd) LIKE '112 BROADWAY%'"); assert.equal(parcelReq.length, 1);
     const ph = parcelReq[0].headers(); assert.equal(ph.cookie, undefined); assert.equal(ph.referer, undefined);
     const oc = await page.textContent('main'); assert.match(oc, /Who owns this property\?/); assert.match(oc, /EXAMPLE HOMES LLC \(mock\)/); assert.match(oc, /Owner's mail goes to: BEND, OR/); assert.match(oc, /Record as of May 1[23], 2026/); assert.match(oc, /If it does not match, ask why/);
@@ -494,7 +504,7 @@ try {
     parcelMode = 'fail'; await page.fill('#oca', '9 Nowhere Ln'); await page.click('#ocf button[type=submit]'); await page.waitForSelector('#ocfail'); assert.match(await page.textContent('#ocfail'), /did not answer/);
     await page.unroute('https://services.nconemap.gov/**'); assert.equal(parcelReq.length, 3);
     assert.deepEqual(foreign.filter((u) => !u.startsWith('https://services.nconemap.gov/')), [], 'only the state parcel service is contacted'); foreign.length = 0;
-    step('owner check: validates the address and county first, asks only the state parcel service (no cookies, no referrer), shows the county record owner, what to do with it, "no record" and "did not answer" states');
+    step('listing check: scam tips in plain words; owner lookup validates the address and county first, asks only the state parcel service (no cookies, no referrer), shows the county record owner, what to do with it, "no record" and "did not answer" states');
     await page.evaluate(() => localStorage.setItem('ncdrh.lang', 'es')); await go('resources/housing'); await page.reload(); await page.waitForSelector('#hcheck');
     assert.match(await page.textContent('#hcheck'), /Revise un anuncio antes de pagar/); await page.click('#ri-housing-0 a.tel[href="tel:+18007332767"]'); await page.waitForSelector('#rcnote');
     assert.match(await page.textContent('#rcnote'), /La Cruz Roja es una agencia de ayuda en casos de desastre/); assert.equal(await page.getAttribute('html', 'lang'), 'es'); await xs('red-cross-notice-es'); await page.click('#rc_close');

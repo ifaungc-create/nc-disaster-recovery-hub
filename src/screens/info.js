@@ -7,9 +7,8 @@ import { esc, tel, ext, verifyBadge, report, contactLine, srcNote } from '../ui.
 import { sourceFor } from '../content/official-sources.js';
 import { getCommunity, communityBlock } from '../community.js';
 import { insurerDirectory } from '../insurers.js';
-import { getLoc, loadData } from '../geo.js';
-import { zillowRentalsUrl } from '../owner.js';
-import { ownerForm, bindOwnerForm } from './owner.js';
+import { getLoc } from '../geo.js';
+import { zillowRentalsUrl, airbnbStaysUrl } from '../owner.js';
 
 // "Source: <agency> (official site)": the government agencies whose websites this item links to.
 const govSources = (it) => [...new Set((it.links || []).map(([, u]) => sourceFor(u)).filter((x) => x && x.gov && x.url))];
@@ -36,14 +35,19 @@ const GROUPS = () => { const S = Object.fromEntries(sections().map((x) => [x.id,
 // Section titles from the content files are plain text; t() titles carry &amp;. Both are safe to print as is after this.
 const rowTitle = (x) => (/&amp;/.test(x) ? x : esc(x));
 const groupList = (g) => `<ul class="list">${g.rows.filter(Boolean).map(([h, ti, d]) => `<li><a class="rowlink" href="#${h}"><span>${rowTitle(ti)}<br><span class="small">${rowTitle(d)}</span></span><span aria-hidden="true">›</span></a></li>`).join('')}</ul>`;
-// Housing & shelter extras: quick jumps, Zillow rentals for the person's county and the owner check.
-const housingJumps = () => `<div class="chips jumps" id="hjumps">${[['ri-housing-0', t('Tonight')], ['hrent', t('Find a rental')], ['hcheck', t('Check a listing')], ['ri-housing-1', t('FEMA')]].map(([id, l]) => `<button type="button" class="chip" data-jumpto="${id}">${l}</button>`).join('')}</div>`;
-const rentalCard = (county) => `<div class="card" id="hrent"><h3>${t('More rental listings')}</h3>
-  <p>${county ? t('Houses and apartments for rent in {name} County on Zillow.', { name: esc(county) }) : t('Houses and apartments for rent in North Carolina on Zillow. Choose your county to see listings near you.')}</p>
-  <div class="links"><a href="${esc(zillowRentalsUrl(county))}" target="_blank" rel="noopener noreferrer" id="zillowlink">${county ? esc(t('Zillow rentals in {name} County', { name: county })) : t('Zillow rentals in North Carolina')} <span aria-hidden="true">↗</span><span class="sr"> ${t('(opens a new tab)')}</span></a>${county ? '' : `<a href="#counties">${t('Choose your county')}</a>`}</div>
-  <p class="small">${t('Zillow is an outside business website, not a government agency, and is not affiliated with this app.')}</p></div>`;
-const checkCard = (counties, county) => `<div class="card okc" id="hcheck"><h3>${t('Check a listing before you pay')}</h3>
-  <p>${t('Found a place to rent on Facebook Marketplace or another website? See who the county says owns it before you pay.')}</p>${ownerForm(counties, { county, id: 'hc' })}</div>`;
+// Housing & shelter extras: quick jumps, rental sites for the person's county and a link to the listing check.
+// "Tonight" opens the hotel finder (location or ZIP), "Check a listing" opens its own page; the other two jump down this page.
+const housingJumps = () => `<div class="chips jumps" id="hjumps"><a class="chip" href="#hotels">${t('Tonight')}</a><button type="button" class="chip" data-jumpto="hrent">${t('Find a rental')}</button><a class="chip" href="#owner-check">${t('Check a listing')}</a><button type="button" class="chip" data-jumpto="ri-housing-1">${t('FEMA')}</button></div>`;
+// "Find a rental": Zillow, NCHousingSearch.org and Airbnb for the person's county (statewide when none), built on the
+// NC Housing Finance Agency item from the content file so its phone, source line and translations stay in one place.
+const outLink = (id, label, url) => `<a href="${esc(url)}" target="_blank" rel="noopener noreferrer" id="${id}">${label} <span aria-hidden="true">↗</span><span class="sr"> ${t('(opens a new tab)')}</span></a>`;
+const rentalCard = (county, it) => { const [guide, nchs] = it.links || [];
+  return `<div class="card" id="hrent"><h3>${esc(it.title)}</h3><p>${t('Search these sites for a house or apartment to rent.')}</p>
+  <div class="links">${outLink('zillowlink', county ? esc(t('Zillow rentals in {name} County', { name: county })) : t('Zillow rentals in North Carolina'), zillowRentalsUrl(county))}${nchs ? ext(nchs[0], nchs[1]) : ''}${outLink('airbnblink', county ? esc(t('Airbnb stays in {name} County', { name: county })) : t('Airbnb stays in North Carolina'), airbnbStaysUrl(county))}${county ? '' : `<a href="#counties">${t('Choose your county')}</a>`}</div>
+  <p>${esc(it.body)}</p>${(it.phones || []).map(([l, n]) => tel(l, n)).join('')}${guide ? `<div class="links">${ext(guide[0], guide[1])}</div>` : ''}
+  <p class="small">${t('Zillow and Airbnb are outside business websites, not government agencies, and are not affiliated with this app.')}</p>${srcLine(it)}${report(it.title)}</div>`; };
+const checkCard = () => `<div class="card okc" id="hcheck"><h3>${t('Check a listing before you pay')}</h3>
+  <p>${t('Found a place on Facebook Marketplace or Craigslist? Learn how to spot a scam and see who the county says owns it.')}</p><a class="btn secondary" href="#owner-check" id="hchecklink">${t('Check a listing')}</a></div>`;
 // In Spanish, a short note: many official sites are only in English.
 const esNote = () => (isEs() ? `<p class="small esnote">${t('Many official websites are only in English. Links marked "(en inglés)" open an English page. Names of agencies and programs are left in English so you can find them.')}</p>` : '');
 async function resources(parts) {
@@ -60,12 +64,12 @@ async function resources(parts) {
   const added = (await getCommunity()).filter((r) => r.category === s.id);
   let dir = null;
   if (s.id === 'insurance') dir = await insurerDirectory().catch(() => ({ html: `<div class="card"><p class="err">${t('The insurance claim phone list could not be loaded. Check your connection and try again.')}</p></div>` }));
-  const housing = s.id === 'housing'; const county = housing ? getLoc()?.county || '' : ''; const counties = housing ? await loadData('counties') : [];
-  const cards = s.items.map((it, i) => item(it, `ri-${s.id}-${i}`) + (housing && i === 2 ? rentalCard(county) + checkCard(counties, county) : '')).join('');
+  const housing = s.id === 'housing'; const county = housing ? getLoc()?.county || '' : '';
+  const cards = s.items.map((it, i) => (housing && i === 2 ? rentalCard(county, it) + checkCard() : item(it, `ri-${s.id}-${i}`))).join('');
   const html = `<p><a href="#resources">‹ ${t('All help')}</a></p><h2>${esc(s.title)}</h2><p>${esc(s.intro)}</p>${housing ? housingJumps() : ''}${esNote()}${srcNote()}${dir ? dir.html : ''}${cards}
     ${communityBlock(added, t('Added by verified responders'))}
     <p class="small srcnote">${t('Numbers and links checked {date}. Programs change: confirm details with the agency.', { date: esc(DATA_DATE) })} <a href="#sources">${t('Official sources')}</a></p>`;
-  if (housing) return { html, bind() { bindOwnerForm('hc'); document.querySelectorAll('[data-jumpto]').forEach((b) => (b.onclick = () => { const el = document.getElementById(b.dataset.jumpto); if (el) { el.tabIndex = -1; el.scrollIntoView({ block: 'start' }); el.focus({ preventScroll: true }); } })); } };
+  if (housing) return { html, bind() { document.querySelectorAll('[data-jumpto]').forEach((b) => (b.onclick = () => { const el = document.getElementById(b.dataset.jumpto); if (el) { el.tabIndex = -1; el.scrollIntoView({ block: 'start' }); el.focus({ preventScroll: true }); } })); } };
   return dir?.bind ? { html, bind: dir.bind } : html;
 }
 

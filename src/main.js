@@ -105,7 +105,7 @@ screens.home = async () => {
     <div class="tiles" id="needtiles">
       ${tile('resources/housing', 'housing', t('Housing & shelter'), t('Tonight, hotels, rentals, FEMA'))}
       ${tile('cultural-food', 'food', t('Food'), t('Pantries and stores: halal, kosher, Latino, Asian'))}
-      ${tile('resources/g-money', 'money', t('Money &amp; jobs'), t('Unemployment, jobs, relief groups'))}
+      ${tile('resources/g-money', 'money', t('Financial assistance &amp; jobs'), t('Unemployment, jobs, relief groups'))}
       ${tile('resources/g-documents', 'docs', t('Documents &amp; insurance'), t('IDs, fire report, claims'))}
       ${tile('resources/g-legal', 'legal', t('Legal &amp; scams'), t('Free legal help, check a rental, contractors'))}
       ${tile(loc?.county ? 'county/' + encodeURIComponent(loc.county) : 'counties', 'county', t('My county'), t('Offices, fire departments, schools'))}

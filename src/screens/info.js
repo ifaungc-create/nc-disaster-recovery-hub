@@ -27,7 +27,7 @@ const GROUPS = () => { const S = Object.fromEntries(sections().map((x) => [x.id,
   return [
     { id: 'housing', title: t('Housing & shelter'), rows: [S.housing, ['hotels', t('Hotels nearby'), t('Directions and call')], ['owner-check', t('Check a rental listing'), t('See who the county says owns it')], S.relocating] },
     { id: 'food', title: t('Food &amp; home'), rows: [['cultural-food', t('Cultural food: pantries & stores'), t('Halal, kosher, Latino, Asian and more')], ['home-care', t('Home care after a fire or flood'), t('Clean, dry, stop mold, save food')]] },
-    { id: 'money', title: t('Money &amp; jobs'), rows: [S.jobs, S.relief, ['phone', t('Get a phone number'), t('Free and low-cost options')]] },
+    { id: 'money', title: t('Financial assistance &amp; jobs'), rows: [S.jobs, S.relief, ['phone', t('Get a phone number'), t('Free and low-cost options')]] },
     { id: 'documents', title: t('Documents &amp; insurance'), rows: [S.documents, S.insurance, S['fire-report']] },
     { id: 'legal', title: t('Legal &amp; scams'), rows: [S.legal, ['owner-check', t('Check a rental listing'), t('See who the county says owns it')], S.boardup] },
     { id: 'county', title: t('My county'), rows: [['counties', t('County services'), t('EM, DSS, health, Register of Deeds')], ['fire', t('Fire departments'), t('Find by county, ZIP or name')], ['schools', t('School districts'), t('All NC districts by county')], ['sources', t('Official sources'), t('Government resources by county and type of help')]] },

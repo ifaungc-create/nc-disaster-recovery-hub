@@ -445,7 +445,7 @@ try {
     assert.deepEqual(await page.$$eval('nav.bottom a', (as) => as.map((a) => a.textContent.trim())), ['Home', 'My Notes', 'All help', 'My county', 'Settings']);
     await xs('home-en'); step('Home: six need tiles, "See all help", bottom tabs "All help" and "My county"');
     await go('resources'); assert.equal(await page.textContent('main h2'), 'All help');
-    assert.deepEqual(await page.$$eval('section.hgroup h3', (hs) => hs.map((h) => h.textContent)), ['Housing & shelter', 'Food & home', 'Money & jobs', 'Documents & insurance', 'Legal & scams', 'My county', 'More help']);
+    assert.deepEqual(await page.$$eval('section.hgroup h3', (hs) => hs.map((h) => h.textContent)), ['Housing & shelter', 'Food & home', 'Financial assistance & jobs', 'Documents & insurance', 'Legal & scams', 'My county', 'More help']);
     const hrefs = await page.$$eval('section.hgroup a.rowlink', (as) => as.map((a) => a.getAttribute('href')));
     for (const h of ['#resources/housing', '#hotels', '#owner-check', '#resources/relocating', '#cultural-food', '#home-care', '#resources/jobs', '#resources/relief', '#phone', '#resources/documents', '#resources/insurance', '#resources/fire-report', '#resources/legal', '#resources/boardup', '#counties', '#fire', '#schools', '#sources', '#translation', '#alerts']) assert.ok(hrefs.includes(h), 'All help lists ' + h);
     await xs('all-help-en');
@@ -498,7 +498,7 @@ try {
     await page.evaluate(() => localStorage.setItem('ncdrh.lang', 'es')); await go('resources/housing'); await page.reload(); await page.waitForSelector('#hcheck');
     assert.match(await page.textContent('#hcheck'), /Revise un anuncio antes de pagar/); await page.click('#ri-housing-0 a.tel[href="tel:+18007332767"]'); await page.waitForSelector('#rcnote');
     assert.match(await page.textContent('#rcnote'), /La Cruz Roja es una agencia de ayuda en casos de desastre/); assert.equal(await page.getAttribute('html', 'lang'), 'es'); await xs('red-cross-notice-es'); await page.click('#rc_close');
-    await go('home'); assert.match(await page.textContent('#needtiles'), /Vivienda y refugio[\s\S]*Comida[\s\S]*Dinero y empleo[\s\S]*Documentos y seguros[\s\S]*Ayuda legal y estafas[\s\S]*Mi condado/); await xs('home-es');
+    await go('home'); assert.match(await page.textContent('#needtiles'), /Vivienda y refugio[\s\S]*Comida[\s\S]*Asistencia financiera y empleo[\s\S]*Documentos y seguros[\s\S]*Ayuda legal y estafas[\s\S]*Mi condado/); await xs('home-es');
     await page.evaluate(() => { localStorage.setItem('ncdrh.lang', 'en'); localStorage.removeItem('ncdrh.location'); }); await page.reload(); await page.waitForSelector('#needtiles');
     step('new Home, owner check and Red Cross notice in Spanish');
   }

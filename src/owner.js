@@ -55,4 +55,5 @@ export async function lookupOwner(address, county, { fetchFn = fetch, timeoutMs 
 }
 
 // Zillow rentals for a county (an outside business website, opened in the person's browser; nothing is sent by the app).
+export const airbnbStaysUrl = (county) => (county ? `https://www.airbnb.com/s/${county.replace(/[^A-Za-z]+/g, '-')}-County--NC/homes` : 'https://www.airbnb.com/s/North-Carolina/homes');
 export const zillowRentalsUrl = (county) => (county ? `https://www.zillow.com/${county.toLowerCase().replace(/[^a-z]+/g, '-')}-county-nc/rentals/` : 'https://www.zillow.com/nc/rentals/');

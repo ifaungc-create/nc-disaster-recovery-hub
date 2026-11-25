@@ -1125,7 +1125,7 @@ export default {
  "Links to agencies and companies open their websites, which have their own privacy policies. {app} uses no third-party scripts, fonts or advertising inside the app. The one outside service it contacts is the state parcel record lookup described above, and only when you use it.": "Los enlaces a agencias y compañías abren sus sitios web, que tienen sus propias políticas de privacidad. {app} no usa scripts, fuentes ni publicidad de terceros dentro de la aplicación. El único servicio externo con el que se comunica es la búsqueda en los registros de parcelas del estado descrita arriba, y solo cuando usted la usa.",
  "Look up the owner": "Buscar al dueño",
  "Looking up the county record. This can take up to 20 seconds.": "Buscando el registro del condado. Puede tardar hasta 20 segundos.",
- "Money &amp; jobs": "Dinero y empleo",
+ "Financial assistance &amp; jobs": "Asistencia financiera y empleo",
  "More help": "Más ayuda",
  "More rental listings": "Más anuncios de alquiler",
  "My case numbers, notes and referrals": "Mis números de caso, notas y referidos",
